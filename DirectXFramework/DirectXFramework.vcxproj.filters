@@ -1,0 +1,311 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="ソース ファイル">
+      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
+      <Extensions>cpp;c;cc;cxx;c++;cppm;ixx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
+    </Filter>
+    <Filter Include="リソース ファイル">
+      <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
+      <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
+    </Filter>
+    <Filter Include="Framework">
+      <UniqueIdentifier>{15e29a8d-89fe-401f-9d5f-fe3659a63bff}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Framework\DirectX">
+      <UniqueIdentifier>{0ec50546-c535-474a-a25b-f605ce0b2178}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Public">
+      <UniqueIdentifier>{a67f16ab-b0fa-4e70-aa8f-0bec52c96b3a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Public\Collider">
+      <UniqueIdentifier>{89f8e488-3bc2-49db-a97c-2f1ef650d894}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Public\Scene">
+      <UniqueIdentifier>{d8551f2a-86be-4ee6-94d0-f61c88c89c4e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Public\Object">
+      <UniqueIdentifier>{132b3038-fef4-4cb0-bc70-3cbdbeefdef2}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Shader">
+      <UniqueIdentifier>{5738976d-798b-4d4f-b6e2-426de561c25a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="リソース ファイル\ヘッダー ファイル">
+      <UniqueIdentifier>{b48a7592-1aa1-403d-984c-27518165a709}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="framework\camera.cpp">
+      <Filter>Framework</Filter>
+    </ClCompile>
+    <ClCompile Include="framework\debugDraw.cpp">
+      <Filter>Framework</Filter>
+    </ClCompile>
+    <ClCompile Include="framework\font.cpp">
+      <Filter>Framework</Filter>
+    </ClCompile>
+    <ClCompile Include="framework\joystick.cpp">
+      <Filter>Framework</Filter>
+    </ClCompile>
+    <ClCompile Include="framework\keyboard.cpp">
+      <Filter>Framework</Filter>
+    </ClCompile>
+    <ClCompile Include="framework\light.cpp">
+      <Filter>Framework</Filter>
+    </ClCompile>
+    <ClCompile Include="framework\mainframe.cpp">
+      <Filter>Framework</Filter>
+    </ClCompile>
+    <ClCompile Include="framework\mouse.cpp">
+      <Filter>Framework</Filter>
+    </ClCompile>
+    <ClCompile Include="framework\sound.cpp">
+      <Filter>Framework</Filter>
+    </ClCompile>
+    <ClCompile Include="framework\directX\Direct2D.cpp">
+      <Filter>Framework\DirectX</Filter>
+    </ClCompile>
+    <ClCompile Include="framework\directX\Direct3D.cpp">
+      <Filter>Framework\DirectX</Filter>
+    </ClCompile>
+    <ClCompile Include="framework\directX\DirectInput.cpp">
+      <Filter>Framework\DirectX</Filter>
+    </ClCompile>
+    <ClCompile Include="framework\directX\shader.cpp">
+      <Filter>Framework\DirectX</Filter>
+    </ClCompile>
+    <ClCompile Include="framework\directX\XAudio2.cpp">
+      <Filter>Framework\DirectX</Filter>
+    </ClCompile>
+    <ClCompile Include="framework\directX\XInput.cpp">
+      <Filter>Framework\DirectX</Filter>
+    </ClCompile>
+    <ClCompile Include="public\Collider\AABBCollider.cpp">
+      <Filter>Public\Collider</Filter>
+    </ClCompile>
+    <ClCompile Include="public\object\cube.cpp">
+      <Filter>Public\Object</Filter>
+    </ClCompile>
+    <ClCompile Include="public\scene\scene.cpp">
+      <Filter>Public\Scene</Filter>
+    </ClCompile>
+    <ClCompile Include="public\scene\scene_assingment_game.cpp">
+      <Filter>Public\Scene</Filter>
+    </ClCompile>
+    <ClCompile Include="public\scene\scene_boot.cpp">
+      <Filter>Public\Scene</Filter>
+    </ClCompile>
+    <ClCompile Include="public\scene\scene_cube_test.cpp">
+      <Filter>Public\Scene</Filter>
+    </ClCompile>
+    <ClCompile Include="public\scene\scene_field_test.cpp">
+      <Filter>Public\Scene</Filter>
+    </ClCompile>
+    <ClCompile Include="public\scene\scene_font_test.cpp">
+      <Filter>Public\Scene</Filter>
+    </ClCompile>
+    <ClCompile Include="public\scene\scene_joystick_test.cpp">
+      <Filter>Public\Scene</Filter>
+    </ClCompile>
+    <ClCompile Include="public\scene\scene_model_test.cpp">
+      <Filter>Public\Scene</Filter>
+    </ClCompile>
+    <ClCompile Include="public\scene\scene_novel_game.cpp">
+      <Filter>Public\Scene</Filter>
+    </ClCompile>
+    <ClCompile Include="public\scene\scene_priority_test.cpp">
+      <Filter>Public\Scene</Filter>
+    </ClCompile>
+    <ClCompile Include="public\scene\scene_se_test.cpp">
+      <Filter>Public\Scene</Filter>
+    </ClCompile>
+    <ClCompile Include="public\scene\scene_sprite_test.cpp">
+      <Filter>Public\Scene</Filter>
+    </ClCompile>
+    <ClCompile Include="public\scene\scene_table.cpp">
+      <Filter>Public\Scene</Filter>
+    </ClCompile>
+    <ClCompile Include="public\billboard.cpp">
+      <Filter>Public</Filter>
+    </ClCompile>
+    <ClCompile Include="public\model.cpp">
+      <Filter>Public</Filter>
+    </ClCompile>
+    <ClCompile Include="public\object.cpp">
+      <Filter>Public</Filter>
+    </ClCompile>
+    <ClCompile Include="public\sprite.cpp">
+      <Filter>Public</Filter>
+    </ClCompile>
+    <ClCompile Include="DirectXFramework.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="framework\camera.h">
+      <Filter>Framework</Filter>
+    </ClInclude>
+    <ClInclude Include="framework\debugDraw.h">
+      <Filter>Framework</Filter>
+    </ClInclude>
+    <ClInclude Include="framework\environment.h">
+      <Filter>Framework</Filter>
+    </ClInclude>
+    <ClInclude Include="framework\font.h">
+      <Filter>Framework</Filter>
+    </ClInclude>
+    <ClInclude Include="framework\joystick.h">
+      <Filter>Framework</Filter>
+    </ClInclude>
+    <ClInclude Include="framework\keyboard.h">
+      <Filter>Framework</Filter>
+    </ClInclude>
+    <ClInclude Include="framework\light.h">
+      <Filter>Framework</Filter>
+    </ClInclude>
+    <ClInclude Include="framework\mainframe.h">
+      <Filter>Framework</Filter>
+    </ClInclude>
+    <ClInclude Include="framework\modelData.h">
+      <Filter>Framework</Filter>
+    </ClInclude>
+    <ClInclude Include="framework\mouse.h">
+      <Filter>Framework</Filter>
+    </ClInclude>
+    <ClInclude Include="framework\sound.h">
+      <Filter>Framework</Filter>
+    </ClInclude>
+    <ClInclude Include="framework\directX\Direct2D.h">
+      <Filter>Framework\DirectX</Filter>
+    </ClInclude>
+    <ClInclude Include="framework\directX\Direct3D.h">
+      <Filter>Framework\DirectX</Filter>
+    </ClInclude>
+    <ClInclude Include="framework\directX\DirectInput.h">
+      <Filter>Framework\DirectX</Filter>
+    </ClInclude>
+    <ClInclude Include="framework\directX\shader.h">
+      <Filter>Framework\DirectX</Filter>
+    </ClInclude>
+    <ClInclude Include="framework\directX\XAudio2.h">
+      <Filter>Framework\DirectX</Filter>
+    </ClInclude>
+    <ClInclude Include="framework\directX\XInput.h">
+      <Filter>Framework\DirectX</Filter>
+    </ClInclude>
+    <ClInclude Include="public\Collider\AABBCollider.h">
+      <Filter>Public\Collider</Filter>
+    </ClInclude>
+    <ClInclude Include="public\object\cube.h">
+      <Filter>Public\Object</Filter>
+    </ClInclude>
+    <ClInclude Include="public\scene\scene.h">
+      <Filter>Public\Scene</Filter>
+    </ClInclude>
+    <ClInclude Include="public\scene\scene_assingment_game.h">
+      <Filter>Public\Scene</Filter>
+    </ClInclude>
+    <ClInclude Include="public\scene\scene_boot.h">
+      <Filter>Public\Scene</Filter>
+    </ClInclude>
+    <ClInclude Include="public\scene\scene_cube_test.h">
+      <Filter>Public\Scene</Filter>
+    </ClInclude>
+    <ClInclude Include="public\scene\scene_field_test.h">
+      <Filter>Public\Scene</Filter>
+    </ClInclude>
+    <ClInclude Include="public\scene\scene_font_test.h">
+      <Filter>Public\Scene</Filter>
+    </ClInclude>
+    <ClInclude Include="public\scene\scene_joystick_test.h">
+      <Filter>Public\Scene</Filter>
+    </ClInclude>
+    <ClInclude Include="public\scene\scene_model_test.h">
+      <Filter>Public\Scene</Filter>
+    </ClInclude>
+    <ClInclude Include="public\scene\scene_novel_game.h">
+      <Filter>Public\Scene</Filter>
+    </ClInclude>
+    <ClInclude Include="public\scene\scene_priority_test.h">
+      <Filter>Public\Scene</Filter>
+    </ClInclude>
+    <ClInclude Include="public\scene\scene_se_test.h">
+      <Filter>Public\Scene</Filter>
+    </ClInclude>
+    <ClInclude Include="public\scene\scene_sprite_test.h">
+      <Filter>Public\Scene</Filter>
+    </ClInclude>
+    <ClInclude Include="public\scene\scene_table.h">
+      <Filter>Public\Scene</Filter>
+    </ClInclude>
+    <ClInclude Include="public\billboard.h">
+      <Filter>Public</Filter>
+    </ClInclude>
+    <ClInclude Include="public\model.h">
+      <Filter>Public</Filter>
+    </ClInclude>
+    <ClInclude Include="public\object.h">
+      <Filter>Public</Filter>
+    </ClInclude>
+    <ClInclude Include="public\sprite.h">
+      <Filter>Public</Filter>
+    </ClInclude>
+    <ClInclude Include="DirectXFramework.h">
+      <Filter>リソース ファイル\ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="framework.h">
+      <Filter>リソース ファイル\ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Resource.h">
+      <Filter>リソース ファイル\ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="targetver.h">
+      <Filter>リソース ファイル\ヘッダー ファイル</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <FxCompile Include="shader\ps_2d.psh">
+      <Filter>Shader</Filter>
+    </FxCompile>
+    <FxCompile Include="shader\ps_3d.psh">
+      <Filter>Shader</Filter>
+    </FxCompile>
+    <FxCompile Include="shader\ps_3d_cube.psh">
+      <Filter>Shader</Filter>
+    </FxCompile>
+    <FxCompile Include="shader\ps_3d_line.psh">
+      <Filter>Shader</Filter>
+    </FxCompile>
+    <FxCompile Include="shader\ps_3d_nolight.psh">
+      <Filter>Shader</Filter>
+    </FxCompile>
+    <FxCompile Include="shader\vs_2d.vsh">
+      <Filter>Shader</Filter>
+    </FxCompile>
+    <FxCompile Include="shader\vs_3d.vsh">
+      <Filter>Shader</Filter>
+    </FxCompile>
+    <FxCompile Include="shader\vs_3d_cube.vsh">
+      <Filter>Shader</Filter>
+    </FxCompile>
+    <FxCompile Include="shader\vs_3d_line.vsh">
+      <Filter>Shader</Filter>
+    </FxCompile>
+    <FxCompile Include="shader\vs_3d_nolight.vsh">
+      <Filter>Shader</Filter>
+    </FxCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="DirectXFramework.ico">
+      <Filter>リソース ファイル</Filter>
+    </Image>
+    <Image Include="small.ico">
+      <Filter>リソース ファイル</Filter>
+    </Image>
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="DirectXFramework.rc">
+      <Filter>リソース ファイル</Filter>
+    </ResourceCompile>
+  </ItemGroup>
+</Project>
