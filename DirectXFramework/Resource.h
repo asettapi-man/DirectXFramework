@@ -9,9 +9,9 @@
 #define IDD_ABOUTBOX			103
 #define IDM_ABOUT				104
 #define IDM_EXIT				105
-#define IDI_VNFRAMEWORK3D2026			107
+#define IDI_DIRECTXFRAMEWORK			107
 #define IDI_SMALL				108
-#define IDC_VNFRAMEWORK3D2026			109
+#define IDC_DIRECTXFRAMEWORK			109
 #define IDC_MYICON				2
 #ifndef IDC_STATIC
 #define IDC_STATIC				-1
