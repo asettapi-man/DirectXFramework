@@ -140,6 +140,9 @@
     <ClCompile Include="DirectXFramework.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
+    <ClCompile Include="public\scene\scene_collision_test.cpp">
+      <Filter>Public\Scene</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="framework\camera.h">
@@ -261,6 +264,9 @@
     </ClInclude>
     <ClInclude Include="targetver.h">
       <Filter>リソース ファイル\ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="public\scene\scene_collision_test.h">
+      <Filter>Public\Scene</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

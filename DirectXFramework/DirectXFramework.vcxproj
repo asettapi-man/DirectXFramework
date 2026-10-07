@@ -151,6 +151,7 @@
     <ClCompile Include="public\scene\scene.cpp" />
     <ClCompile Include="public\scene\scene_assingment_game.cpp" />
     <ClCompile Include="public\scene\scene_boot.cpp" />
+    <ClCompile Include="public\scene\scene_collision_test.cpp" />
     <ClCompile Include="public\scene\scene_cube_test.cpp" />
     <ClCompile Include="public\scene\scene_field_test.cpp" />
     <ClCompile Include="public\scene\scene_font_test.cpp" />
@@ -191,6 +192,7 @@
     <ClInclude Include="public\scene\scene.h" />
     <ClInclude Include="public\scene\scene_assingment_game.h" />
     <ClInclude Include="public\scene\scene_boot.h" />
+    <ClInclude Include="public\scene\scene_collision_test.h" />
     <ClInclude Include="public\scene\scene_cube_test.h" />
     <ClInclude Include="public\scene\scene_field_test.h" />
     <ClInclude Include="public\scene\scene_font_test.h" />
