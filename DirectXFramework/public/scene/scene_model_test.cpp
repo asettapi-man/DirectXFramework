@@ -6,7 +6,7 @@ bool SceneModelTest::initialize()
 {
 	//pCube = new cCube();
 	//						フォルダ名("/"で終わる)	ファイル名(vnmファイル)
-	pModel = new vnModel(L"data/model/", L"debug_fan.vnm");
+	pModel = new vnModel(L"data/model/", L"Tree.vnm");
 	pTheta = new cCube();
 	pPhi = new cCube();
 
