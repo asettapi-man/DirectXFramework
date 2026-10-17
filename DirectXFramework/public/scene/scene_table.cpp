@@ -20,6 +20,7 @@ WCHAR SceneName[(int)eSceneTable::SceneMax][32] =
 {
 	L"Boot",
 	L"Field Test",
+	L"Ground Test",
 	L"Collision Test",
 	L"Cube Test",
 	L"PriorityTest",
@@ -53,6 +54,7 @@ void switchScene()
 	{
 	case Boot:			pScene = new SceneBoot();			break;
 	case FieldTest:		pScene = new SceneFieldTest();		break;
+	case GroundTest:	pScene = new SceneGroundTest();		break;
 	case CollisionTest:	pScene = new SceneCollisionTest();	break;
 	case CubeTest:		pScene = new SceneCubeTest();		break;
 	case PriorityTest:	pScene = new ScenePriorityTest();	break;

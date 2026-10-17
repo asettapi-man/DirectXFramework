@@ -14,7 +14,7 @@ struct vnVertex3D_Line
 };
 
 //í∏ì_êî
-#define vnDebugDraw_VertexMax	(1024)
+#define vnDebugDraw_VertexMax	(1024 * 4)
 
 class vnDebugDraw
 {

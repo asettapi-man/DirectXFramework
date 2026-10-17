@@ -19,7 +19,7 @@ bool SceneCollisionTest::initialize()
 
 	//線の始点と終点の頂点
 	points[0] = XMVectorSet(-2.0f, 4.0f, -2.0f, 0.0f);
-	points[1] = XMVectorSet(3.0f, -4.0f, 3.0f, 0.0f);
+	points[1] = XMVectorSet(3.0f, 4.0f, 3.0f, 0.0f);
 
 	//三角形の頂点座標
 	points[2] = XMVectorSet(-1.0f, 0.0f, 1.0f, 0.0f);
@@ -188,43 +188,46 @@ void SceneCollisionTest::execute()
 	d += PlaneDistance;
 
 	float t = s / (s - d);	//衝突点のパラメータt
+	float dif = s - d;	//floatの差
 
-	XMVECTOR hit = linePos + lineDir * t;	//衝突点の座標
-
-	pPoint->setPosition(&hit);	//衝突点の座標をポイントに設定
-
-	//衝突判定
-	//三角形の辺のベクトル作成
-	XMVECTOR edge1 = XMVectorSubtract(points[3], points[2]);
-	XMVECTOR edge2 = XMVectorSubtract(points[4], points[3]);
-	XMVECTOR edge3 = XMVectorSubtract(points[2], points[4]);
-
-	//衝突点と三角形の各頂点のベクトル作成
-	XMVECTOR hitEdge1 = XMVectorSubtract(hit, points[2]);
-	XMVECTOR hitEdge2 = XMVectorSubtract(hit, points[3]);
-	XMVECTOR hitEdge3 = XMVectorSubtract(hit, points[4]);
-
-	//三角形の辺と衝突点のベクトルの外積を計算（法線ベクトルと同じ方向かどうかを判定するため）
-	XMVECTOR cross1 = XMVector3Cross(edge1, hitEdge1);
-	XMVECTOR cross2 = XMVector3Cross(edge2, hitEdge2);
-	XMVECTOR cross3 = XMVector3Cross(edge3, hitEdge3);
-
-	//外積と法線ベクトルの内積を計算
-	cross1 = XMVector3Dot(cross1, planeNormal);
-	cross2 = XMVector3Dot(cross2, planeNormal);
-	cross3 = XMVector3Dot(cross3, planeNormal);
-
-	if (XMVectorGetY(cross1) > 0.0f && XMVectorGetY(cross2) > 0.0f && XMVectorGetY(cross3) > 0.0f)
+	if (fabsf(dif) > 0.000001f && t >= 0)
 	{
-		//衝突している場合の処理
-		pPoint->setAmbient(1.0f, 0.0f, 0.0f, 1.0f);	//赤色に変更
-	}
-	else
-	{
-		//衝突していない場合の処理
-		pPoint->setAmbient(1.0f, 1.0f, 1.0f, 1.0f);	//白色に変更
-	}
+		XMVECTOR hit = linePos + lineDir * t;	//衝突点の座標
 
+		pPoint->setPosition(&hit);	//衝突点の座標をポイントに設定
+
+		//衝突判定
+		//三角形の辺のベクトル作成
+		XMVECTOR edge1 = XMVectorSubtract(points[3], points[2]);
+		XMVECTOR edge2 = XMVectorSubtract(points[4], points[3]);
+		XMVECTOR edge3 = XMVectorSubtract(points[2], points[4]);
+
+		//衝突点と三角形の各頂点のベクトル作成
+		XMVECTOR hitEdge1 = XMVectorSubtract(hit, points[2]);
+		XMVECTOR hitEdge2 = XMVectorSubtract(hit, points[3]);
+		XMVECTOR hitEdge3 = XMVectorSubtract(hit, points[4]);
+
+		//三角形の辺と衝突点のベクトルの外積を計算（法線ベクトルと同じ方向かどうかを判定するため）
+		XMVECTOR cross1 = XMVector3Cross(edge1, hitEdge1);
+		XMVECTOR cross2 = XMVector3Cross(edge2, hitEdge2);
+		XMVECTOR cross3 = XMVector3Cross(edge3, hitEdge3);
+
+		//外積と法線ベクトルの内積を計算
+		cross1 = XMVector3Dot(cross1, planeNormal);
+		cross2 = XMVector3Dot(cross2, planeNormal);
+		cross3 = XMVector3Dot(cross3, planeNormal);
+
+		if (XMVectorGetY(cross1) > 0.0f && XMVectorGetY(cross2) > 0.0f && XMVectorGetY(cross3) > 0.0f)
+		{
+			//衝突している場合の処理
+			pPoint->setDiffuse(1.0f, 0.0f, 0.0f, 1.0f);	//赤色に変更
+		}
+		else
+		{
+			//衝突していない場合の処理
+			pPoint->setDiffuse(1.0f, 1.0f, 1.0f, 1.0f);	//白色に変更
+		}
+	}
 	//線の描画
 	vnDebugDraw::Line(&points[0], &points[1], 0xffffff00);
 
@@ -276,19 +279,12 @@ void SceneCollisionTest::execute()
 	vnFont::print(50.0f, 50.0f + (float)(line++ * 16), L"PageUp : 増加");
 	vnFont::print(50.0f, 50.0f + (float)(line++ * 16), L"PageDown : 減少");
 	line++;
-	for (int i = 0; i < PointNum; i++)
-	{
-		for (int j = 0; j < 3; j++)
-		{
-			vnFont::print(50.0f, 50.0f + (float)(line++ * 16), L"e[%d][%d] : %s", i, j, e[i][j] == eOperation::On ? L"On" : L"Off");
-		}
-	}
-	line++;
-	vnFont::print(50.0f, 50.0f + (float)(line++ * 16), L"hitPoint : %.3f, %.3f, %.3f", XMVectorGetX(hit), XMVectorGetY(hit), XMVectorGetZ(hit));
-	vnFont::print(50.0f, 50.0f + (float)(line++ * 16), L"planeNormal : %.3f, %.3f, %.3f", XMVectorGetX(planeNormal), XMVectorGetY(planeNormal), XMVectorGetZ(planeNormal));
-	vnFont::print(50.0f, 50.0f + (float)(line++ * 16), L"cross1 : %.3f, %.3f, %.3f", XMVectorGetX(cross1), XMVectorGetY(cross1), XMVectorGetZ(cross1));
-	vnFont::print(50.0f, 50.0f + (float)(line++ * 16), L"cross2 : %.3f, %.3f, %.3f", XMVectorGetX(cross2), XMVectorGetY(cross2), XMVectorGetZ(cross2));
-	vnFont::print(50.0f, 50.0f + (float)(line++ * 16), L"cross3 : %.3f, %.3f, %.3f", XMVectorGetX(cross3), XMVectorGetY(cross3), XMVectorGetZ(cross3));
+	vnFont::print(50.0f, 50.0f + (float)(line++ * 16), L"t : %.3f", t);
+	//vnFont::print(50.0f, 50.0f + (float)(line++ * 16), L"hitPoint : %.3f, %.3f, %.3f", XMVectorGetX(hit), XMVectorGetY(hit), XMVectorGetZ(hit));
+	//vnFont::print(50.0f, 50.0f + (float)(line++ * 16), L"planeNormal : %.3f, %.3f, %.3f", XMVectorGetX(planeNormal), XMVectorGetY(planeNormal), XMVectorGetZ(planeNormal));
+	//vnFont::print(50.0f, 50.0f + (float)(line++ * 16), L"cross1 : %.3f, %.3f, %.3f", XMVectorGetX(cross1), XMVectorGetY(cross1), XMVectorGetZ(cross1));
+	//vnFont::print(50.0f, 50.0f + (float)(line++ * 16), L"cross2 : %.3f, %.3f, %.3f", XMVectorGetX(cross2), XMVectorGetY(cross2), XMVectorGetZ(cross2));
+	//vnFont::print(50.0f, 50.0f + (float)(line++ * 16), L"cross3 : %.3f, %.3f, %.3f", XMVectorGetX(cross3), XMVectorGetY(cross3), XMVectorGetZ(cross3));
 
 	vnDebugDraw::Grid();	//グリッドの描画
 	vnDebugDraw::Axis();	//軸の描画

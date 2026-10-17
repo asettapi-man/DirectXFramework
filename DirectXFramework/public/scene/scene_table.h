@@ -11,6 +11,7 @@ enum eSceneTable
 {
 	Boot,
 	FieldTest,
+	GroundTest,
 	CollisionTest,
 	CubeTest,
 	PriorityTest,
@@ -28,6 +29,7 @@ enum eSceneTable
 #include "scene.h"
 #include "scene_boot.h"
 #include "scene_field_test.h"
+#include "scene_ground_test.h"
 #include "scene_collision_test.h"
 #include "scene_model_test.h"
 #include "scene_cube_test.h"
