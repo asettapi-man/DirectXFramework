@@ -440,6 +440,13 @@ const WCHAR* vnModel::getTextureName(int id)
 	return pMaterialData[id].Texture;
 }
 
+vnModel_MaterialData* vnModel::getMaterial()
+{
+	if (!pModelData) return NULL;
+	vnModel_MaterialData* pMaterialData = reinterpret_cast<vnModel_MaterialData*>(reinterpret_cast<__int64>(pModelData) + pModelData->MaterialAccess);
+	return pMaterialData;
+}
+
 //メッシュデータ(先頭アドレス)の取得
 vnModel_MeshData* vnModel::getMesh()
 {

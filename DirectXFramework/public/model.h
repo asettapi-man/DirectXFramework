@@ -61,6 +61,7 @@ public:
 	int getMeshNum();
 	const WCHAR *getTextureName(int id);
 
+	vnModel_MaterialData* getMaterial();	//マテリアルの取得
 	vnModel_MeshData *getMesh();	//メッシュデータ(先頭アドレス)の取得
 	vnVertex3D *getVertex();		//頂点データ(先頭アドレス)の取得
 	LPWORD getIndex();				//インデックスデータ(先頭アドレス)の取得

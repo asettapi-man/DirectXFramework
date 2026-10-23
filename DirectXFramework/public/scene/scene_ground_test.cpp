@@ -1,7 +1,7 @@
 #include "../../framework.h"
 #include "../../Framework/environment.h"
 
-bool SceneGroundTest::isCollide(XMVECTOR* out, XMVECTOR* linePos, XMVECTOR* lineDir, float length)
+bool SceneGroundTest::isCollide(XMVECTOR* out, XMVECTOR* nor, XMVECTOR* linePos, XMVECTOR* lineDir, float length)
 {
 	bool result = false;	//return用変数
 
@@ -111,27 +111,139 @@ bool SceneGroundTest::isCollide(XMVECTOR* out, XMVECTOR* linePos, XMVECTOR* line
 		{
 			//衝突座標を返却用変数に代入
 			*out = hit;
+			if (nor) *nor = planeNormal;
 			result = true;
-			/*
-			vnDebugDraw::Line(&firstPoint, &secondPoint, debugLineColor);
-			vnDebugDraw::Line(&secondPoint, &thirdPoint, debugLineColor);
-			vnDebugDraw::Line(&thirdPoint, &firstPoint, debugLineColor);
-			*/
 		}
-		else
-		{
-			//vnDebugDraw::Line(&firstPoint, &secondPoint, 0xff0000ff);
-			//vnDebugDraw::Line(&secondPoint, &thirdPoint, 0xff0000ff);
-			//vnDebugDraw::Line(&thirdPoint, &firstPoint, 0xff0000ff);
-		}
-
-		//XMVECTOR rayEndPos = *linePos + *lineDir * 0.3f;
-		//vnDebugDraw::Line(linePos, &rayEndPos, 0xffff0000);
-
-		//vnFont::print(10.0f, 70.0f + i * 60.0f, L"firstCross : %.3f", fC);
-		//vnFont::print(10.0f, 90.0f + i * 60.0f, L"secondCross : %.3f", sC);
-		//vnFont::print(10.0f, 110.0f + i * 60.0f, L"thirdCross : %.3f", tC);
 	}
+	return result;
+}
+
+int SceneGroundTest::isCollideMesh(XMVECTOR* out, XMVECTOR* nor, XMVECTOR* linePos, XMVECTOR* lineDir, float length)
+{
+	int result = -1;	//return用変数
+
+	//地面とプレイヤーの当たり判定
+	//頂点配列の数
+	int vtxNum = pGround->getVertexNum();
+
+	//インデックス配列の数
+	int idxNum = pGround->getIndexNum();
+
+	//メッシュの数
+	int meshNum = pGround->getMeshNum();
+
+	//頂点配列
+	vnVertex3D* vtx = pGround->getVertex();
+
+	//インデックス配列
+	LPWORD idx = pGround->getIndex();
+
+	vnModel_MeshData* pMesh = pGround->getMesh();
+
+	XMMATRIX world = *pGround->getWorld();
+
+	for (int m = 0; m < meshNum; m++)
+	{
+		//メッシュ単位の情報
+		int iNum = pMesh[m].IndexNum;		//メッシュ単位のインデックス数
+		int s_idx = pMesh[m].StartIndex;	//メッシュ単位のインデックスの先頭番号
+
+		for (int i = 0; i < iNum; i += 3)
+		{
+			//各３頂点番号を取得
+			int idx0 = idx[s_idx + i + 0];
+			int idx1 = idx[s_idx + i + 1];
+			int idx2 = idx[s_idx + i + 2];
+
+			//各３頂点の位置を取得
+			XMVECTOR firstPoint = XMVectorSet(
+				vtx[idx0].x,
+				vtx[idx0].y,
+				vtx[idx0].z,
+				0.0f
+			);	//vertex0
+
+			XMVECTOR secondPoint = XMVectorSet(
+				vtx[idx1].x,
+				vtx[idx1].y,
+				vtx[idx1].z,
+				0.0f
+			);	//vertex1
+
+			XMVECTOR thirdPoint = XMVectorSet(
+				vtx[idx2].x,
+				vtx[idx2].y,
+				vtx[idx2].z,
+				0.0f
+			);	//vertex2
+
+			//ワールド座標に変換
+			firstPoint = XMVector3TransformCoord(firstPoint, world);
+			secondPoint = XMVector3TransformCoord(secondPoint, world);
+			thirdPoint = XMVector3TransformCoord(thirdPoint, world);
+
+			//平面（三角形）の情報
+			XMVECTOR v1, v2;
+			v1 = XMVectorSubtract(secondPoint, firstPoint);
+			v2 = XMVectorSubtract(thirdPoint, firstPoint);
+
+			planeNormal = XMVector3Cross(v1, v2);	//外積で法線ベクトルを求める
+			planeNormal = XMVector3Normalize(planeNormal);	//正規化
+
+			XMVECTOR vDot = XMVector3Dot(planeNormal, firstPoint);	//ある１頂点と法線ベクトルから内積を求める
+			planeDistance = -XMVectorGetX(vDot);	//距離
+
+			float s, d;
+			XMVECTOR vS = XMVector3Dot(planeNormal, *linePos);
+			s = XMVectorGetX(vS);
+			s += planeDistance;
+
+			XMVECTOR vD = XMVector3Dot(planeNormal, *linePos + *lineDir);
+			d = XMVectorGetX(vD);
+			d += planeDistance;
+
+			float t = s / (s - d);	//傾き
+			float dif = s - d;	//floatの差
+
+			if (fabsf(dif < 0.000001f)) continue;
+			if (t < 0) continue;
+			if (t > length) continue;
+
+			XMVECTOR hit = *linePos + *lineDir * t;
+
+			//①各３頂点の距離を求める（0 -> 1, 1 -> 2, 2 -> 0）
+			XMVECTOR firstEdge = XMVectorSubtract(secondPoint, firstPoint);
+			XMVECTOR secondEdge = XMVectorSubtract(thirdPoint, secondPoint);
+			XMVECTOR thirdEdge = XMVectorSubtract(firstPoint, thirdPoint);
+
+			//rayと各３頂点の位置の差分
+			XMVECTOR firstHitEdge = XMVectorSubtract(hit, firstPoint);
+			XMVECTOR secondHitEdge = XMVectorSubtract(hit, secondPoint);
+			XMVECTOR thirdHitEdge = XMVectorSubtract(hit, thirdPoint);
+
+			//③　①と②の外積を求める（求めたy成分で触れているか判定する）
+			XMVECTOR firstCross = XMVector3Cross(firstEdge, firstHitEdge);
+			XMVECTOR secondCross = XMVector3Cross(secondEdge, secondHitEdge);
+			XMVECTOR thirdCross = XMVector3Cross(thirdEdge, thirdHitEdge);
+
+			//法線ベクトルとの内積を求める
+			firstCross = XMVector3Dot(firstCross, planeNormal);
+			secondCross = XMVector3Dot(secondCross, planeNormal);
+			thirdCross = XMVector3Dot(thirdCross, planeNormal);
+
+			float fC = XMVectorGetX(firstCross);
+			float sC = XMVectorGetX(secondCross);
+			float tC = XMVectorGetX(thirdCross);
+
+			if (fC >= 0.0f && sC >= 0.0f && tC >= 0.0f)
+			{
+				//衝突座標を返却用変数に代入
+				*out = hit;
+				if (nor) *nor = planeNormal;
+				result = m;	//衝突したメッシュ番号を返却
+			}
+		}	//End of Vertex Loop
+	}	//End of Mesh Loop
 	return result;
 }
 
@@ -141,7 +253,7 @@ bool SceneGroundTest::initialize()
 	//== 生成 ==
 	pPlayer = new vnModel(L"data/model/bear/", L"bear.vnm");		//プレイヤー
 	pPlayer->setPosition(0.0f, 0.0f, 0.0f);
-	pGround = new vnModel(L"data/model/", L"overpass_000.vnm");	//地面
+	pGround = new vnModel(L"data/model/", L"overpass.vnm");	//地面
 
 	//シーンに登録
 	registerObject(pPlayer);
@@ -160,6 +272,7 @@ bool SceneGroundTest::initialize()
 	gravity = XMVectorSet(0.0f, -0.01f, 0.0f, 0.0f);
 
 	jumpForce = 0.3f;
+	playerGroundID = -1;
 
 	debugLineColor = 0xff00ff00;
 
@@ -183,39 +296,42 @@ void SceneGroundTest::execute()
 	//移動方向を示す方向ベクトル
 	XMVECTOR vMove = XMVectorSet(0.0f, 0.0f, 0.0f, 0.0f);
 	bool isMoving = false;	//プレイヤーの移動フラグ
+	float speed = 0.1f;
+
+	if (playerGroundID == 1) speed *= 2.0f;
 
 	if (vnKeyboard::on(DIK_W))
 	{
 		//pPlayer->addPositionZ(0.05f);
-		vMove = XMVectorSetZ(vMove, 0.1f);
+		vMove = XMVectorSetZ(vMove, speed);
 		isMoving = true;	//移動中
 	}
 	if (vnKeyboard::on(DIK_S))
 	{
 		//pPlayer->addPositionZ(-0.05f);
-		vMove = XMVectorSetZ(vMove, -0.1f);
+		vMove = XMVectorSetZ(vMove, -speed);
 		isMoving = true;	//移動中
 	}
 	if (vnKeyboard::on(DIK_D))
 	{
 		//pPlayer->addPositionX(0.05f);
-		vMove = XMVectorSetX(vMove, 0.1f);
+		vMove = XMVectorSetX(vMove, speed);
 		isMoving = true;	//移動中
 	}
 	if (vnKeyboard::on(DIK_A))
 	{
 		//pPlayer->addPositionX(-0.05f);
-		vMove = XMVectorSetX(vMove, -0.1f);
+		vMove = XMVectorSetX(vMove, -speed);
 		isMoving = true;	//移動中
 	}
 	if (vnKeyboard::on(DIK_DOWNARROW))
 	{
-		vMove = XMVectorSetY(vMove, -0.1f);
+		vMove = XMVectorSetY(vMove, -speed);
 		isMoving = true;
 	}
 	if (vnKeyboard::on(DIK_UPARROW))
 	{
-		vMove = XMVectorSetY(vMove, 0.1f);
+		vMove = XMVectorSetY(vMove, speed);
 		isMoving = true;
 	}
 
@@ -227,9 +343,9 @@ void SceneGroundTest::execute()
 
 	{
 		//進行方向の地形を調べて進めるか判断
-		XMVECTOR hit;	//衝突位置取得変数
+		XMVECTOR hit, nor;	//衝突位置取得変数
 		XMVECTOR vPos = *pPlayer->getPosition();
-		vPos = XMVectorAdd(vPos, XMVectorSet(0.0f, 2.0f, 0.0f, 0.0f));
+		vPos = XMVectorAdd(vPos, XMVectorSet(0.0f, 1.0f, 0.0f, 0.0f));
 		XMVECTOR vDir = XMVector3Normalize(vMove);
 		float length = XMVectorGetX(XMVector3Length(vMove));
 
@@ -237,17 +353,16 @@ void SceneGroundTest::execute()
 		vnDebugDraw::Line(&vPos, &linePosEnd, debugLineColor);
 
 		//壁との衝突判定
-		bool result = isCollide(&hit, &vPos, &vDir, length);
+		bool result = isCollide(&hit, &nor, &vPos, &vDir, length);
 
 		if (result == true)
 		{
+			//衝突があった際の壁ずり処理
+			vMove = vMove - XMVector3Dot(vMove, nor) * nor;
+		}
 
-		}
-		else
-		{
-			//プレイヤーの座標に移動ベクトルを加算して更新
-			pPlayer->addPosition(&vMove);
-		}
+		//プレイヤーの座標に移動ベクトルを加算して更新
+		pPlayer->addPosition(&vMove);
 
 		vnFont::print(10.0f, 90.0f, L"wall_result : %s", result ? L"true" : L"false");
 	}
@@ -289,8 +404,9 @@ void SceneGroundTest::execute()
 		pPlayer->setRotationY(ry);	//プレイヤーのY軸の回転角度を更新
 	}
 
-	if (vnKeyboard::trg(DIK_SPACE) && !isJump)
+	if (vnKeyboard::trg(DIK_SPACE) && !isJump && playerGroundID != 2)
 	{
+		if (playerGroundID == 3) jumpForce *= 2.0f;
 		isJump = true;
 		velocity = XMVectorSet(0.0f, jumpForce, 0.0f, 0.0f);
 	}
@@ -312,7 +428,7 @@ void SceneGroundTest::execute()
 
 	XMVECTOR hit;	//衝突座標を受け取る変数
 	linePos = *pPlayer->getPosition();
-	linePos = XMVectorAdd(linePos, XMVectorSet(0.0f, 0.15f, 0.0f, 0.0f));
+	linePos = XMVectorAdd(linePos, XMVectorSet(0.0f, 0.1f, 0.0f, 0.0f));
 	lineDir = XMVectorSet(0.0f, -1.0f, 0.0f, 0.0f);
 	float length = 0.3f;
 
@@ -321,9 +437,11 @@ void SceneGroundTest::execute()
 	vnDebugDraw::Line(&linePos, &linePosEnd, debugLineColor);
 	
 	//地面判定
-	bool result = isCollide(&hit, &linePos, &lineDir, length);
+	//bool result = isCollide(&hit, &linePos, &lineDir, length);
+	int result = isCollideMesh(&hit, NULL, &linePos, &lineDir, length);
+	playerGroundID = result;
 
-	if (result == true)
+	if (result >= 0)
 	{
 		isJump = false;
 
@@ -332,7 +450,30 @@ void SceneGroundTest::execute()
 
 		//速度をリセット
 		velocity = XMVectorZero();
+		jumpForce = 0.3f;	//ジャンプ力リセット
+
+		vnModel_MaterialData* pMat = pGround->getMaterial();
+		vnModel_MeshData* pMesh = pGround->getMesh();
+
+		pPlayer->setDiffuse(
+			pMat[pMesh[result].MaterialID].Diffuse[0],	//R
+			pMat[pMesh[result].MaterialID].Diffuse[1],	//G
+			pMat[pMesh[result].MaterialID].Diffuse[2],	//B
+			pMat[pMesh[result].MaterialID].Diffuse[3]	//A
+		);
+		
 	}
+
+	/*if(result == true)
+	{
+		isJump = false;
+
+		//プレイヤーの位置をコライダーの上に移動
+		pPlayer->setPositionY(XMVectorGetY(hit));
+
+		//速度をリセット
+		velocity = XMVectorZero();
+	}*/
 
 	//マウスの移動量を取得
 	float dx = vnMouse::getDX();
@@ -417,6 +558,11 @@ void SceneGroundTest::execute()
 	);
 
 	vnFont::print(10.0f, 70.0f, L"ground_result : %s", result ? L"true" : L"false");
+	vnFont::print(10.0f, 110.0f, L"VertexNum : %d", pGround->getVertexNum());
+	vnFont::print(10.0f, 130.0f, L"IndexNum : %d", pGround->getIndexNum());
+	vnFont::print(10.0f, 150.0f, L"MeshNum : %d", pGround->getMeshNum());
+
+	vnFont::print(10.0f, 170.0f, L"Hit Mesh : %d", result);
 
 	vnScene::execute();
 }

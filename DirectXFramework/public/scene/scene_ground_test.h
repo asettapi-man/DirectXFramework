@@ -32,9 +32,17 @@ private:
 	float jumpForce;	//ジャンプ力
 	bool isJump;	//ジャンプフラグ
 
+	int playerGroundID;	//プレイヤーが接続している地面のメッシュ番号
+
 	//線分と地形（三角形群）の衝突を調べる関数
 	//outに結果を出力
-	bool isCollide(XMVECTOR* out, XMVECTOR* linePos, XMVECTOR* lineDir, float length);	
+	bool isCollide(XMVECTOR* out, XMVECTOR* nor, XMVECTOR* linePos, XMVECTOR* lineDir, float length);
+
+	//線分と地形（三角形群）の衝突を調べる関数
+	//return : -1 衝突無し
+	//0以上 : メッシュ番号
+	int isCollideMesh(XMVECTOR* out, XMVECTOR* nor, XMVECTOR* linePos, XMVECTOR* lineDir, float length);
+
 public:
 	
 	bool initialize();
