@@ -24,11 +24,17 @@ private:
 	bool reverseH;	//水平反転
 	bool reverseV;	//垂直反転
 
-	XMVECTOR velocity;	//移動量
-	XMVECTOR gravity;	//重力
-	bool isHit;	//衝突判定
+	XMVECTOR velocity;	//速度
+	XMVECTOR gravity;	//重力加速度
+
+	XMVECTOR linePos;	//線分の位置
+	XMVECTOR lineDir;	//線分の向き
+	float jumpForce;	//ジャンプ力
 	bool isJump;	//ジャンプフラグ
 
+	//線分と地形（三角形群）の衝突を調べる関数
+	//outに結果を出力
+	bool isCollide(XMVECTOR* out, XMVECTOR* linePos, XMVECTOR* lineDir, float length);	
 public:
 	
 	bool initialize();
