@@ -1,6 +1,6 @@
 #pragma once
 
-#include "../Object/player.h"
+//#include "../Object/player.h"
 
 #define BLOCK_NUM 16
 class SceneMainGame : public vnScene
@@ -27,7 +27,7 @@ private:
 	eGameState gameState;	//ゲームステート
 	eDirection direction;	//衝突方向
 
-	Player* player;				//プレイヤー
+	//Player* player;				//プレイヤー
 	vnModel* pShadow;			//影オブジェクト
 
 	vnModel* pGround;			//地面オブジェクト

@@ -5,14 +5,14 @@
 bool SceneMainGame::initialize()
 {	
 	//== 生成 ==
-	player->initialize();
+	/*player->initialize();
 	playerPos = XMFLOAT3(
 		player->getModel()->getPositionX(), 
 		player->getModel()->getPositionY() + player->getModel()->getAABBCollider().getBoundingBox().Extents.y, 
 		player->getModel()->getPositionZ());	//プレイヤーの座標を取得
 
 	player->getModel()->getAABBCollider().initialize(playerPos, XMFLOAT3(0.5f, 1.3f, 0.5f));	//AABBの初期化
-
+	*/
 	pShadow = new vnModel(L"data/model/", L"shadow.vnm");		//影
 	pShadow->setTransparent(true);	//影の半透明を有効
 	pShadow->setPositionY(0.01f);	//影の位置を少し浮かせる	Z-Fighting対策
@@ -157,7 +157,7 @@ bool SceneMainGame::initialize()
 	pJumpSE = new vnSound(L"data/sound/jump.wav");	//ジャンプ時の効果音
 
 	//シーンに登録
-	registerObject(player->getModel());
+	//registerObject(player->getModel());
 	registerObject(pGround);
 	registerObject(pSky);
 	registerObject(pCheckerFlag);
@@ -202,7 +202,7 @@ bool SceneMainGame::initialize()
 void SceneMainGame::terminate()
 {
 	//== 破棄 ==
-	deleteObject(player->getModel());
+	//deleteObject(player->getModel());
 	deleteObject(pGround);
 	deleteObject(pSky);
 	deleteObject(pCheckerFlag);
@@ -330,7 +330,7 @@ void SceneMainGame::execute()
 			}
 
 			{
-				vnFont::print(10.0f, 10.0f, L"PlayerPos: %.3f, %.3f, %.3f",
+				/*vnFont::print(10.0f, 10.0f, L"PlayerPos: %.3f, %.3f, %.3f",
 					player->getModel()->getPositionX(),		//x座標
 					player->getModel()->getPositionY(), 	//y座標
 					player->getModel()->getPositionZ()		//z座標
@@ -345,7 +345,7 @@ void SceneMainGame::execute()
 					playerBox.Center.x,	//AABBの中心座標X
 					playerBox.Center.y,	//AABBの中心座標Y
 					playerBox.Center.z	//AABBの中心座標Z
-				);
+				);*/
 
 				vnFont::print(10.0f, 90.0f, L"Jump: %s", isJump ? L"true" : L"false");
 
@@ -396,7 +396,7 @@ void SceneMainGame::execute()
 #endif
 			//落下処理
 			velocity += gravity;
-			player->getModel()->addPositionY(XMVectorGetY(velocity));
+			//player->getModel()->addPositionY(XMVectorGetY(velocity));
 
 			if (XMVectorGetY(velocity) < 0.0f)
 			{
@@ -411,13 +411,13 @@ void SceneMainGame::execute()
 			vMove = XMVector3TransformNormal(vMove, mrotate);
 
 			//プレイヤーの座標に移動ベクトルを加算して更新
-			player->getModel()->addPosition(&vMove);
+			//player->getModel()->addPosition(&vMove);
 
-			pShadow->setPosition(player->getModel()->getPosition());	//影の座標をプレイヤーの座標に合わせる
+			//pShadow->setPosition(player->getModel()->getPosition());	//影の座標をプレイヤーの座標に合わせる
 			pShadow->setPositionY(0.01f);	//影の座標を少し浮かせる	Z-Fighting対策
 
 			//プレイヤーの角度を進行方向に向ける
-			if (isMovingForPlayer)
+			/*if (isMovingForPlayer)
 			{
 				float movePX = XMVectorGetX(vMove);	//進行方向ベクトルのX成分
 				float movePZ = XMVectorGetZ(vMove);	//進行方向ベクトルのZ成分
@@ -450,8 +450,8 @@ void SceneMainGame::execute()
 				float ry = atan2f(-XMVectorGetZ(mAns.r[0]), XMVectorGetZ(mAns.r[2]));
 
 				//計算された中間角度を設定
-				player->getModel()->setRotationY(ry);	//プレイヤーのY軸の回転角度を更新
-			}
+				//player->getModel()->setRotationY(ry);	//プレイヤーのY軸の回転角度を更新
+			}*/
 
 			//動く床の作成
 			int n = 0;
@@ -465,7 +465,7 @@ void SceneMainGame::execute()
 			}
 
 			//AABBの中心座標を設定
-			playerPos = XMFLOAT3(
+			/*playerPos = XMFLOAT3(
 				player->getModel()->getPositionX(),
 				player->getModel()->getPositionY() + player->getModel()->getAABBCollider().getBoundingBox().Extents.y,
 				player->getModel()->getPositionZ());	//プレイヤーの座標を取得
@@ -514,7 +514,7 @@ void SceneMainGame::execute()
 				player->getModel()->getPositionZ());	//プレイヤーの座標を取得
 
 			player->getModel()->getAABBCollider().setBoundingBoxCenter(playerPos);	//AABBの中心座標を設定
-
+			*/
 			//マウスの移動量を取得
 			float dx = vnMouse::getDX();
 			float dy = vnMouse::getDY();
@@ -559,7 +559,7 @@ void SceneMainGame::execute()
 			eye = XMVector3TransformNormal(eye, camRotate);
 
 			//回転の中心をプレイヤーにする（プレイヤーの座標を加算する）
-			eye = XMVectorAdd(eye, *player->getModel()->getPosition());
+			//eye = XMVectorAdd(eye, *player->getModel()->getPosition());
 
 			camPos = XMVectorAdd(eye, camBias);
 
@@ -567,7 +567,7 @@ void SceneMainGame::execute()
 			vnCamera::setPosition(&camPos);
 
 			//カメラの注視点を更新
-			camTarget = XMVectorAdd(*player->getModel()->getPosition(), camBias);
+			//camTarget = XMVectorAdd(*player->getModel()->getPosition(), camBias);
 
 			vnCamera::setTarget(&camTarget);
 		}
@@ -643,8 +643,8 @@ void SceneMainGame::render()
 void SceneMainGame::TitleSetUp()
 {
 	//プレイヤーの初期化
-	player->getModel()->setPosition(0.0f, 0.0f, 0.0f);	//位置
-	player->getModel()->setRotationY(0.0f);	//Y軸回転
+	//player->getModel()->setPosition(0.0f, 0.0f, 0.0f);	//位置
+	//player->getModel()->setRotationY(0.0f);	//Y軸回転
 
 	//カメラの初期化
 	theta = 0.0f;	//角度θ
