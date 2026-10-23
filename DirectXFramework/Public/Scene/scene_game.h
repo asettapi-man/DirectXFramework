@@ -1,6 +1,6 @@
 #pragma once
 
-//#include "../Object/player.h"
+#include "../Object/player.h"
 
 #define BLOCK_NUM 16
 class SceneMainGame : public vnScene
@@ -27,15 +27,11 @@ private:
 	eGameState gameState;	//ゲームステート
 	eDirection direction;	//衝突方向
 
-	//Player* player;				//プレイヤー
+	Player* player;				//プレイヤー
 	vnModel* pShadow;			//影オブジェクト
 
 	vnModel* pGround;			//地面オブジェクト
 	vnModel* pSky;				//背景
-
-	vnModel* pBlock[BLOCK_NUM];	//ブロックオブジェクト
-
-	vnModel* pCheckerFlag;	//ゴール
 
 	//== 画像 ==
 	vnSprite* pTitle;	//タイトル画面
@@ -59,13 +55,8 @@ private:
 
 	bool isControllable;	//操作可能フラグ
 	bool isJump;	//ジャンプ可能フラグ
-	std::vector<bool> isFlip;	//箱移動反転フラグ
 
 	XMFLOAT3 playerPos;	//プレイヤーの座標
-	XMFLOAT3 blockPos;	//ブロックの座標
-	XMFLOAT3 goalPos;	//ゴールの座標
-
-	std::vector<XMFLOAT3> vStartBlockPos;	//動く床の初期値保存配列
 
 	vnSound* pBGM;	//BGM
 
@@ -97,5 +88,5 @@ public:
 	void ImageColor(vnSprite* sprite);
 
 	//== AABBの当たり判定 ==
-	bool CheckBoundingBoxCollision(vnModel* m1, vnModel* m2);
+	bool CheckPlayerCollision(Player* p, AABBCollider* c);
 };

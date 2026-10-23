@@ -7,7 +7,6 @@
 #pragma once
 
 #include "object.h"
-#include "../Public/Collider/AABBCollider.h"
 
 class vnModel : public vnObject
 {
@@ -40,8 +39,6 @@ protected:
 	//インデックスバッファ
 	ID3D12Resource* pIndexBuffer;
 	D3D12_INDEX_BUFFER_VIEW indexBufferView;
-
-	AABBCollider aabbCollider;	//AABBの当たり判定
 
 public:
 	//コンストラクタ
@@ -132,7 +129,4 @@ public:
 
 	//タイリングとオフセットの取得
 	const XMVECTOR* getTilingOffset(int id = 0);
-
-	//AABBの当たり判定の取得
-	AABBCollider& getAABBCollider();
 };

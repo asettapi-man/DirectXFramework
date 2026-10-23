@@ -100,6 +100,4 @@ using namespace DirectX;
 #include "../Public/scene/scene.h"
 #include "../Public/scene/scene_table.h"
 
-#include "../Public/Collider/AABBCollider.h"
-
 #include "mainframe.h"

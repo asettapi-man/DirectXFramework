@@ -148,6 +148,7 @@
     <ClCompile Include="public\model.cpp" />
     <ClCompile Include="public\object.cpp" />
     <ClCompile Include="public\object\cube.cpp" />
+    <ClCompile Include="Public\Object\player.cpp" />
     <ClCompile Include="public\scene\scene.cpp" />
     <ClCompile Include="public\scene\scene_assingment_game.cpp" />
     <ClCompile Include="public\scene\scene_boot.cpp" />
@@ -191,6 +192,7 @@
     <ClInclude Include="public\model.h" />
     <ClInclude Include="public\object.h" />
     <ClInclude Include="public\object\cube.h" />
+    <ClInclude Include="Public\Object\player.h" />
     <ClInclude Include="public\scene\scene.h" />
     <ClInclude Include="public\scene\scene_assingment_game.h" />
     <ClInclude Include="public\scene\scene_boot.h" />

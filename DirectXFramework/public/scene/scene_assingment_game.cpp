@@ -3,12 +3,12 @@
 
 //初期化関数
 bool SceneAssingment::initialize()
-{	
+{
 	//== 生成 ==
 	pPlayer = new vnModel(L"data/model/bear/", L"bear.vnm");	//プレイヤー
-	playerPos = XMFLOAT3(
-		pPlayer->getPositionX(), 
-		pPlayer->getPositionY() + pPlayer->getAABBCollider().getBoundingBox().Extents.y, 
+	/*playerPos = XMFLOAT3(
+		pPlayer->getPositionX(),
+		pPlayer->getPositionY() + pPlayer->getAABBCollider().getBoundingBox().Extents.y,
 		pPlayer->getPositionZ());	//プレイヤーの座標を取得
 
 	pPlayer->getAABBCollider().initialize(playerPos, XMFLOAT3(0.5f, 1.3f, 0.5f));	//AABBの初期化
@@ -17,12 +17,12 @@ bool SceneAssingment::initialize()
 	pShadow->setTransparent(true);	//影の半透明を有効
 	pShadow->setPositionY(0.01f);	//影の位置を少し浮かせる	Z-Fighting対策
 	pShadow->getAABBCollider().setEnable(false);	//影の当たり判定を無効にする
-
+	*/
 	//DIffuse : デフォルト(1, 1, 1, 1)	※wが半透明度
 	//Ambient : デフォルト(0, 0, 0, 0)
 	//Specular: デフォルト(0, 0, 0, 1)	※w（強度）は0以下にしない
 
-	pGround = new vnModel(L"data/model/", L"ground.vnm");		//地面
+	/*pGround = new vnModel(L"data/model/", L"ground.vnm");		//地面
 	pGround->getAABBCollider().setEnable(false);	//影の当たり判定を無効にする
 
 	pSky = new vnModel(L"data/model/", L"skydome.vnm");			//背景
@@ -31,171 +31,170 @@ bool SceneAssingment::initialize()
 
 	pCheckerFlag = new vnModel(L"data/model/", L"CheckerFlag.vnm");	//ゴール
 	pCheckerFlag->getAABBCollider().initialize(XMFLOAT3(0.0f, 0.0f, 0.0f), XMFLOAT3(1.0f, 3.0f, 1.0f));	//当たり判定の初期化
+	*/
+	/*{
+		 //std::random_device rd;
+		 std::mt19937 mt(4/*rd());
+		 int i;
+		 float x, z;
+		 float radius = 17.0f;
+		 for (i = 0; i < BLOCK_NUM - 1; i++)
+		 {
+			 pBlock[i] = new vnModel(L"data/model/primitive/", L"cube.vnm");	//ブロック
+			 float radian = 360.0f / (float)BLOCK_NUM * i * XM_PI / 180.0f;	//ラジアン角度
 
-	{
-		//std::random_device rd;
-		std::mt19937 mt(4/*rd()*/);
-		int i;
-		float x, z;
-		float radius = 17.0f;
-		for (i = 0; i < BLOCK_NUM - 1; i++)
-		{
-			pBlock[i] = new vnModel(L"data/model/primitive/", L"cube.vnm");	//ブロック
-			float radian = 360.0f / (float)BLOCK_NUM * i * XM_PI / 180.0f;	//ラジアン角度
+			 //極座標 -> 直交座標
+			 x = cos(radian) * radius;
+			 z = sin(radian) * radius;
 
-			//極座標 -> 直交座標
-			x = cos(radian) * radius;
-			z = sin(radian) * radius;
+			 pBlock[i]->setPosition(x, 3.0f * i + 1.0f, z);		//位置を設定
 
-			pBlock[i]->setPosition(x, 3.0f * i + 1.0f, z);		//位置を設定
+			 //ブロックの大きさを乱数で設定
+			 std::uniform_real_distribution<float> scaleDist(0.5f, 1.5f);
+			 XMVECTOR blockScale = XMVectorSet(scaleDist(mt), scaleDist(mt), scaleDist(mt), 0.0f);
+			 pBlock[i]->setScale(&blockScale);	//ブロックのサイズ設定
 
-			//ブロックの大きさを乱数で設定
-			std::uniform_real_distribution<float> scaleDist(0.5f, 1.5f);
-			XMVECTOR blockScale = XMVectorSet(scaleDist(mt), scaleDist(mt), scaleDist(mt), 0.0f);
-			pBlock[i]->setScale(&blockScale);	//ブロックのサイズ設定
+			 //ブロックの色を乱数で設定
+			 std::uniform_real_distribution<float> colorDist(0.0f, 1.0f);
+			 XMVECTOR ambient = XMVectorSet(colorDist(mt), colorDist(mt), colorDist(mt), 1.0f);
+			 pBlock[i]->setAmbient(&ambient);
 
-			//ブロックの色を乱数で設定
-			std::uniform_real_distribution<float> colorDist(0.0f, 1.0f);
-			XMVECTOR ambient = XMVectorSet(colorDist(mt), colorDist(mt), colorDist(mt), 1.0f);
-			pBlock[i]->setAmbient(&ambient);
+			 /*blockPos = XMFLOAT3(pBlock[i]->getPositionX(), pBlock[i]->getPositionY(), pBlock[i]->getPositionZ());	//ブロックの座標を取得
+			 pBlock[i]->getAABBCollider().initialize(blockPos, XMFLOAT3(XMVectorGetX(blockScale), XMVectorGetY(blockScale), XMVectorGetZ(blockScale)));	//AABBの初期化
+			 if (i == 0) continue;
+			 if (i % 4 != 0) continue;
 
-			blockPos = XMFLOAT3(pBlock[i]->getPositionX(), pBlock[i]->getPositionY(), pBlock[i]->getPositionZ());	//ブロックの座標を取得
-			pBlock[i]->getAABBCollider().initialize(blockPos, XMFLOAT3(XMVectorGetX(blockScale), XMVectorGetY(blockScale), XMVectorGetZ(blockScale)));	//AABBの初期化
+			 //動く床の初期値追加
+			 vStartBlockPos.push_back(blockPos);
+			 isFlip.push_back(false);
+		 }
 
-			if (i == 0) continue;
-			if (i % 4 != 0) continue;
+		 //最後のブロックの位置
+		 pBlock[i] = new vnModel(L"data/model/primitive/", L"cube.vnm");	//ブロック
+		 float radian = 360.0f / (float)BLOCK_NUM * i * XM_PI / 180.0f;	//ラジアン角度
 
-			//動く床の初期値追加
-			vStartBlockPos.push_back(blockPos);
-			isFlip.push_back(false);
-		}
+		 //極座標 -> 直交座標
+		 x = cos(radian) * radius;
+		 z = sin(radian) * radius;
 
-		//最後のブロックの位置
-		pBlock[i] = new vnModel(L"data/model/primitive/", L"cube.vnm");	//ブロック
-		float radian = 360.0f / (float)BLOCK_NUM * i * XM_PI / 180.0f;	//ラジアン角度
+		 pBlock[i]->setPosition(x, 3.0f * i + 1.0f, z);		//位置を設定
 
-		//極座標 -> 直交座標
-		x = cos(radian) * radius;
-		z = sin(radian) * radius;
+		 //ブロックの色を乱数で設定
+		 std::uniform_real_distribution<float> colorDist(0.0f, 1.0f);
+		 XMVECTOR ambient = XMVectorSet(colorDist(mt), colorDist(mt), colorDist(mt), 1.0f);
+		 pBlock[i]->setAmbient(&ambient);
 
-		pBlock[i]->setPosition(x, 3.0f * i + 1.0f, z);		//位置を設定
+		 blockPos = XMFLOAT3(pBlock[i]->getPositionX(), pBlock[i]->getPositionY(), pBlock[i]->getPositionZ());	//ブロックの座標を取得
+		 XMVECTOR blockScale = XMVectorSet(3.0f, 1.0f, 3.0f, 0.0f);
+		 pBlock[i]->setScale(&blockScale);
+		 pBlock[i]->getAABBCollider().initialize(blockPos, XMFLOAT3(XMVectorGetX(blockScale), XMVectorGetY(blockScale), XMVectorGetZ(blockScale)));	//AABBの初期化
 
-		//ブロックの色を乱数で設定
-		std::uniform_real_distribution<float> colorDist(0.0f, 1.0f);
-		XMVECTOR ambient = XMVectorSet(colorDist(mt), colorDist(mt), colorDist(mt), 1.0f);
-		pBlock[i]->setAmbient(&ambient);
+		 //ゴールの位置
+		 pCheckerFlag->setPosition(x, 3.0f * i + 1.0f, z);
+		 goalPos = XMFLOAT3(
+			 pCheckerFlag->getPositionX(),
+			 pCheckerFlag->getPositionY() + pCheckerFlag->getAABBCollider().getBoundingBox().Extents.y,
+			 pCheckerFlag->getPositionZ()
+		 );
+		 pCheckerFlag->getAABBCollider().setBoundingBoxCenter(goalPos);
+	 }*/
 
-		blockPos = XMFLOAT3(pBlock[i]->getPositionX(), pBlock[i]->getPositionY(), pBlock[i]->getPositionZ());	//ブロックの座標を取得
-		XMVECTOR blockScale = XMVectorSet(3.0f, 1.0f, 3.0f, 0.0f);
-		pBlock[i]->setScale(&blockScale);
-		pBlock[i]->getAABBCollider().initialize(blockPos, XMFLOAT3(XMVectorGetX(blockScale), XMVectorGetY(blockScale), XMVectorGetZ(blockScale)));	//AABBの初期化
+	 //== 画像 ==
+	 pTitle = new vnSprite(
+		 (float)vnMainFrame::screenCenterX,
+		 (float)vnMainFrame::screenCenterY,
+		 vnMainFrame::screenWidth,
+		 vnMainFrame::screenHeight,
+		 L"data/image/Title.png"
+	 );
 
-		//ゴールの位置
-		pCheckerFlag->setPosition(x, 3.0f * i + 1.0f, z);
-		goalPos = XMFLOAT3(
-			pCheckerFlag->getPositionX(),
-			pCheckerFlag->getPositionY() + pCheckerFlag->getAABBCollider().getBoundingBox().Extents.y,
-			pCheckerFlag->getPositionZ()
-		);
-		pCheckerFlag->getAABBCollider().setBoundingBoxCenter(goalPos);
-	}
+	 pStartButton = new vnSprite(
+		 (float)vnMainFrame::screenCenterX,
+		 (float)vnMainFrame::screenCenterY + 100.0f,
+		 400.0f,
+		 100.0f,
+		 L"data/image/startButton.png"
+	 );
 
-	//== 画像 ==
-	pTitle = new vnSprite(
-		(float)vnMainFrame::screenCenterX,
-		(float)vnMainFrame::screenCenterY,
-		vnMainFrame::screenWidth,
-		vnMainFrame::screenHeight,
-		L"data/image/Title.png"
-	);
+	 pQuitButton = new vnSprite(
+		 (float)vnMainFrame::screenCenterX,
+		 (float)vnMainFrame::screenCenterY + 250.0f,
+		 400.0f,
+		 100.0f,
+		 L"data/image/quitButton.png"
+	 );
 
-	pStartButton = new vnSprite(
-		(float)vnMainFrame::screenCenterX,
-		(float)vnMainFrame::screenCenterY + 100.0f,
-		400.0f,
-		100.0f,
-		L"data/image/startButton.png"
-	);
+	 pTitleButton = new vnSprite(
+		 (float)vnMainFrame::screenCenterX,
+		 (float)vnMainFrame::screenCenterY + 250.0f,
+		 400.0f,
+		 100.0f,
+		 L"data/image/titleButton.png"
+	 );
+	 pTitleButton->setRenderEnable(false);	//非表示
 
-	pQuitButton = new vnSprite(
-		(float)vnMainFrame::screenCenterX,
-		(float)vnMainFrame::screenCenterY + 250.0f,
-		400.0f,
-		100.0f,
-		L"data/image/quitButton.png"
-	);
+	 pDescriptionUI = new vnSprite(
+		 (float)vnMainFrame::screenWidth - 90.0f,
+		 (float)vnMainFrame::screenHeight - 70.0f,
+		 180.0f,
+		 60.0f,
+		 L""
+	 );
+	 pDescriptionUI->setRenderEnable(false);	//非表示
 
-	pTitleButton = new vnSprite(
-		(float)vnMainFrame::screenCenterX,
-		(float)vnMainFrame::screenCenterY + 250.0f,
-		400.0f,
-		100.0f,
-		L"data/image/titleButton.png"
-	);
-	pTitleButton->setRenderEnable(false);	//非表示
+	 for (int i = 0; i < vnSprite::VertexNum; i++)
+	 {
+		 pDescriptionUI->vtx[i].r = 0.0f;
+		 pDescriptionUI->vtx[i].g = 0.0f;
+		 pDescriptionUI->vtx[i].b = 0.0f;
+		 pDescriptionUI->vtx[i].a = 0.5f;
+	 }
 
-	pDescriptionUI = new vnSprite(
-		(float)vnMainFrame::screenWidth - 90.0f,
-		(float)vnMainFrame::screenHeight - 70.0f,
-		180.0f,
-		60.0f,
-		L""
-	);
-	pDescriptionUI->setRenderEnable(false);	//非表示
+	 pBGM = new vnSound(L"data/sound/bgm.wav");	//BGM
+	 pClickSE = new vnSound(L"data/sound/cursor2.wav");	//クリック時の効果音
+	 pClearSE = new vnSound(L"data/sound/clear.wav");	//クリア時の効果音
+	 pJumpSE = new vnSound(L"data/sound/jump.wav");	//ジャンプ時の効果音
 
-	for (int i = 0; i < vnSprite::VertexNum; i++)
-	{
-		pDescriptionUI->vtx[i].r = 0.0f;
-		pDescriptionUI->vtx[i].g = 0.0f;
-		pDescriptionUI->vtx[i].b = 0.0f;
-		pDescriptionUI->vtx[i].a = 0.5f;
-	}
+	 //シーンに登録
+	 registerObject(pPlayer);
+	 registerObject(pGround);
+	 registerObject(pSky);
+	 registerObject(pCheckerFlag);
+	 for (int i = 0; i < BLOCK_NUM; i++)
+	 {
+		 registerObject(pBlock[i]);
+	 }
 
-	pBGM = new vnSound(L"data/sound/bgm.wav");	//BGM
-	pClickSE = new vnSound(L"data/sound/cursor2.wav");	//クリック時の効果音
-	pClearSE = new vnSound(L"data/sound/clear.wav");	//クリア時の効果音
-	pJumpSE = new vnSound(L"data/sound/jump.wav");	//ジャンプ時の効果音
+	 //== 半透明のオブジェクトは不透明の後に描画する ==
+	 registerObject(pShadow);
 
-	//シーンに登録
-	registerObject(pPlayer);
-	registerObject(pGround);
-	registerObject(pSky);
-	registerObject(pCheckerFlag);
-	for (int i = 0; i < BLOCK_NUM; i++)
-	{
-		registerObject(pBlock[i]);
-	}
+	 //== 画像 ==
+	 registerObject(pTitle);
+	 registerObject(pStartButton);
+	 registerObject(pQuitButton);
+	 registerObject(pTitleButton);
+	 registerObject(pDescriptionUI);
 
-	//== 半透明のオブジェクトは不透明の後に描画する ==
-	registerObject(pShadow);
+	 //== 初期化 ==
 
-	//== 画像 ==
-	registerObject(pTitle);
-	registerObject(pStartButton);
-	registerObject(pQuitButton);
-	registerObject(pTitleButton);
-	registerObject(pDescriptionUI);
+	 radius = 10.0f;	//半径
+	 theta = 0.0f;	//角度θ
+	 phi = 0.0f;		//角度φ
 
-	//== 初期化 ==
+	 reverseH = false;	//水平反転
+	 reverseV = false;	//垂直反転
 
-	radius = 10.0f;	//半径
-	theta = 0.0f;	//角度θ
-	phi = 0.0f;		//角度φ
+	 velocity = XMVectorZero();	//ベクトルaの初期化
+	 jumpVec = XMVectorSet(0.0f, 0.3f, 0.0f, 0.0f);	//ベクトルbの初期化
+	 gravity = XMVectorSet(0.0f, -0.01f, 0.0f, 0.0f);	//重力ベクトルの初期化
 
-	reverseH = false;	//水平反転
-	reverseV = false;	//垂直反転
+	 isControllable = true;	//操作可能フラグの初期化
+	 isJump = true;	//ジャンプ可能フラグの初期化
 
-	velocity = XMVectorZero();	//ベクトルaの初期化
-	jumpVec = XMVectorSet(0.0f, 0.3f, 0.0f, 0.0f);	//ベクトルbの初期化
-	gravity = XMVectorSet(0.0f, -0.01f, 0.0f, 0.0f);	//重力ベクトルの初期化
+	 gameState = eGameState::TITLE;	//ゲームステートの初期化
+	 direction = eDirection::NONE;	//衝突方向の初期化
 
-	isControllable = true;	//操作可能フラグの初期化
-	isJump = true;	//ジャンプ可能フラグの初期化
-
-	gameState = eGameState::TITLE;	//ゲームステートの初期化
-	direction = eDirection::NONE;	//衝突方向の初期化
-
-	return true;
+	 return true;
 }
 
 //終了関数
@@ -340,12 +339,12 @@ void SceneAssingment::execute()
 					pPlayer->getRotationY()		//y軸の回転角度
 				);
 
-				BoundingBox& playerBox = pPlayer->getAABBCollider().getBoundingBox();
+				/*BoundingBox& playerBox = pPlayer->getAABBCollider().getBoundingBox();
 				vnFont::print(10.0f, 70.0f, L"PlayerCollider: %.3f, %.3f, %.3f",
 					playerBox.Center.x,	//AABBの中心座標X
 					playerBox.Center.y,	//AABBの中心座標Y
 					playerBox.Center.z	//AABBの中心座標Z
-				);
+				);*/
 
 				vnFont::print(10.0f, 90.0f, L"Jump: %s", isJump ? L"true" : L"false");
 
@@ -367,12 +366,12 @@ void SceneAssingment::execute()
 					pCheckerFlag->getPositionZ()
 				);
 
-				BoundingBox& goalPos = pCheckerFlag->getAABBCollider().getBoundingBox();
+				/*BoundingBox& goalPos = pCheckerFlag->getAABBCollider().getBoundingBox();
 				vnFont::print(10.0f, 170.0f, L"pCheckFlagColliderPos : %.3f, %.3f, %.3f",
 					goalPos.Center.x,
 					goalPos.Center.y,
 					goalPos.Center.z
-				);
+				);*/
 
 				vnFont::print(10.0f, 190.0f, L"isControllable : %s", isControllable ? L"true" : L"false");
 
@@ -382,7 +381,7 @@ void SceneAssingment::execute()
 					vnCamera::getPositionZ()
 				);
 
-				for (int i = 0; i < BLOCK_NUM; i++)
+				/*for (int i = 0; i < BLOCK_NUM; i++)
 				{
 					BoundingBox& blockBox = pBlock[i]->getAABBCollider().getBoundingBox();
 					vnFont::print(10.0f, 250.0f + i * 20.0f, L"BlockCollider%d: %.3f, %.3f, %.3f",
@@ -391,7 +390,7 @@ void SceneAssingment::execute()
 						blockBox.Center.y,	//AABBの中心座標Y
 						blockBox.Center.z	//AABBの中心座標Z
 					);
-				}
+				}*/
 			}
 #endif
 			//落下処理
@@ -465,13 +464,13 @@ void SceneAssingment::execute()
 			}
 
 			//AABBの中心座標を設定
-			playerPos = XMFLOAT3(
+			/*playerPos = XMFLOAT3(
 				pPlayer->getPositionX(),
 				pPlayer->getPositionY() + pPlayer->getAABBCollider().getBoundingBox().Extents.y,
 				pPlayer->getPositionZ());	//プレイヤーの座標を取得
 
 			pPlayer->getAABBCollider().setBoundingBoxCenter(playerPos);	//AABBの中心座標を設定
-
+			*/
 			//ブロックの当たり判定
 			for (int i = 0; i < BLOCK_NUM; i++)
 			{
@@ -508,13 +507,13 @@ void SceneAssingment::execute()
 			}
 
 			//AABBの中心座標を再設定
-			playerPos = XMFLOAT3(
+			/*playerPos = XMFLOAT3(
 				pPlayer->getPositionX(),
 				pPlayer->getPositionY() + pPlayer->getAABBCollider().getBoundingBox().Extents.y,
 				pPlayer->getPositionZ());	//プレイヤーの座標を取得
 
 			pPlayer->getAABBCollider().setBoundingBoxCenter(playerPos);	//AABBの中心座標を設定
-
+			*/
 			//マウスの移動量を取得
 			float dx = vnMouse::getDX();
 			float dy = vnMouse::getDY();
@@ -694,13 +693,13 @@ void SceneAssingment::MoveToTarget(vnModel* pBlock, int n)
 	}
 
 	//当たり判定の再設定
-	pBlock->getAABBCollider().setBoundingBoxCenter(
+	/*pBlock->getAABBCollider().setBoundingBoxCenter(
 		XMFLOAT3(
 			pBlock->getPositionX(),
 			pBlock->getPositionY(),
 			pBlock->getPositionZ()
 		)
-	);
+	);*/
 }
 
 /// <summary>
@@ -766,6 +765,7 @@ void SceneAssingment::ImageColor(vnSprite* sprite)
 //== AABBの当たり判定 ==
 bool SceneAssingment::CheckBoundingBoxCollision(vnModel* m1, vnModel* m2)
 {
+	/*
 	//AABBの取得
 	AABBCollider& m1Box = m1->getAABBCollider();
 	AABBCollider& m2Box = m2->getAABBCollider();
@@ -889,6 +889,6 @@ bool SceneAssingment::CheckBoundingBoxCollision(vnModel* m1, vnModel* m2)
 	else
 	{
 		direction = eDirection::NONE;
+	}*/
 		return false;
-	}
 }

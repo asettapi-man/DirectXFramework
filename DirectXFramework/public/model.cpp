@@ -398,14 +398,6 @@ void vnModel::render()
 		vnDirect3D::getCommandList()->IASetIndexBuffer(&indexBufferView);
 		vnDirect3D::getCommandList()->DrawIndexedInstanced(pMesh[i].IndexNum, 1, pMesh[i].StartIndex, pMesh[i].StartVertex, 0);
 	}
-
-#ifdef _DEBUG
-	if (aabbCollider.getEnable())
-	{
-		aabbCollider.debugLineRenderer();
-	}
-#endif // _DEBUG
-
 }
 
 int vnModel::getVertexNum()
@@ -1138,9 +1130,4 @@ const XMVECTOR* vnModel::getTilingOffset(int id)
 {
 	if (pMaterials == NULL || getMaterialNum() <= 0)return NULL;
 	return &pMaterials[id].TilingOffset;
-}
-
-AABBCollider& vnModel::getAABBCollider()
-{
-	return aabbCollider;
 }

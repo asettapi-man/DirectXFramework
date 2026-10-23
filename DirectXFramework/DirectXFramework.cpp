@@ -284,27 +284,27 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
         }
         break;
 #endif
-    //case WM_ACTIVATEAPP:
-    //    //アプリケーションのアクティブ状態
-    //    if (wParam == TRUE)
-    //    {
-    //        //アクティブ時
-    //        LockCursorToWindow(hWnd);
-    //    }
-    //    else
-    //    {
-    //        //非アクティブ時
-    //        UnlockCursor();
-    //    }
-    //    break;
-    //case WM_ENTERSIZEMOVE:
-    //    //ウィンドウの移動・サイズ変更時
-    //    UnlockCursor();
-    //    break;
-    //case WM_EXITSIZEMOVE:
-    //    //ウィンドウの移動・サイズ変更終了時
-    //    LockCursorToWindow(hWnd);
-    //    break;
+    case WM_ACTIVATEAPP:
+        //アプリケーションのアクティブ状態
+        if (wParam == TRUE)
+        {
+            //アクティブ時
+            LockCursorToWindow(hWnd);
+        }
+        else
+        {
+            //非アクティブ時
+            UnlockCursor();
+        }
+        break;
+    case WM_ENTERSIZEMOVE:
+        //ウィンドウの移動・サイズ変更時
+        UnlockCursor();
+        break;
+    case WM_EXITSIZEMOVE:
+        //ウィンドウの移動・サイズ変更終了時
+        LockCursorToWindow(hWnd);
+        break;
     case WM_MOUSEMOVE:              //マウス座標の設定
         vnDirectInput::setMousePosition(LOWORD(lParam), HIWORD(lParam));
         break;

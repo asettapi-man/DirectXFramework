@@ -5,103 +5,29 @@
 bool SceneMainGame::initialize()
 {	
 	//== 生成 ==
-	/*player->initialize();
+	player->initialize();
 	playerPos = XMFLOAT3(
 		player->getModel()->getPositionX(), 
-		player->getModel()->getPositionY() + player->getModel()->getAABBCollider().getBoundingBox().Extents.y, 
+		player->getModel()->getPositionY() + player->getAABBCollider().getBoundingBox().Extents.y, 
 		player->getModel()->getPositionZ());	//プレイヤーの座標を取得
 
-	player->getModel()->getAABBCollider().initialize(playerPos, XMFLOAT3(0.5f, 1.3f, 0.5f));	//AABBの初期化
-	*/
+	player->getAABBCollider().initialize(playerPos, XMFLOAT3(0.5f, 1.3f, 0.5f));	//AABBの初期化
+
 	pShadow = new vnModel(L"data/model/", L"shadow.vnm");		//影
 	pShadow->setTransparent(true);	//影の半透明を有効
 	pShadow->setPositionY(0.01f);	//影の位置を少し浮かせる	Z-Fighting対策
-	pShadow->getAABBCollider().setEnable(false);	//影の当たり判定を無効にする
 
 	//DIffuse : デフォルト(1, 1, 1, 1)	※wが半透明度
 	//Ambient : デフォルト(0, 0, 0, 0)
 	//Specular: デフォルト(0, 0, 0, 1)	※w（強度）は0以下にしない
 
 	pGround = new vnModel(L"data/model/", L"ground.vnm");		//地面
-	pGround->getAABBCollider().setEnable(false);	//影の当たり判定を無効にする
 
 	pSky = new vnModel(L"data/model/", L"skydome.vnm");			//背景
 	pSky->setLighting(false);		//背景のライティングを無効
-	pSky->getAABBCollider().setEnable(false);	//影の当たり判定を無効にする
-
-	pCheckerFlag = new vnModel(L"data/model/", L"CheckerFlag.vnm");	//ゴール
-	pCheckerFlag->getAABBCollider().initialize(XMFLOAT3(0.0f, 0.0f, 0.0f), XMFLOAT3(1.0f, 3.0f, 1.0f));	//当たり判定の初期化
-
-	{
-		//std::random_device rd;
-		std::mt19937 mt(4/*rd()*/);
-		int i;
-		float x, z;
-		float radius = 17.0f;
-		for (i = 0; i < BLOCK_NUM - 1; i++)
-		{
-			pBlock[i] = new vnModel(L"data/model/primitive/", L"cube.vnm");	//ブロック
-			float radian = 360.0f / (float)BLOCK_NUM * i * XM_PI / 180.0f;	//ラジアン角度
-
-			//極座標 -> 直交座標
-			x = cos(radian) * radius;
-			z = sin(radian) * radius;
-
-			pBlock[i]->setPosition(x, 3.0f * i + 1.0f, z);		//位置を設定
-
-			//ブロックの大きさを乱数で設定
-			std::uniform_real_distribution<float> scaleDist(0.5f, 1.5f);
-			XMVECTOR blockScale = XMVectorSet(scaleDist(mt), scaleDist(mt), scaleDist(mt), 0.0f);
-			pBlock[i]->setScale(&blockScale);	//ブロックのサイズ設定
-
-			//ブロックの色を乱数で設定
-			std::uniform_real_distribution<float> colorDist(0.0f, 1.0f);
-			XMVECTOR ambient = XMVectorSet(colorDist(mt), colorDist(mt), colorDist(mt), 1.0f);
-			pBlock[i]->setAmbient(&ambient);
-
-			blockPos = XMFLOAT3(pBlock[i]->getPositionX(), pBlock[i]->getPositionY(), pBlock[i]->getPositionZ());	//ブロックの座標を取得
-			pBlock[i]->getAABBCollider().initialize(blockPos, XMFLOAT3(XMVectorGetX(blockScale), XMVectorGetY(blockScale), XMVectorGetZ(blockScale)));	//AABBの初期化
-
-			if (i == 0) continue;
-			if (i % 4 != 0) continue;
-
-			//動く床の初期値追加
-			vStartBlockPos.push_back(blockPos);
-			isFlip.push_back(false);
-		}
-
-		//最後のブロックの位置
-		pBlock[i] = new vnModel(L"data/model/primitive/", L"cube.vnm");	//ブロック
-		float radian = 360.0f / (float)BLOCK_NUM * i * XM_PI / 180.0f;	//ラジアン角度
-
-		//極座標 -> 直交座標
-		x = cos(radian) * radius;
-		z = sin(radian) * radius;
-
-		pBlock[i]->setPosition(x, 3.0f * i + 1.0f, z);		//位置を設定
-
-		//ブロックの色を乱数で設定
-		std::uniform_real_distribution<float> colorDist(0.0f, 1.0f);
-		XMVECTOR ambient = XMVectorSet(colorDist(mt), colorDist(mt), colorDist(mt), 1.0f);
-		pBlock[i]->setAmbient(&ambient);
-
-		blockPos = XMFLOAT3(pBlock[i]->getPositionX(), pBlock[i]->getPositionY(), pBlock[i]->getPositionZ());	//ブロックの座標を取得
-		XMVECTOR blockScale = XMVectorSet(3.0f, 1.0f, 3.0f, 0.0f);
-		pBlock[i]->setScale(&blockScale);
-		pBlock[i]->getAABBCollider().initialize(blockPos, XMFLOAT3(XMVectorGetX(blockScale), XMVectorGetY(blockScale), XMVectorGetZ(blockScale)));	//AABBの初期化
-
-		//ゴールの位置
-		pCheckerFlag->setPosition(x, 3.0f * i + 1.0f, z);
-		goalPos = XMFLOAT3(
-			pCheckerFlag->getPositionX(),
-			pCheckerFlag->getPositionY() + pCheckerFlag->getAABBCollider().getBoundingBox().Extents.y,
-			pCheckerFlag->getPositionZ()
-		);
-		pCheckerFlag->getAABBCollider().setBoundingBoxCenter(goalPos);
-	}
 
 	//== 画像 ==
-	pTitle = new vnSprite(
+	/*pTitle = new vnSprite(
 		(float)vnMainFrame::screenCenterX,
 		(float)vnMainFrame::screenCenterY,
 		vnMainFrame::screenWidth,
@@ -155,16 +81,11 @@ bool SceneMainGame::initialize()
 	pClickSE = new vnSound(L"data/sound/cursor2.wav");	//クリック時の効果音
 	pClearSE = new vnSound(L"data/sound/clear.wav");	//クリア時の効果音
 	pJumpSE = new vnSound(L"data/sound/jump.wav");	//ジャンプ時の効果音
-
+	*/
 	//シーンに登録
-	//registerObject(player->getModel());
+	registerObject(player->getModel());
 	registerObject(pGround);
 	registerObject(pSky);
-	registerObject(pCheckerFlag);
-	for (int i = 0; i < BLOCK_NUM; i++)
-	{
-		registerObject(pBlock[i]);
-	}
 
 	//== 半透明のオブジェクトは不透明の後に描画する ==
 	registerObject(pShadow);
@@ -192,9 +113,8 @@ bool SceneMainGame::initialize()
 	isControllable = true;	//操作可能フラグの初期化
 	isJump = true;	//ジャンプ可能フラグの初期化
 
-	gameState = eGameState::TITLE;	//ゲームステートの初期化
-	direction = eDirection::NONE;	//衝突方向の初期化
-
+	//gameState = eGameState::TITLE;	//ゲームステートの初期化
+	//direction = eDirection::NONE;	//衝突方向の初期化
 	return true;
 }
 
@@ -205,11 +125,6 @@ void SceneMainGame::terminate()
 	//deleteObject(player->getModel());
 	deleteObject(pGround);
 	deleteObject(pSky);
-	deleteObject(pCheckerFlag);
-	for (int i = 0; i < BLOCK_NUM; i++)
-	{
-		deleteObject(pBlock[i]);
-	}
 
 	deleteObject(pShadow);
 
@@ -229,10 +144,190 @@ void SceneMainGame::terminate()
 //処理関数
 void SceneMainGame::execute()
 {
-	if (!pBGM->isPlaying())
+	bool isMovingForPlayer = false;	//プレイヤーの移動フラグ
+	//移動方向を示す方向ベクトル
+	vMove = XMVectorSet(0.0f, 0.0f, 0.0f, 0.0f);
+
+	if (vnKeyboard::on(DIK_W))
+	{
+		vMove = XMVectorSetZ(vMove, 0.1f);
+		isMovingForPlayer = true;	//移動中
+	}
+	if (vnKeyboard::on(DIK_S))
+	{
+		vMove = XMVectorSetZ(vMove, -0.1f);
+		isMovingForPlayer = true;	//移動中
+	}
+	if (vnKeyboard::on(DIK_D))
+	{
+		vMove = XMVectorSetX(vMove, 0.1f);
+		isMovingForPlayer = true;	//移動中
+	}
+	if (vnKeyboard::on(DIK_A))
+	{
+		vMove = XMVectorSetX(vMove, -0.1f);
+		isMovingForPlayer = true;	//移動中
+	}
+
+	//ジャンプ処理
+	if (vnKeyboard::trg(DIK_SPACE) && isJump)
+	{
+		pJumpSE->play();
+		isJump = false;	//ジャンプ中はジャンプできない
+		velocity = jumpVec;
+	}
+
+	//落下処理
+	velocity += gravity;
+
+	if (XMVectorGetY(velocity) < 0.0f)
+	{
+		//落下中はジャンプ不可
+		isJump = false;
+	}
+
+	//プレイヤーの移動ベクトル（vMove）をカメラの角度（theta）に応じて回転
+	XMMATRIX mrotate = XMMatrixRotationY(theta);
+
+	//移動ベクトルに回転マトリクスを適用
+	vMove = XMVector3TransformNormal(vMove, mrotate);
+
+	//プレイヤーの座標に移動ベクトルを加算して更新
+	player->getModel()->addPosition(&vMove);
+
+	//pShadow->setPosition(player->getModel()->getPosition());	//影の座標をプレイヤーの座標に合わせる
+	pShadow->setPositionY(0.01f);	//影の座標を少し浮かせる	Z-Fighting対策
+
+	//プレイヤーの角度を進行方向に向ける
+	if (isMovingForPlayer)
+	{
+		float movePX = XMVectorGetX(vMove);	//進行方向ベクトルのX成分
+		float movePZ = XMVectorGetZ(vMove);	//進行方向ベクトルのZ成分
+		float rotPY = atan2f(movePX, movePZ);	//進行方向ベクトルのXとZからY軸の回転角度を計算
+
+		//現在の角度(source) ; pPlayer->getRotation()
+		//目的の角度(destination) ; rotPY
+		XMMATRIX mSrc, mDst, mAns;
+		XMVECTOR qSrc, qDst, qAns;
+
+		//オイラー角からクオータニオンに変換（Y軸回転のみ）
+		//qSrc = XMQuaternionRotationRollPitchYaw(0.0f, pPlayer->getPositionY(), 0.0f);
+		//qDst = XMQuaternionRotationRollPitchYaw(0.0f, rotPY, 0.0f);
+
+		//オイラー角をマトリクスに変換（Y軸回転のみ）
+		mSrc = XMMatrixRotationY(player->getModel()->getRotationY());
+		mDst = XMMatrixRotationY(rotPY);
+
+		//マトリクスをクオータニオンに変換
+		qSrc = XMQuaternionRotationMatrix(mSrc);
+		qDst = XMQuaternionRotationMatrix(mDst);
+
+		//球面線形補間での中間の姿勢（角度）を計算
+		qAns = XMQuaternionSlerp(qSrc, qDst, 0.1f);	//第三引数の数値が大きいほど速く回転する
+
+		//クオータニオンをマトリクスに変換
+		mAns = XMMatrixRotationQuaternion(qAns);
+
+		//マトリクスかオイラー角(Y軸回転値)を計算
+		float ry = atan2f(-XMVectorGetZ(mAns.r[0]), XMVectorGetZ(mAns.r[2]));
+
+		//計算された中間角度を設定
+		//player->getModel()->setRotationY(ry);	//プレイヤーのY軸の回転角度を更新
+	}
+
+	//AABBの中心座標を設定
+	playerPos = XMFLOAT3(
+		player->getModel()->getPositionX(),
+		player->getModel()->getPositionY() + player->getAABBCollider().getBoundingBox().Extents.y,
+		player->getModel()->getPositionZ());	//プレイヤーの座標を取得
+
+	player->getAABBCollider().setBoundingBoxCenter(playerPos);	//AABBの中心座標を設定
+
+	//地面判定
+	if (player->getModel()->getPositionY() < 0.0f)
+	{
+		player->getModel()->setPositionY(0.0f);
+		velocity = XMVectorZero();
+		isJump = true;	//地面に着地したらジャンプ可能
+	}
+
+	//AABBの中心座標を再設定
+	playerPos = XMFLOAT3(
+		player->getModel()->getPositionX(),
+		player->getModel()->getPositionY() + player->getAABBCollider().getBoundingBox().Extents.y,
+		player->getModel()->getPositionZ());	//プレイヤーの座標を取得
+
+	player->getAABBCollider().setBoundingBoxCenter(playerPos);	//AABBの中心座標を設定
+
+	//マウスの移動量を取得
+	float dx = vnMouse::getDX();
+	float dy = vnMouse::getDY();
+
+	const float value_r = 0.5f * 3.141592f / 180.0f;	//ラジアン角度
+
+	//角度の更新
+	if (reverseH)
+	{
+		dx = -dx;	//水平反転
+	}
+	if (reverseV)
+	{
+		dy = -dy;	//垂直反転
+	}
+
+	theta += dx * value_r;
+	phi += dy * value_r;
+
+	//角度の制限
+	if (phi > 1.5f)
+	{
+		phi = 1.5f;
+	}
+	else if (phi < -1.5f)
+	{
+		phi = -1.5f;
+	}
+
+	//== カメラ座標の計算 ==
+	XMVECTOR camBias = XMVectorSet(0.0f, 1.5f, 0.0f, 0.0f);	//カメラの位置のプレイヤーに対するオフセット
+	XMVECTOR camTarget;	//カメラの注視点（プレイヤーの座標 + オフセット）
+	XMVECTOR camPos;	//カメラの位置
+
+	//回転していない基準となるベクトル
+	XMVECTOR eye = XMVectorSet(0.0f, 0.0f, -radius, 0.0f);
+
+	//回転マトリクスを作成
+	XMMATRIX camRotate = XMMatrixRotationRollPitchYaw(phi, theta, 0.0f);
+
+	//基準となるベクトルを回転させる
+	eye = XMVector3TransformNormal(eye, camRotate);
+
+	//回転の中心をプレイヤーにする（プレイヤーの座標を加算する）
+	//eye = XMVectorAdd(eye, *player->getModel()->getPosition());
+
+	camPos = XMVectorAdd(eye, camBias);
+
+	//カメラの位置を更新
+	vnCamera::setPosition(&camPos);
+
+	//カメラの注視点を更新
+	//camTarget = XMVectorAdd(*player->getModel()->getPosition(), camBias);
+
+	vnCamera::setTarget(&camTarget);
+
+	vnDebugDraw::Grid();
+	vnDebugDraw::Axis();
+
+	vnFont::print((float)vnMainFrame::screenWidth - 150.0f, (float)vnMainFrame::screenHeight - 100.0f, L"操作説明");
+	vnFont::print((float)vnMainFrame::screenWidth - 150.0f, (float)vnMainFrame::screenHeight - 80.0f, L"移動 : W A S D");
+	vnFont::print((float)vnMainFrame::screenWidth - 150.0f, (float)vnMainFrame::screenHeight - 60.0f, isJump ? 0xffffb84a : 0x7fffb84a, L"ジャンプ : Space");
+
+	vnScene::execute();
+
+	/*if (!pBGM->isPlaying())
 	{
 		pBGM->play();
-	}
+	}*/
 
 	switch (gameState)
 	{
@@ -290,38 +385,6 @@ void SceneMainGame::execute()
 
 		if (isControllable)
 		{
-			bool isMovingForPlayer = false;	//プレイヤーの移動フラグ
-			//移動方向を示す方向ベクトル
-			vMove = XMVectorSet(0.0f, 0.0f, 0.0f, 0.0f);
-
-			if (vnKeyboard::on(DIK_W))
-			{
-				vMove = XMVectorSetZ(vMove, 0.1f);
-				isMovingForPlayer = true;	//移動中
-			}
-			if (vnKeyboard::on(DIK_S))
-			{
-				vMove = XMVectorSetZ(vMove, -0.1f);
-				isMovingForPlayer = true;	//移動中
-			}
-			if (vnKeyboard::on(DIK_D))
-			{
-				vMove = XMVectorSetX(vMove, 0.1f);
-				isMovingForPlayer = true;	//移動中
-			}
-			if (vnKeyboard::on(DIK_A))
-			{
-				vMove = XMVectorSetX(vMove, -0.1f);
-				isMovingForPlayer = true;	//移動中
-			}
-
-			//ジャンプ処理
-			if (vnKeyboard::trg(DIK_SPACE) && isJump)
-			{
-				pJumpSE->play();
-				isJump = false;	//ジャンプ中はジャンプできない
-				velocity = jumpVec;
-			}
 
 #ifdef _DEBUG
 			if (vnKeyboard::on(DIK_UP))
@@ -361,18 +424,12 @@ void SceneMainGame::execute()
 					XMVectorGetZ(velocity)
 				);
 
-				vnFont::print(10.0f, 150.0f, L"pCheckFlagPos : %.3f, %.3f, %.3f",
-					pCheckerFlag->getPositionX(),
-					pCheckerFlag->getPositionY(),
-					pCheckerFlag->getPositionZ()
-				);
-
-				BoundingBox& goalPos = pCheckerFlag->getAABBCollider().getBoundingBox();
+				/*BoundingBox& goalPos = pCheckerFlag->getAABBCollider().getBoundingBox();
 				vnFont::print(10.0f, 170.0f, L"pCheckFlagColliderPos : %.3f, %.3f, %.3f",
 					goalPos.Center.x,
 					goalPos.Center.y,
 					goalPos.Center.z
-				);
+				);*/
 
 				vnFont::print(10.0f, 190.0f, L"isControllable : %s", isControllable ? L"true" : L"false");
 
@@ -382,7 +439,7 @@ void SceneMainGame::execute()
 					vnCamera::getPositionZ()
 				);
 
-				for (int i = 0; i < BLOCK_NUM; i++)
+				/*for (int i = 0; i < BLOCK_NUM; i++)
 				{
 					BoundingBox& blockBox = pBlock[i]->getAABBCollider().getBoundingBox();
 					vnFont::print(10.0f, 250.0f + i * 20.0f, L"BlockCollider%d: %.3f, %.3f, %.3f",
@@ -391,211 +448,25 @@ void SceneMainGame::execute()
 						blockBox.Center.y,	//AABBの中心座標Y
 						blockBox.Center.z	//AABBの中心座標Z
 					);
-				}
+				}*/
 			}
 #endif
-			//落下処理
-			velocity += gravity;
-			//player->getModel()->addPositionY(XMVectorGetY(velocity));
 
-			if (XMVectorGetY(velocity) < 0.0f)
-			{
-				//落下中はジャンプ不可
-				isJump = false;
-			}
+			////極座標 -> 直交座標の変換
+			//float cx = radius * cosf(theta) * cosf(phi);
+			//float cy = radius * sinf(phi);
+			//float cz = radius * sinf(theta) * cosf(phi);
 
-			//プレイヤーの移動ベクトル（vMove）をカメラの角度（theta）に応じて回転
-			XMMATRIX mrotate = XMMatrixRotationY(theta);
+			////回転の中心をプレイヤーにする（プレイヤーの座標を加算する）
+			//cx += pPlayer->getPositionX();
+			//cy += pPlayer->getPositionY();
+			//cz += pPlayer->getPositionZ();
 
-			//移動ベクトルに回転マトリクスを適用
-			vMove = XMVector3TransformNormal(vMove, mrotate);
+			////カメラの位置を更新
+			//vnCamera::setPosition(cx, cy, cz);
 
-			//プレイヤーの座標に移動ベクトルを加算して更新
-			//player->getModel()->addPosition(&vMove);
-
-			//pShadow->setPosition(player->getModel()->getPosition());	//影の座標をプレイヤーの座標に合わせる
-			pShadow->setPositionY(0.01f);	//影の座標を少し浮かせる	Z-Fighting対策
-
-			//プレイヤーの角度を進行方向に向ける
-			/*if (isMovingForPlayer)
-			{
-				float movePX = XMVectorGetX(vMove);	//進行方向ベクトルのX成分
-				float movePZ = XMVectorGetZ(vMove);	//進行方向ベクトルのZ成分
-				float rotPY = atan2f(movePX, movePZ);	//進行方向ベクトルのXとZからY軸の回転角度を計算
-
-				//現在の角度(source) ; pPlayer->getRotation()
-				//目的の角度(destination) ; rotPY
-				XMMATRIX mSrc, mDst, mAns;
-				XMVECTOR qSrc, qDst, qAns;
-
-				//オイラー角からクオータニオンに変換（Y軸回転のみ）
-				//qSrc = XMQuaternionRotationRollPitchYaw(0.0f, pPlayer->getPositionY(), 0.0f);
-				//qDst = XMQuaternionRotationRollPitchYaw(0.0f, rotPY, 0.0f);
-
-				//オイラー角をマトリクスに変換（Y軸回転のみ）
-				mSrc = XMMatrixRotationY(player->getModel()->getRotationY());
-				mDst = XMMatrixRotationY(rotPY);
-
-				//マトリクスをクオータニオンに変換
-				qSrc = XMQuaternionRotationMatrix(mSrc);
-				qDst = XMQuaternionRotationMatrix(mDst);
-
-				//球面線形補間での中間の姿勢（角度）を計算
-				qAns = XMQuaternionSlerp(qSrc, qDst, 0.1f);	//第三引数の数値が大きいほど速く回転する
-
-				//クオータニオンをマトリクスに変換
-				mAns = XMMatrixRotationQuaternion(qAns);
-
-				//マトリクスかオイラー角(Y軸回転値)を計算
-				float ry = atan2f(-XMVectorGetZ(mAns.r[0]), XMVectorGetZ(mAns.r[2]));
-
-				//計算された中間角度を設定
-				//player->getModel()->setRotationY(ry);	//プレイヤーのY軸の回転角度を更新
-			}*/
-
-			//動く床の作成
-			int n = 0;
-			for (int i = 0; i < BLOCK_NUM - 1; i++)
-			{
-				if (i == 0) continue;
-				if (i % 4 != 0) continue;
-
-				MoveToTarget(pBlock[i], n);
-				n++;
-			}
-
-			//AABBの中心座標を設定
-			/*playerPos = XMFLOAT3(
-				player->getModel()->getPositionX(),
-				player->getModel()->getPositionY() + player->getModel()->getAABBCollider().getBoundingBox().Extents.y,
-				player->getModel()->getPositionZ());	//プレイヤーの座標を取得
-
-			player->getModel()->getAABBCollider().setBoundingBoxCenter(playerPos);	//AABBの中心座標を設定
-
-			//ブロックの当たり判定
-			for (int i = 0; i < BLOCK_NUM; i++)
-			{
-				if (CheckBoundingBoxCollision(player->getModel(), pBlock[i]))
-				{
-					OutputDebugStringW(L"衝突\n");	//デバッグ文
-
-					if (direction != eDirection::Y_TOP)
-					{
-						//オブジェクトの上部から落ちたらジャンプ不可
-						isJump = false;
-					}
-				}
-			}
-
-			//ゴールフラグとの当たり判定
-			if (CheckBoundingBoxCollision(player->getModel(), pCheckerFlag))
-			{
-				pClearSE->play();
-				isControllable = false;
-				pTitleButton->setRenderEnable(true);	//表示
-				ShowCursor(true);
-				SetCursorPos(vnMainFrame::screenCenterX, vnMainFrame::screenCenterY);
-
-				gameState = eGameState::RESULT;
-			}
-
-			//地面判定
-			if (player->getModel()->getPositionY() < 0.0f)
-			{
-				player->getModel()->setPositionY(0.0f);
-				velocity = XMVectorZero();
-				isJump = true;	//地面に着地したらジャンプ可能
-			}
-
-			//AABBの中心座標を再設定
-			playerPos = XMFLOAT3(
-				player->getModel()->getPositionX(),
-				player->getModel()->getPositionY() + player->getModel()->getAABBCollider().getBoundingBox().Extents.y,
-				player->getModel()->getPositionZ());	//プレイヤーの座標を取得
-
-			player->getModel()->getAABBCollider().setBoundingBoxCenter(playerPos);	//AABBの中心座標を設定
-			*/
-			//マウスの移動量を取得
-			float dx = vnMouse::getDX();
-			float dy = vnMouse::getDY();
-
-			const float value_r = 0.5f * 3.141592f / 180.0f;	//ラジアン角度
-
-			//角度の更新
-			if (reverseH)
-			{
-				dx = -dx;	//水平反転
-			}
-			if (reverseV)
-			{
-				dy = -dy;	//垂直反転
-			}
-
-			theta += dx * value_r;
-			phi += dy * value_r;
-
-			//角度の制限
-			if (phi > 1.5f)
-			{
-				phi = 1.5f;
-			}
-			else if (phi < -1.5f)
-			{
-				phi = -1.5f;
-			}
-
-			//== カメラ座標の計算 ==
-			XMVECTOR camBias = XMVectorSet(0.0f, 1.5f, 0.0f, 0.0f);	//カメラの位置のプレイヤーに対するオフセット
-			XMVECTOR camTarget;	//カメラの注視点（プレイヤーの座標 + オフセット）
-			XMVECTOR camPos;	//カメラの位置
-
-			//回転していない基準となるベクトル
-			XMVECTOR eye = XMVectorSet(0.0f, 0.0f, -radius, 0.0f);
-
-			//回転マトリクスを作成
-			XMMATRIX camRotate = XMMatrixRotationRollPitchYaw(phi, theta, 0.0f);
-
-			//基準となるベクトルを回転させる
-			eye = XMVector3TransformNormal(eye, camRotate);
-
-			//回転の中心をプレイヤーにする（プレイヤーの座標を加算する）
-			//eye = XMVectorAdd(eye, *player->getModel()->getPosition());
-
-			camPos = XMVectorAdd(eye, camBias);
-
-			//カメラの位置を更新
-			vnCamera::setPosition(&camPos);
-
-			//カメラの注視点を更新
-			//camTarget = XMVectorAdd(*player->getModel()->getPosition(), camBias);
-
-			vnCamera::setTarget(&camTarget);
-		}
-
-		////極座標 -> 直交座標の変換
-		//float cx = radius * cosf(theta) * cosf(phi);
-		//float cy = radius * sinf(phi);
-		//float cz = radius * sinf(theta) * cosf(phi);
-
-		////回転の中心をプレイヤーにする（プレイヤーの座標を加算する）
-		//cx += pPlayer->getPositionX();
-		//cy += pPlayer->getPositionY();
-		//cz += pPlayer->getPositionZ();
-
-		////カメラの位置を更新
-		//vnCamera::setPosition(cx, cy, cz);
-
-		//ビルボードオブジェクト
-
-		vnDebugDraw::Grid();
-		vnDebugDraw::Axis();
-
-		vnFont::print((float)vnMainFrame::screenWidth - 150.0f, (float)vnMainFrame::screenHeight - 100.0f, L"操作説明");
-		vnFont::print((float)vnMainFrame::screenWidth - 150.0f, (float)vnMainFrame::screenHeight - 80.0f, L"移動 : W A S D");
-		vnFont::print((float)vnMainFrame::screenWidth - 150.0f, (float)vnMainFrame::screenHeight - 60.0f, isJump ? 0xffffb84a : 0x7fffb84a, L"ジャンプ : Space");
-
-		vnScene::execute();
-		break;
+			//ビルボードオブジェクト
+			break;
 
 	case eGameState::RESULT:
 		vnFont::setColor(0xffffb84a);
@@ -621,7 +492,7 @@ void SceneMainGame::execute()
 				pQuitButton->setRenderEnable(true);
 
 				//非表示
-				pTitleButton->setRenderEnable(false);	
+				pTitleButton->setRenderEnable(false);
 				pDescriptionUI->setRenderEnable(false);
 				gameState = eGameState::TITLE;
 			}
@@ -631,6 +502,7 @@ void SceneMainGame::execute()
 			ImageColor(pTitleButton);
 		}
 		break;
+		}
 	}
 }
 
@@ -651,56 +523,6 @@ void SceneMainGame::TitleSetUp()
 	phi = 0.0f;		//角度φ
 
 	isControllable = true;
-}
-
-//箱の横移動処理
-void SceneMainGame::MoveToTarget(vnModel* pBlock, int n)
-{
-	float startPos = vStartBlockPos[n].z - 3.0f;
-	float endPos = vStartBlockPos[n].z + 3.0f;
-	float targetPos = isFlip[n] ? startPos : endPos;
-
-	//自身の位置から目的地までの差分
-	XMVECTOR direction = XMVectorSubtract(
-		XMVectorSet(0.0f, 0.0f, targetPos, 0.0f),
-		XMVectorSet(0.0f, 0.0f, pBlock->getPositionZ(), 0.0f)
-	);
-
-	//正規化して方向ベクトルだけを取得
-	direction = XMVector3Normalize(direction);
-
-	if (XMVectorGetZ(direction) > 0.1f)
-	{
-		pBlock->addPositionZ(0.03f);
-	}
-	else
-	{
-		pBlock->addPositionZ(-0.03f);
-	}
-
-	//目的地までの距離を求める
-	XMVECTOR distance = XMVectorSubtract(
-		XMVectorSet(0.0f, 0.0f, targetPos, 0.0f),
-		XMVectorSet(0.0f, 0.0f, pBlock->getPositionZ(), 0.0f)
-	);
-
-	float dis = XMVectorGetZ(XMVector3Length(distance));
-
-	if (dis < 0.1f)
-	{
-		pBlock->setPositionZ(targetPos);
-		isFlip[n] = !isFlip[n];
-		targetPos = isFlip[n] ? startPos : endPos;
-	}
-
-	//当たり判定の再設定
-	pBlock->getAABBCollider().setBoundingBoxCenter(
-		XMFLOAT3(
-			pBlock->getPositionX(),
-			pBlock->getPositionY(),
-			pBlock->getPositionZ()
-		)
-	);
 }
 
 /// <summary>
@@ -764,17 +586,16 @@ void SceneMainGame::ImageColor(vnSprite* sprite)
 }
 
 //== AABBの当たり判定 ==
-bool SceneMainGame::CheckBoundingBoxCollision(vnModel* m1, vnModel* m2)
+bool SceneMainGame::CheckPlayerCollision(Player* p, AABBCollider* c)
 {
-	//AABBの取得
-	AABBCollider& m1Box = m1->getAABBCollider();
-	AABBCollider& m2Box = m2->getAABBCollider();
+	//プレイヤーのAABBCollider取得
+	AABBCollider& pc = p->getAABBCollider();
 
 	//BoundingBoxの取得
-	BoundingBox& m1BoundingBox = m1Box.getBoundingBox();
-	BoundingBox& m2BoundingBox = m2Box.getBoundingBox();
+	BoundingBox& m1BoundingBox = pc.getBoundingBox();
+	BoundingBox& m2BoundingBox = c->getBoundingBox();
 
-	if (m1Box.Intersects(m2Box))
+	if (pc.Intersects(*c))
 	{
 		//x, y, zの重なりの大きさを計算
 		float overlapX = m1BoundingBox.Extents.x + m2BoundingBox.Extents.x - abs(m1BoundingBox.Center.x - m2BoundingBox.Center.x);
@@ -795,9 +616,9 @@ bool SceneMainGame::CheckBoundingBoxCollision(vnModel* m1, vnModel* m2)
 					direction = eDirection::X_RIGHT;
 					if (playerMoveX < 0.0f)
 					{
-						m1->addPositionX(-playerMoveX);
+						p->getModel()->addPositionX(-playerMoveX);
 					}
-					m1->addPositionX(overlapX);
+					p->getModel()->addPositionX(overlapX);
 				}
 				else
 				{
@@ -805,9 +626,9 @@ bool SceneMainGame::CheckBoundingBoxCollision(vnModel* m1, vnModel* m2)
 					direction = eDirection::X_LEFT;
 					if (playerMoveX > 0.0f)
 					{
-						m1->addPositionX(-playerMoveX);
+						p->getModel()->addPositionX(-playerMoveX);
 					}
-					m1->addPositionX(-overlapX);
+					p->getModel()->addPositionX(-overlapX);
 				}
 			}
 			else
@@ -819,9 +640,9 @@ bool SceneMainGame::CheckBoundingBoxCollision(vnModel* m1, vnModel* m2)
 					direction = eDirection::Z_FRONT;
 					if (playerMoveZ < 0.0f)
 					{
-						m1->addPositionZ(-playerMoveZ);
+						p->getModel()->addPositionZ(-playerMoveZ);
 					}
-					m1->addPositionZ(overlapZ);
+					p->getModel()->addPositionZ(overlapZ);
 				}
 				else
 				{
@@ -829,9 +650,9 @@ bool SceneMainGame::CheckBoundingBoxCollision(vnModel* m1, vnModel* m2)
 					direction = eDirection::Z_BACK;
 					if (playerMoveZ > 0.0f)
 					{
-						m1->addPositionZ(-playerMoveZ);
+						p->getModel()->addPositionZ(-playerMoveZ);
 					}
-					m1->addPositionZ(-overlapZ);
+					p->getModel()->addPositionZ(-overlapZ);
 				}
 			}
 		}
@@ -844,7 +665,7 @@ bool SceneMainGame::CheckBoundingBoxCollision(vnModel* m1, vnModel* m2)
 				{
 					//m1がm2より上にある場合
 					direction = eDirection::Y_TOP;
-					m1->addPositionY(overlapY);
+					p->getModel()->addPositionY(overlapY);
 					if (XMVectorGetY(velocity) < 0.0f)
 					{
 						velocity = XMVectorZero();	//速度ベクトルをリセット
@@ -855,7 +676,7 @@ bool SceneMainGame::CheckBoundingBoxCollision(vnModel* m1, vnModel* m2)
 				{
 					//m1がm2より下にある場合
 					direction = eDirection::Y_DOWN;
-					m1->addPositionY(-overlapY);
+					p->getModel()->addPositionY(-overlapY);
 					velocity = XMVectorZero();	//速度ベクトルをリセット
 				}
 			}
@@ -868,9 +689,9 @@ bool SceneMainGame::CheckBoundingBoxCollision(vnModel* m1, vnModel* m2)
 					direction = eDirection::Z_FRONT;
 					if (playerMoveZ < 0.0f)
 					{
-						m1->addPositionZ(-playerMoveZ);
+						p->getModel()->addPositionZ(-playerMoveZ);
 					}
-					m1->addPositionZ(overlapZ);
+					p->getModel()->addPositionZ(overlapZ);
 				}
 				else
 				{
@@ -878,9 +699,9 @@ bool SceneMainGame::CheckBoundingBoxCollision(vnModel* m1, vnModel* m2)
 					direction = eDirection::Z_BACK;
 					if (playerMoveZ > 0.0f)
 					{
-						m1->addPositionZ(-playerMoveZ);
+						p->getModel()->addPositionZ(-playerMoveZ);
 					}
-					m1->addPositionZ(-overlapZ);
+					p->getModel()->addPositionZ(-overlapZ);
 				}
 			}
 		}

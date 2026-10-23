@@ -1,5 +1,6 @@
 #include "../../framework.h"
 #include "../../Framework/environment.h"
+#include "AABBCollider.h"
 
 //コンストラクタ
 AABBCollider::AABBCollider()
