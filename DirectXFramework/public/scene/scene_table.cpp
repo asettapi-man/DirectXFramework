@@ -23,6 +23,7 @@ WCHAR SceneName[(int)eSceneTable::SceneMax][32] =
 	L"Field Test",
 	L"Ground Test",
 	L"Collision Test",
+	L"SphereCollision Test",
 	L"Cube Test",
 	L"PriorityTest",
 	L"Model Test",
@@ -53,20 +54,21 @@ void switchScene()
 	vnScene *pScene=NULL;
 	switch(reserveScene)
 	{
-	case Boot:			pScene = new SceneBoot();			break;
-	case Game:			pScene = new SceneMainGame();		break;
-	case FieldTest:		pScene = new SceneFieldTest();		break;
-	case GroundTest:	pScene = new SceneGroundTest();		break;
-	case CollisionTest:	pScene = new SceneCollisionTest();	break;
-	case CubeTest:		pScene = new SceneCubeTest();		break;
-	case PriorityTest:	pScene = new ScenePriorityTest();	break;
-	case ModelTest:		pScene = new SceneModelTest();		break;
-	case SpriteTest:	pScene = new SceneSpriteTest();		break;
-	case JoystickTest:	pScene = new SceneJoystickTest();	break;
-	case SeTest:		pScene = new SceneSeTest();			break;
-	case FontTest:		pScene = new SceneFontTest();		break;
-	case NovelGame:		pScene = new SceneNovelGame();		break;
-	case Assingment:	pScene = new SceneAssingment();		break;
+	case Boot:					pScene = new SceneBoot();					break;
+	case Game:					pScene = new SceneMainGame();				break;
+	case FieldTest:				pScene = new SceneFieldTest();				break;
+	case GroundTest:			pScene = new SceneGroundTest();				break;
+	case CollisionTest:			pScene = new SceneCollisionTest();			break;
+	case SphereCollisionTest:	pScene = new SceneSphereCollisionTest();	break;
+	case CubeTest:				pScene = new SceneCubeTest();				break;
+	case PriorityTest:			pScene = new ScenePriorityTest();			break;
+	case ModelTest:				pScene = new SceneModelTest();				break;
+	case SpriteTest:			pScene = new SceneSpriteTest();				break;
+	case JoystickTest:			pScene = new SceneJoystickTest();			break;
+	case SeTest:				pScene = new SceneSeTest();					break;
+	case FontTest:				pScene = new SceneFontTest();				break;
+	case NovelGame:				pScene = new SceneNovelGame();				break;
+	case Assingment:			pScene = new SceneAssingment();				break;
 	}
 	
 	vnMainFrame::initializeScene(pScene);

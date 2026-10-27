@@ -152,6 +152,9 @@
     <ClCompile Include="Public\Object\player.cpp">
       <Filter>Public\Object</Filter>
     </ClCompile>
+    <ClCompile Include="Public\Scene\scene_sphere_collision_test.cpp">
+      <Filter>Public\Scene</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="framework\camera.h">
@@ -285,6 +288,9 @@
     </ClInclude>
     <ClInclude Include="Public\Object\player.h">
       <Filter>Public\Object</Filter>
+    </ClInclude>
+    <ClInclude Include="Public\Scene\scene_sphere_collision_test.h">
+      <Filter>Public\Scene</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

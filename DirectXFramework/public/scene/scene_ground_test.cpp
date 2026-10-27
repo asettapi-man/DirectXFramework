@@ -429,6 +429,7 @@ void SceneGroundTest::execute()
 	XMVECTOR hit;	//衝突座標を受け取る変数
 	linePos = *pPlayer->getPosition();
 	linePos = XMVectorAdd(linePos, XMVectorSet(0.0f, 0.1f, 0.0f, 0.0f));
+	linePos = XMVectorAdd(linePos, vMove * 5.0f);	//進行方向に5.0f進める
 	lineDir = XMVectorSet(0.0f, -1.0f, 0.0f, 0.0f);
 	float length = 0.3f;
 

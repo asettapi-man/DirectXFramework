@@ -163,6 +163,7 @@
     <ClCompile Include="public\scene\scene_novel_game.cpp" />
     <ClCompile Include="public\scene\scene_priority_test.cpp" />
     <ClCompile Include="public\scene\scene_se_test.cpp" />
+    <ClCompile Include="Public\Scene\scene_sphere_collision_test.cpp" />
     <ClCompile Include="public\scene\scene_sprite_test.cpp" />
     <ClCompile Include="public\scene\scene_table.cpp" />
     <ClCompile Include="public\sprite.cpp" />
@@ -207,6 +208,7 @@
     <ClInclude Include="public\scene\scene_novel_game.h" />
     <ClInclude Include="public\scene\scene_priority_test.h" />
     <ClInclude Include="public\scene\scene_se_test.h" />
+    <ClInclude Include="Public\Scene\scene_sphere_collision_test.h" />
     <ClInclude Include="public\scene\scene_sprite_test.h" />
     <ClInclude Include="public\scene\scene_table.h" />
     <ClInclude Include="public\sprite.h" />
