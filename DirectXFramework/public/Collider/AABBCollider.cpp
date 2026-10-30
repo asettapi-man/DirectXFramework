@@ -12,35 +12,35 @@ AABBCollider::AABBCollider()
 	isEnable = true;
 }
 
-void AABBCollider::initialize(const XMFLOAT3& center, const XMFLOAT3& extents)
+void AABBCollider::Initialize(const XMFLOAT3& center, const XMFLOAT3& extents)
 {
 	boundingBox.Center = center;
 	boundingBox.Extents = extents;
 }
 
 //== ìñÇΩÇËîªíËÇÃê›íË ==
-void AABBCollider::setBoundingBox(const BoundingBox& box)
+void AABBCollider::SetBoundingBox(const BoundingBox& box)
 {
 	boundingBox.Center = box.Center;
 	boundingBox.Extents = box.Extents;
 }
 
-void AABBCollider::setBoundingBoxCenter(const XMFLOAT3& center)
+void AABBCollider::SetBoundingBoxCenter(const XMFLOAT3& center)
 {
 	boundingBox.Center = center;
 }
 
-void AABBCollider::setBoundingBoxCenter(float x, float y, float z)
+void AABBCollider::SetBoundingBoxCenter(float x, float y, float z)
 {
 	boundingBox.Center = XMFLOAT3(x, y, z);
 }
 
-void AABBCollider::setBoundingBoxExtents(const XMFLOAT3& extents)
+void AABBCollider::SetBoundingBoxExtents(const XMFLOAT3& extents)
 {
 	boundingBox.Extents = extents;
 }
 
-void AABBCollider::setBoundingBoxExtents(float x, float y, float z)
+void AABBCollider::SetBoundingBoxExtents(float x, float y, float z)
 {
 	boundingBox.Extents = XMFLOAT3(x, y, z);
 }
@@ -64,7 +64,7 @@ bool AABBCollider::Intersects(const AABBCollider& other) const
 }
 
 //== AABBColliderÇÃìñÇΩÇËîªíËÇê¸Ç≈â¬éãâªÇ∑ÇÈ ==
-void AABBCollider::debugLineRenderer()
+void AABBCollider::DebugLineRenderer()
 {
 	const XMFLOAT3& center = boundingBox.Center;
 	const XMFLOAT3& extents = boundingBox.Extents;

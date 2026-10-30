@@ -12,25 +12,25 @@ public:
 	AABBCollider();	//コンストラクタ
 
 	//初期化
-	void initialize(const XMFLOAT3& center, const XMFLOAT3& extents);
+	void Initialize(const XMFLOAT3& center, const XMFLOAT3& extents);
 
 	//== AABBの当たり判定の取得 ==
-	inline BoundingBox& getBoundingBox() { return boundingBox; }	//AABBの当たり判定を取得
+	inline BoundingBox& GetBoundingBox() { return boundingBox; }	//AABBの当たり判定を取得
 
 	//当たり判定の設定
-	void setBoundingBox(const BoundingBox& box);
-	void setBoundingBoxCenter(const XMFLOAT3& center);
-	void setBoundingBoxCenter(float x, float y, float z);
-	void setBoundingBoxExtents(const XMFLOAT3& extents);
-	void setBoundingBoxExtents(float x, float y, float z);
+	void SetBoundingBox(const BoundingBox& box);
+	void SetBoundingBoxCenter(const XMFLOAT3& center);
+	void SetBoundingBoxCenter(float x, float y, float z);
+	void SetBoundingBoxExtents(const XMFLOAT3& extents);
+	void SetBoundingBoxExtents(float x, float y, float z);
 	bool Intersects(const AABBCollider& other) const;	//AABB同士の当たり判定
 
 	//有効・無効フラグの取得
-	inline bool getEnable() { return isEnable; }
+	inline bool GetEnable() { return isEnable; }
 
 	//有効・無効フラグの設定
-	inline void setEnable(bool enable) { isEnable = enable; }
+	inline void SetEnable(bool enable) { isEnable = enable; }
 
 	//デバッグ用
-	void debugLineRenderer();
+	void DebugLineRenderer();
 };
