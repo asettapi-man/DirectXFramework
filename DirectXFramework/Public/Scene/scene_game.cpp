@@ -286,13 +286,13 @@ void SceneMainGame::execute()
 		phi = -1.5f;
 	}
 
-	//== カメラ座標の計算 ==
-	XMVECTOR camBias = XMVectorSet(0.0f, 1.5f, 0.0f, 0.0f);	//カメラの位置のプレイヤーに対するオフセット
+	//== １人称カメラ座標の計算 ==
+	XMVECTOR camBias = XMVectorSet(0.0f, 2.0f, 0.0f, 0.0f);	//カメラの位置のプレイヤーに対するオフセット
 	XMVECTOR camTarget;	//カメラの注視点（プレイヤーの座標 + オフセット）
 	XMVECTOR camPos;	//カメラの位置
 
 	//回転していない基準となるベクトル
-	XMVECTOR eye = XMVectorSet(0.0f, 0.0f, -radius, 0.0f);
+	XMVECTOR eye = XMVectorSet(0.0f, 0.0f, -0.01f, 0.0f);
 
 	//回転マトリクスを作成
 	XMMATRIX camRotate = XMMatrixRotationRollPitchYaw(phi, theta, 0.0f);
