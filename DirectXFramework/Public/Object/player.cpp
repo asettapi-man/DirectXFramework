@@ -56,25 +56,33 @@ void Player::Execute()
 
 	//移動方向を示す方向ベクトル
 	vMove = XMVectorSet(0.0f, 0.0f, 0.0f, 0.0f);
+	float movement = 0.1f;	//移動量
 
+	//ダッシュ処理
+	if (vnKeyboard::on(DIK_LSHIFT))
+	{
+		movement = 0.5f;
+	}
+
+	//移動処理
 	if (vnKeyboard::on(DIK_W))
 	{
-		vMove = XMVectorSetZ(vMove, 0.1f);
+		vMove = XMVectorSetZ(vMove, movement);
 		isMovingForPlayer = true;	//移動中
 	}
 	if (vnKeyboard::on(DIK_S))
 	{
-		vMove = XMVectorSetZ(vMove, -0.1f);
+		vMove = XMVectorSetZ(vMove, -movement);
 		isMovingForPlayer = true;	//移動中
 	}
 	if (vnKeyboard::on(DIK_D))
 	{
-		vMove = XMVectorSetX(vMove, 0.1f);
+		vMove = XMVectorSetX(vMove, movement);
 		isMovingForPlayer = true;	//移動中
 	}
 	if (vnKeyboard::on(DIK_A))
 	{
-		vMove = XMVectorSetX(vMove, -0.1f);
+		vMove = XMVectorSetX(vMove, -movement);
 		isMovingForPlayer = true;	//移動中
 	}
 
