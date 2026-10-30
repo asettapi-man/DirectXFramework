@@ -33,13 +33,13 @@ private:
 	vnModel* pGround;			//地面オブジェクト
 	vnModel* pSky;				//背景
 
-	//== 画像 ==
+	/*//== 画像 ==
 	vnSprite* pTitle;	//タイトル画面
 	vnSprite* pStartButton;	//スタートボタン
 	vnSprite* pQuitButton;	//終了ボタン
 	vnSprite* pTitleButton;	//タイトルへ戻るボタン
 	vnSprite* pDescriptionUI;	//説明UI背景
-
+	*/
 	//極座標の情報
 	float radius;	//半径
 	float theta;	//角度θ(平面角,経度)
@@ -50,20 +50,21 @@ private:
 
 	XMVECTOR vMove;		//移動ベクトル
 	XMVECTOR velocity;	//速度ベクトル
-	XMVECTOR jumpVec;	//ジャンプベクトル
 	XMVECTOR gravity;	//重力ベクトル
+
+	float jumpForce;	//ジャンプ力
 
 	bool isControllable;	//操作可能フラグ
 	bool isJump;	//ジャンプ可能フラグ
 
 	XMFLOAT3 playerPos;	//プレイヤーの座標
 
-	vnSound* pBGM;	//BGM
+	/*vnSound* pBGM;	//BGM
 
 	vnSound* pClickSE;	//クリック時の効果音
 	vnSound* pClearSE;	//クリア時の効果音
 	vnSound* pJumpSE;	//ジャンプ時の効果音
-
+	*/
 public:
 	
 	bool initialize();
@@ -74,18 +75,6 @@ public:
 
 	//再度ゲームプレイできるように初期化
 	void TitleSetUp();
-
-	//ブロックの折り返し移動
-	void MoveToTarget(vnModel* pBlock, int n);
-
-	//画像の当たり判定
-	bool CheckImageMouseOver(vnSprite* sprite);
-
-	//画像へのマウスオーバー時の色変更
-	void MouseOverImageColor(vnSprite* sprite, float r = 0.5f, float g = 0.5f, float b = 0.5f);
-
-	//画像の通常時色
-	void ImageColor(vnSprite* sprite);
 
 	//== AABBの当たり判定 ==
 	bool CheckPlayerCollision(Player* p, AABBCollider* c);

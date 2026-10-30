@@ -5,13 +5,7 @@
 bool SceneMainGame::initialize()
 {	
 	//== 生成 ==
-	player->initialize();
-	playerPos = XMFLOAT3(
-		player->getModel()->getPositionX(), 
-		player->getModel()->getPositionY() + player->getAABBCollider().getBoundingBox().Extents.y, 
-		player->getModel()->getPositionZ());	//プレイヤーの座標を取得
-
-	player->getAABBCollider().initialize(playerPos, XMFLOAT3(0.5f, 1.3f, 0.5f));	//AABBの初期化
+	player = new Player(L"data/model/bear/", L"bear.vnm", XMFLOAT3(0.0f, 1.3f, 0.0f), XMFLOAT3(0.5f, 1.3f, 0.5f));
 
 	pShadow = new vnModel(L"data/model/", L"shadow.vnm");		//影
 	pShadow->setTransparent(true);	//影の半透明を有効
@@ -90,12 +84,13 @@ bool SceneMainGame::initialize()
 	//== 半透明のオブジェクトは不透明の後に描画する ==
 	registerObject(pShadow);
 
-	//== 画像 ==
+	/*//== 画像 ==
 	registerObject(pTitle);
 	registerObject(pStartButton);
 	registerObject(pQuitButton);
 	registerObject(pTitleButton);
 	registerObject(pDescriptionUI);
+	*/
 
 	//== 初期化 ==
 
@@ -106,15 +101,16 @@ bool SceneMainGame::initialize()
 	reverseH = false;	//水平反転
 	reverseV = false;	//垂直反転
 
-	velocity = XMVectorZero();	//ベクトルaの初期化
-	jumpVec = XMVectorSet(0.0f, 0.3f, 0.0f, 0.0f);	//ベクトルbの初期化
+	velocity = XMVectorZero();	//移動量ベクトルの初期化
 	gravity = XMVectorSet(0.0f, -0.01f, 0.0f, 0.0f);	//重力ベクトルの初期化
 
-	isControllable = true;	//操作可能フラグの初期化
-	isJump = true;	//ジャンプ可能フラグの初期化
+	jumpForce = 0.3f;	//ジャンプ力
 
-	//gameState = eGameState::TITLE;	//ゲームステートの初期化
-	//direction = eDirection::NONE;	//衝突方向の初期化
+	isControllable = true;	//操作可能フラグの初期化
+	isJump = false;	//ジャンプ可能フラグの初期化
+
+	gameState = eGameState::GAME;	//ゲームステートの初期化
+	direction = eDirection::NONE;	//衝突方向の初期化
 	return true;
 }
 
@@ -128,7 +124,7 @@ void SceneMainGame::terminate()
 
 	deleteObject(pShadow);
 
-	//== 画像 ==
+	/*//== 画像 ==
 	deleteObject(pTitle);
 	deleteObject(pStartButton);
 	deleteObject(pQuitButton);
@@ -139,6 +135,7 @@ void SceneMainGame::terminate()
 	delete(pClickSE);
 	delete(pClearSE);
 	delete(pJumpSE);
+	*/
 }
 
 //処理関数
@@ -170,20 +167,21 @@ void SceneMainGame::execute()
 	}
 
 	//ジャンプ処理
-	if (vnKeyboard::trg(DIK_SPACE) && isJump)
+	if (vnKeyboard::trg(DIK_SPACE) && !isJump)
 	{
-		pJumpSE->play();
-		isJump = false;	//ジャンプ中はジャンプできない
-		velocity = jumpVec;
+		//pJumpSE->play();
+		isJump = true;	//ジャンプ中はジャンプできない
+		velocity = XMVectorSet(0.0f, jumpForce, 0.0f, 0.0f);
 	}
 
 	//落下処理
 	velocity += gravity;
+	player->getModel()->addPositionY(XMVectorGetY(velocity));
 
 	if (XMVectorGetY(velocity) < 0.0f)
 	{
 		//落下中はジャンプ不可
-		isJump = false;
+		isJump = true;
 	}
 
 	//プレイヤーの移動ベクトル（vMove）をカメラの角度（theta）に応じて回転
@@ -232,7 +230,7 @@ void SceneMainGame::execute()
 		float ry = atan2f(-XMVectorGetZ(mAns.r[0]), XMVectorGetZ(mAns.r[2]));
 
 		//計算された中間角度を設定
-		//player->getModel()->setRotationY(ry);	//プレイヤーのY軸の回転角度を更新
+		player->getModel()->setRotationY(ry);	//プレイヤーのY軸の回転角度を更新
 	}
 
 	//AABBの中心座標を設定
@@ -248,7 +246,7 @@ void SceneMainGame::execute()
 	{
 		player->getModel()->setPositionY(0.0f);
 		velocity = XMVectorZero();
-		isJump = true;	//地面に着地したらジャンプ可能
+		isJump = false;	//地面に着地したらジャンプ可能
 	}
 
 	//AABBの中心座標を再設定
@@ -303,7 +301,7 @@ void SceneMainGame::execute()
 	eye = XMVector3TransformNormal(eye, camRotate);
 
 	//回転の中心をプレイヤーにする（プレイヤーの座標を加算する）
-	//eye = XMVectorAdd(eye, *player->getModel()->getPosition());
+	eye = XMVectorAdd(eye, *player->getModel()->getPosition());
 
 	camPos = XMVectorAdd(eye, camBias);
 
@@ -311,7 +309,7 @@ void SceneMainGame::execute()
 	vnCamera::setPosition(&camPos);
 
 	//カメラの注視点を更新
-	//camTarget = XMVectorAdd(*player->getModel()->getPosition(), camBias);
+	camTarget = XMVectorAdd(*player->getModel()->getPosition(), camBias);
 
 	vnCamera::setTarget(&camTarget);
 
@@ -320,7 +318,7 @@ void SceneMainGame::execute()
 
 	vnFont::print((float)vnMainFrame::screenWidth - 150.0f, (float)vnMainFrame::screenHeight - 100.0f, L"操作説明");
 	vnFont::print((float)vnMainFrame::screenWidth - 150.0f, (float)vnMainFrame::screenHeight - 80.0f, L"移動 : W A S D");
-	vnFont::print((float)vnMainFrame::screenWidth - 150.0f, (float)vnMainFrame::screenHeight - 60.0f, isJump ? 0xffffb84a : 0x7fffb84a, L"ジャンプ : Space");
+	vnFont::print((float)vnMainFrame::screenWidth - 150.0f, (float)vnMainFrame::screenHeight - 60.0f, isJump ? 0x7fffb84a : 0xffffb84a, L"ジャンプ : Space");
 
 	vnScene::execute();
 
@@ -333,51 +331,6 @@ void SceneMainGame::execute()
 	{
 	case eGameState::TITLE:
 	{
-		if (CheckImageMouseOver(pStartButton))
-		{
-			//マウスオーバー時の色変更
-			MouseOverImageColor(pStartButton);
-
-			//左クリック時
-			if (vnMouse::trgL())
-			{
-				pClickSE->play();
-				TitleSetUp();
-
-				//表示
-				pDescriptionUI->setRenderEnable(true);
-
-				//非表示状態
-				pTitle->setRenderEnable(false);
-				pStartButton->setRenderEnable(false);
-				pQuitButton->setRenderEnable(false);
-
-				ShowCursor(false);	//マウスカーソルの非表示
-
-				gameState = eGameState::GAME;
-			}
-		}
-		else
-		{
-			ImageColor(pStartButton);
-		}
-
-		//終了ボタン
-		if (CheckImageMouseOver(pQuitButton))
-		{
-			//マウスオーバー時の色変更
-			MouseOverImageColor(pQuitButton);
-
-			//左クリック時
-			if (vnMouse::trgL())
-			{
-				PostQuitMessage(0);	//アプリケーション終了
-			}
-		}
-		else
-		{
-			ImageColor(pQuitButton);
-		}
 		break;
 	}
 	case eGameState::GAME:
@@ -476,31 +429,6 @@ void SceneMainGame::execute()
 
 		vnFont::setColor(0xffff0000);
 		vnFont::print((float)vnMainFrame::screenCenterX, (float)vnMainFrame::screenCenterY, L"ゴール！");
-
-		if (CheckImageMouseOver(pTitleButton))
-		{
-			MouseOverImageColor(pTitleButton);
-
-			if (vnMouse::trgL())
-			{
-				//左クリック時
-				pClickSE->play();
-
-				//表示
-				pTitle->setRenderEnable(true);
-				pStartButton->setRenderEnable(true);
-				pQuitButton->setRenderEnable(true);
-
-				//非表示
-				pTitleButton->setRenderEnable(false);
-				pDescriptionUI->setRenderEnable(false);
-				gameState = eGameState::TITLE;
-			}
-		}
-		else
-		{
-			ImageColor(pTitleButton);
-		}
 		break;
 		}
 	}
@@ -510,6 +438,8 @@ void SceneMainGame::execute()
 void SceneMainGame::render()
 {
 	vnScene::render();
+
+	player->render();
 }
 
 void SceneMainGame::TitleSetUp()
@@ -523,66 +453,6 @@ void SceneMainGame::TitleSetUp()
 	phi = 0.0f;		//角度φ
 
 	isControllable = true;
-}
-
-/// <summary>
-/// マウスポインタが画像の範囲内か判定
-/// </summary>
-/// <param name="sprite">画像</param>
-/// <returns></returns>
-bool SceneMainGame::CheckImageMouseOver(vnSprite* sprite)
-{
-	//マウスのポインタ位置
-	float dx = vnMouse::getX();
-	float dy = vnMouse::getY();
-
-	//画像サイズの半分を取得
-	float halfSizeX = sprite->sizeX / 2.0f;
-	float halfSizeY = sprite->sizeY / 2.0f;
-
-	//四つ角の位置を計算
-	float left = sprite->posX - halfSizeX;
-	float right = sprite->posX + halfSizeX;
-	float top = sprite->posY - halfSizeY;
-	float bottom = sprite->posY + halfSizeY;
-
-	if ((dx >= left && dx <= right) && (dy >= top && dy <= bottom))
-	{
-		return true;
-	}
-
-	return false;
-}
-
-/// <summary>
-/// マウスオーバー時の色変更
-/// </summary>
-/// <param name="sprite">画像</param>
-/// <param name="r">赤色の度合</param>
-/// <param name="g">緑色の度合</param>
-/// <param name="b">青色の度合</param>
-void SceneMainGame::MouseOverImageColor(vnSprite* sprite, float r, float g, float b)
-{
-	for (int i = 0; i < vnSprite::VertexNum; i++)
-	{
-		sprite->vtx[i].r = r;
-		sprite->vtx[i].g = g;
-		sprite->vtx[i].b = b;
-	}
-}
-
-/// <summary>
-/// 通常時の色設定
-/// </summary>
-/// <param name="sprite">画像</param>
-void SceneMainGame::ImageColor(vnSprite* sprite)
-{
-	for (int i = 0; i < vnSprite::VertexNum; i++)
-	{
-		sprite->vtx[i].r = 1.0f;
-		sprite->vtx[i].g = 1.0f;
-		sprite->vtx[i].b = 1.0f;
-	}
 }
 
 //== AABBの当たり判定 ==

@@ -2,10 +2,16 @@
 #include "../../Framework/environment.h"
 #include "player.h"
 
-void Player::initialize()
+Player::Player(const WCHAR* folder, const WCHAR* file, const XMFLOAT3& boxColliderCenter, const XMFLOAT3& boxColliderExtents)
 {
-	model = new vnModel(L"data/model/bear/", L"bear.vnm");
-	//model->setPosition(0.0f, 0.0f, 0.0f);
+	model = new vnModel(folder, file);
+	aabbCollider.initialize(boxColliderCenter, boxColliderExtents);	//AABB‚Ì‰Šú‰»
+}
+
+Player::~Player()
+{
+	//ƒƒ‚ƒŠ‰ð•ú
+	delete(model);
 }
 
 void Player::execute()
@@ -15,8 +21,6 @@ void Player::execute()
 
 void Player::render()
 {
-	model->render();
-
 #ifdef _DEBUG
 	if (aabbCollider.getEnable())
 	{

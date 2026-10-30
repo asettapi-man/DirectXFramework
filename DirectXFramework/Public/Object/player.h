@@ -13,7 +13,8 @@ private:
 public:
 	inline vnModel* getModel() { return model; }	//モデルの取得
 
-	void initialize();	//初期化
+	Player(const WCHAR* folder, const WCHAR* file, const XMFLOAT3& boxColliderCenter, const XMFLOAT3& boxColliderExtents);	//コンストラクタ
+	~Player();	//デストラクタ
 	void execute();		//処理
 	void render();		//描画
 
