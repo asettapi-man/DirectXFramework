@@ -1,6 +1,7 @@
 #pragma once
 
 #include <vector>
+#include "model.h"
 
 class Inventory
 {
@@ -9,6 +10,7 @@ private:
 	// インベントリの情報
 	struct ItemData
 	{
+		vnModel* model;
 		int weight;	// 資源の重さ
 	};
 
@@ -21,5 +23,6 @@ public:
 	Inventory() = default;	//コンストラクタ
 
 	bool CanAdd(const ItemData& data) const;	//追加可能フラグ関数
-	int GetTotalWeight(const std::vector<ItemData> inventory) const;	//インベントリの最大重量取得関数
+	int GetTotalWeight() const;	//インベントリの最大重量取得関数
+	void SetItemData(vnModel* model, int weight);	//モデルの追加
 };

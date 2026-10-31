@@ -10,17 +10,18 @@
 bool Inventory::CanAdd(const ItemData& data) const
 {
 	//データを追加可能かどうかと重さが最大重量を越えていないか確認
-	return false;
+	return inventory.size() < maxInventoryCount
+		&& GetTotalWeight() + data.weight < maxWeight;
 }
 
 /// <summary>
-/// インベントリ内の合計重量を取得
+/// インベントリ内の合計重量を取得する関数
 /// </summary>
 /// <param name="inventory">インベントリ情報</param>
 /// <returns>合計重量を返す</returns>
-int Inventory::GetTotalWeight(const std::vector<ItemData> inventory) const
+int Inventory::GetTotalWeight() const
 {
-	int totalWeight = 0;	//結果用
+	int totalWeight = 0;	//トータル用
 
 	for (const ItemData& item : inventory)
 	{
@@ -29,4 +30,20 @@ int Inventory::GetTotalWeight(const std::vector<ItemData> inventory) const
 	}
 
 	return totalWeight;
+}
+
+/// <summary>
+/// インベントリにデータを追加する関数
+/// </summary>
+/// <param name="model">モデル情報</param>
+/// <param name="weight">重量</param>
+void Inventory::SetItemData(vnModel* model, int weight)
+{
+	ItemData itemData = { model, weight };	//追加するデータ作成
+
+	//追加可能？
+	if (CanAdd(itemData))
+	{
+		inventory.push_back(itemData);	//データを配列に追加
+	}
 }
