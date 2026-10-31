@@ -145,6 +145,7 @@
     <ClCompile Include="framework\sound.cpp" />
     <ClCompile Include="public\billboard.cpp" />
     <ClCompile Include="public\Collider\AABBCollider.cpp" />
+    <ClCompile Include="public\inventory.cpp" />
     <ClCompile Include="public\model.cpp" />
     <ClCompile Include="public\object.cpp" />
     <ClCompile Include="public\object\cube.cpp" />
@@ -190,6 +191,7 @@
     <ClInclude Include="framework\sound.h" />
     <ClInclude Include="public\billboard.h" />
     <ClInclude Include="public\Collider\AABBCollider.h" />
+    <ClInclude Include="public\inventory.h" />
     <ClInclude Include="public\model.h" />
     <ClInclude Include="public\object.h" />
     <ClInclude Include="public\object\cube.h" />

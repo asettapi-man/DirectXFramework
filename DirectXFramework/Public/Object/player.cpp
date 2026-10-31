@@ -14,12 +14,20 @@ Player::Player(const WCHAR* folder, const WCHAR* file, const XMFLOAT3& boxCollid
 	model = new vnModel(folder, file);
 	aabbCollider.Initialize(boxColliderCenter, boxColliderExtents);	//AABBの初期化
 
+	direction = eDirection::NONE;	//衝突方向
+
 	velocity = XMVectorZero();	//移動量ベクトルの初期化
 	gravity = XMVectorSet(0.0f, -0.01f, 0.0f, 0.0f);	//重力ベクトルの初期化
 
+	isJump = false;	//ジャンプフラグ
 	jumpForce = 0.3f;	//ジャンプ力
 
 	radius = 10.0f;	//半径
+	theta = 0.0f;	//角度θ
+	phi = 0.0f;		//角度φ
+
+	reverseH = false;	//水平反転
+	reverseV = false;	//垂直反転
 }
 
 /// <summary>
