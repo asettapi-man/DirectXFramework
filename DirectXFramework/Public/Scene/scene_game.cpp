@@ -21,6 +21,13 @@ bool SceneMainGame::initialize()
 	pSky = new vnModel(L"data/model/", L"skydome.vnm");			//背景
 	pSky->setLighting(false);		//背景のライティングを無効
 
+	for (int i = 0; i < modelSize; i++)
+	{
+		vnModel* model = new vnModel(L"data/model/", L"ForestIsland.vnm");
+		models.push_back(model);
+		models[i]->setPosition(50.0f * i, 0.0f, 0.0f);
+	}
+
 	//== 画像 ==
 	/*pTitle = new vnSprite(
 		(float)vnMainFrame::screenCenterX,
@@ -82,6 +89,11 @@ bool SceneMainGame::initialize()
 	registerObject(pGround);
 	registerObject(pSky);
 
+	for (int i = 0; i < modelSize; i++)
+	{
+		registerObject(models[i]);
+	}
+
 	//== 半透明のオブジェクトは不透明の後に描画する ==
 	registerObject(pShadow);
 
@@ -104,9 +116,16 @@ bool SceneMainGame::initialize()
 void SceneMainGame::terminate()
 {
 	//== 破棄 ==
-	//deleteObject(player->getModel());
+	delete player;
+
+	deleteObject(player->GetModel());
 	deleteObject(pGround);
 	deleteObject(pSky);
+
+	for (int i = 0; i < modelSize; i++)
+	{
+		deleteObject(models[i]);
+	}
 
 	deleteObject(pShadow);
 

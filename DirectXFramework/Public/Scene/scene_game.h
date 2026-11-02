@@ -2,7 +2,7 @@
 
 #include "../Object/player.h"
 
-#define BLOCK_NUM 16
+#define modelSize 12
 class SceneMainGame : public vnScene
 {
 private:
@@ -20,6 +20,8 @@ private:
 
 	vnModel* pGround;			//地面オブジェクト
 	vnModel* pSky;				//背景
+
+	std::vector<vnModel*> models;
 
 	/*//== 画像 ==
 	vnSprite* pTitle;	//タイトル画面

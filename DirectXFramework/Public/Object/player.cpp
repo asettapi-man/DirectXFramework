@@ -30,13 +30,9 @@ Player::Player(const WCHAR* folder, const WCHAR* file, const XMFLOAT3& boxCollid
 	reverseV = false;	//垂直反転
 }
 
-/// <summary>
-/// デストラクタ
-/// </summary>
 Player::~Player()
 {
-	//メモリ解放
-	delete(model);
+	delete model;
 }
 
 /// <summary>

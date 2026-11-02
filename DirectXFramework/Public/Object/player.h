@@ -51,7 +51,7 @@ public:
 	inline bool GetIsJump() const { return isJump; }	//ジャンプフラグの取得
 
 	Player(const WCHAR* folder, const WCHAR* file, const XMFLOAT3& boxColliderCenter, const XMFLOAT3& boxColliderExtents);	//コンストラクタ
-	~Player();			//デストラクタ
+	~Player();
 
 	void Initialize();	//初期化
 	void Execute();		//処理

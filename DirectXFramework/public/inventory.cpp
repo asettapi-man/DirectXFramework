@@ -17,11 +17,10 @@ bool Inventory::CanAdd(const ItemData& data) const
 /// <summary>
 /// インベントリ内の合計重量を取得する関数
 /// </summary>
-/// <param name="inventory">インベントリ情報</param>
 /// <returns>合計重量を返す</returns>
-int Inventory::GetTotalWeight() const
+float Inventory::GetTotalWeight() const
 {
-	int totalWeight = 0;	//トータル用
+	float totalWeight = 0;	//トータル用
 
 	for (const ItemData& item : inventory)
 	{
@@ -37,7 +36,7 @@ int Inventory::GetTotalWeight() const
 /// </summary>
 /// <param name="model">モデル情報</param>
 /// <param name="weight">重量</param>
-void Inventory::SetItemData(vnModel* model, int weight)
+void Inventory::SetItemData(vnModel* model, float weight)
 {
 	ItemData itemData = { model, weight };	//追加するデータ作成
 
