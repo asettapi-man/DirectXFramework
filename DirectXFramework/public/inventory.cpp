@@ -36,10 +36,8 @@ float Inventory::GetTotalWeight() const
 /// </summary>
 /// <param name="model">モデル情報</param>
 /// <param name="weight">重量</param>
-void Inventory::SetItemData(vnModel* model, float weight)
+void Inventory::SetItemData(ItemData itemData)
 {
-	ItemData itemData = { model, weight };	//追加するデータ作成
-
 	//追加可能？
 	if (CanAdd(itemData))
 	{

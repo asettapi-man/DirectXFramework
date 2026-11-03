@@ -3,34 +3,74 @@
 #include <random>
 #include "material.h"
 
+/// <summary>
+/// コンストラクタ
+/// </summary>
+/// <param name="type">資材の種類</param>
+Material::Material(MaterialType type)
+{
+	itemData = CreateItemData(type);	//採取時にランダムな資材を生成
+}
+
+/// <summary>
+/// デストラクタ
+/// </summary>
 Material::~Material()
 {
 	delete itemData.model;
 }
 
+/// <summary>
+/// 資材の重量取得関数
+/// </summary>
+/// <returns>決められたランダムな値を返す</returns>
 float Material::GetRandomWeight()
 {
 	std::random_device rd;
-	std::mt19937 mt(rd);
+	std::mt19937 mt(rd());
 	std::uniform_real_distribution<float> dist(minMaterialWeight, maxMaterialWeight);
 	float weight = dist(mt);
 
 	return weight;
 }
 
-std::vector<vnModel*> Material::RandomDropMaterials()
+/// <summary>
+/// 資材モデル作成関数
+/// </summary>
+/// <param name="type">資材の種類</param>
+/// <returns>種類ごとの資材モデルを返す/returns>
+vnModel* Material::CreateModel(MaterialType type)
 {
-	std::vector<vnModel*> result;	//結果用
+	vnModel* model = nullptr;	//出力結果
 
-	std::random_device rd;
-	std::mt19937 mt(rd);
-	std::uniform_int_distribution<unsigned int> dist(minDropCount, maxDropCount);
-	unsigned int rand = dist(mt);	//乱数生成
-
-	for (unsigned int i = 0; i < rand; i++)
+	switch (type)
 	{
+	case MaterialType::Wood:	//木材
+		model = new vnModel(L"data/model/", L".vnm");	//木材モデル
+		break;
 
+	case MaterialType::Metal:	//金属
+		model = new vnModel(L"data/model/", L".vnm");	//金属モデル
+		break;
+
+	default:	//該当なし
+		break;
 	}
 
-	return result;
+	return model;
+}
+
+/// <summary>
+/// 資材情報の作成
+/// </summary>
+/// <param name="type">資材の種類</param>
+/// <returns>資材情報を返す</returns>
+ItemData Material::CreateItemData(MaterialType type)
+{
+	float weight = GetRandomWeight();
+	vnModel* model = CreateModel(type);
+
+	itemData = { model, weight };
+
+	return itemData;
 }

@@ -15,7 +15,7 @@ private:
 public:
 	Inventory() = default;	//コンストラクタ
 
-	bool CanAdd(const ItemData& data) const;				//追加可能フラグ関数
-	float GetTotalWeight() const;							//インベントリの最大重量取得関数
-	void SetItemData(vnModel* model, float weight);	//モデルの追加
+	bool CanAdd(const ItemData& data) const;	//追加可能フラグ関数
+	float GetTotalWeight() const;				//インベントリの最大重量取得関数
+	void SetItemData(ItemData itemData);		//資材情報の追加
 };

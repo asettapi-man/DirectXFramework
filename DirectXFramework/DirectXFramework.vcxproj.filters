@@ -158,6 +158,9 @@
     <ClCompile Include="public\inventory.cpp">
       <Filter>Public</Filter>
     </ClCompile>
+    <ClCompile Include="Public\material.cpp">
+      <Filter>Public</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="framework\camera.h">
@@ -296,6 +299,9 @@
       <Filter>Public\Scene</Filter>
     </ClInclude>
     <ClInclude Include="public\inventory.h">
+      <Filter>Public</Filter>
+    </ClInclude>
+    <ClInclude Include="Public\material.h">
       <Filter>Public</Filter>
     </ClInclude>
   </ItemGroup>
