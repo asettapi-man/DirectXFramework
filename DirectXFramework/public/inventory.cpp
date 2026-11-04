@@ -5,13 +5,13 @@
 /// <summary>
 /// 追加可能フラグ関数
 /// </summary>
-/// <param name="data">追加するデータ</param>
+/// <param name="material">資材クラス</param>
 /// <returns>追加可能かどうかを返す</returns>
-bool Inventory::CanAdd(const ItemData& data) const
+bool Inventory::CanAdd(const Material* material) const
 {
 	//データを追加可能かどうかと重さが最大重量を越えていないか確認
 	return inventory.size() < maxInventoryCount
-		&& GetTotalWeight() + data.weight < maxWeight;
+		&& GetTotalWeight() + material->GetItemData().weight < maxWeight;
 }
 
 /// <summary>
@@ -22,9 +22,9 @@ float Inventory::GetTotalWeight() const
 {
 	float totalWeight = 0;	//トータル用
 
-	for (const ItemData& item : inventory)
+	for (const Material* mat : inventory)
 	{
-		int weight = item.weight;	//アイテムの重量
+		int weight = mat->GetItemData().weight;	//アイテムの重量
 		totalWeight += weight;
 	}
 
@@ -32,15 +32,27 @@ float Inventory::GetTotalWeight() const
 }
 
 /// <summary>
-/// インベントリにデータを追加する関数
+/// インベントリに資材を追加する関数
 /// </summary>
-/// <param name="model">モデル情報</param>
-/// <param name="weight">重量</param>
-void Inventory::SetItemData(ItemData itemData)
+/// <param name="material">資材クラス</param>
+void Inventory::SetMaterial(Material* material)
 {
 	//追加可能？
-	if (CanAdd(itemData))
+	if (CanAdd(material))
 	{
-		inventory.push_back(itemData);	//データを配列に追加
+		inventory.push_back(material);	//データを配列に追加
+	}
+}
+
+void Inventory::DeleteMaterial(Material* material)
+{
+	if (inventory.empty()) return;	//要素が無ければ終了
+
+	for (auto itr = inventory.begin(); itr != inventory.end(); itr++)
+	{
+		if (*itr != material) continue;
+
+		//一致する資材情報があれば削除
+		inventory.erase(itr);
 	}
 }

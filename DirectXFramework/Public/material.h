@@ -36,6 +36,8 @@ public:
 	Material(MaterialType type);		//コンストラクタ
 	~Material();						//デストラクタ
 
+	inline ItemData GetItemData() const { return itemData; }	//資材情報取得関数
+
 	float GetRandomWeight();						//資材の重量決定関数
 	vnModel* CreateModel(MaterialType type);		//資材生成関数
 	ItemData CreateItemData(MaterialType type);		//資材情報の作成関数
