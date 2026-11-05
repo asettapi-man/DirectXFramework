@@ -17,7 +17,7 @@ Material::Material(MaterialType type)
 /// </summary>
 Material::~Material()
 {
-	delete itemData.model;
+
 }
 
 /// <summary>

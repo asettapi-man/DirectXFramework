@@ -5,8 +5,11 @@
 #include "DirectXFramework.h"
 
 #include "Framework/environment.h"
+#include "Framework/../Public/time_manager.h"
 
 #define MAX_LOADSTRING 100
+
+TimeManager timeManager;    //経過時間クラス
 
 // グローバル変数:
 HINSTANCE hInst;                                // 現在のインターフェイス
@@ -55,6 +58,9 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
     //メインフレームの初期化
     vnMainFrame::initialize(hWnd, hInst, screen_width, screen_height);
 
+    timeManager.Initialize();   //経過時間の初期化
+    timeManager.BeginFrame();   //開始時間の取得
+
     // メイン メッセージ ループ:
     while (true)
     {
@@ -67,6 +73,10 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
             TranslateMessage(&msg);
             DispatchMessage(&msg);
         }
+
+        //経過時間の更新
+        timeManager.UpdateDeltaTime();
+
         //メインフレームの実行
         vnMainFrame::execute();
     }

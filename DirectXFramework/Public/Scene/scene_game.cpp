@@ -1,5 +1,6 @@
 #include "../../framework.h"
 #include "../../Framework/environment.h"
+#include "../../Public/time_manager.h"
 
 //初期化関数
 bool SceneMainGame::initialize()
@@ -115,9 +116,6 @@ bool SceneMainGame::initialize()
 //終了関数
 void SceneMainGame::terminate()
 {
-	//== 破棄 ==
-	delete player;
-
 	deleteObject(player->GetModel());
 	deleteObject(pGround);
 	deleteObject(pSky);
@@ -128,6 +126,9 @@ void SceneMainGame::terminate()
 	}
 
 	deleteObject(pShadow);
+
+	//== 破棄 ==
+	delete player;
 
 	/*//== 画像 ==
 	deleteObject(pTitle);
@@ -146,7 +147,7 @@ void SceneMainGame::terminate()
 //処理関数
 void SceneMainGame::execute()
 {
-	player->Execute();
+	player->Execute(TimeManager::GetDeltaTime());
 	//pShadow->setPosition(player->getModel()->getPosition());	//影の座標をプレイヤーの座標に合わせる
 	pShadow->setPositionY(0.01f);	//影の座標を少し浮かせる	Z-Fighting対策
 
@@ -222,6 +223,8 @@ void SceneMainGame::execute()
 				vnCamera::getPositionY(),
 				vnCamera::getPositionZ()
 			);
+
+			vnFont::print(10.0f, 230.0f, L"DeltaTime : %.3f", TimeManager::GetDeltaTime());
 
 			/*for (int i = 0; i < BLOCK_NUM; i++)
 			{

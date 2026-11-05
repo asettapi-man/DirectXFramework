@@ -169,6 +169,7 @@
     <ClCompile Include="public\scene\scene_sprite_test.cpp" />
     <ClCompile Include="public\scene\scene_table.cpp" />
     <ClCompile Include="public\sprite.cpp" />
+    <ClCompile Include="Public\time_manager.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="DirectXFramework.h" />
@@ -216,6 +217,7 @@
     <ClInclude Include="public\scene\scene_sprite_test.h" />
     <ClInclude Include="public\scene\scene_table.h" />
     <ClInclude Include="public\sprite.h" />
+    <ClInclude Include="Public\time_manager.h" />
     <ClInclude Include="Resource.h" />
     <ClInclude Include="targetver.h" />
   </ItemGroup>

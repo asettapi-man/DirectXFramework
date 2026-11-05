@@ -16,11 +16,18 @@ Player::Player(const WCHAR* folder, const WCHAR* file, const XMFLOAT3& boxCollid
 
 	direction = eDirection::NONE;	//衝突方向
 
+	//AABBの中心座標を設定
+	playerPos = XMFLOAT3(
+		model->getPositionX(),
+		model->getPositionY() + aabbCollider.GetBoundingBox().Extents.y,
+		model->getPositionZ());	//プレイヤーの座標を取得
+
 	velocity = XMVectorZero();	//移動量ベクトルの初期化
-	gravity = XMVectorSet(0.0f, -0.01f, 0.0f, 0.0f);	//重力ベクトルの初期化
+	gravity = XMVectorSet(0.0f, -9.81f, 0.0f, 0.0f);	//重力ベクトルの初期化
+	vMove = XMVectorSet(0.0f, 0.0f, 0.0f, 0.0f);
 
 	isJump = false;	//ジャンプフラグ
-	jumpForce = 0.3f;	//ジャンプ力
+	jumpForce = 6.0f;	//ジャンプ力
 
 	radius = 10.0f;	//半径
 	theta = 0.0f;	//角度θ
@@ -32,7 +39,7 @@ Player::Player(const WCHAR* folder, const WCHAR* file, const XMFLOAT3& boxCollid
 
 Player::~Player()
 {
-	delete model;
+
 }
 
 /// <summary>
@@ -54,18 +61,18 @@ void Player::Initialize()
 /// <summary>
 /// 継続処理関数
 /// </summary>
-void Player::Execute()
+void Player::Execute(double deltaTime)
 {
 	bool isMovingForPlayer = false;	//移動フラグ
 
 	//移動方向を示す方向ベクトル
 	vMove = XMVectorSet(0.0f, 0.0f, 0.0f, 0.0f);
-	float movement = 0.1f;	//移動量
+	float movement = 5.0f * deltaTime;	//移動量
 
 	//ダッシュ処理
 	if (vnKeyboard::on(DIK_LSHIFT))
 	{
-		movement = 0.5f;
+		movement = 10.0f * deltaTime;
 	}
 
 	//移動処理
@@ -99,8 +106,8 @@ void Player::Execute()
 	}
 
 	//落下処理
-	velocity += gravity;
-	model->addPositionY(XMVectorGetY(velocity));
+	velocity += gravity * deltaTime;
+	model->addPositionY(XMVectorGetY(velocity) * deltaTime);
 
 	if (XMVectorGetY(velocity) < 0.0f)
 	{
@@ -171,8 +178,8 @@ void Player::Execute()
 	}
 
 	//マウスの移動量を取得
-	float dx = vnMouse::getDX();
-	float dy = vnMouse::getDY();
+	float dx = (float)vnMouse::getDX();
+	float dy = (float)vnMouse::getDY();
 
 	const float value_r = 0.5f * 3.141592f / 180.0f;	//ラジアン角度
 

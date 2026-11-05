@@ -53,9 +53,9 @@ public:
 	Player(const WCHAR* folder, const WCHAR* file, const XMFLOAT3& boxColliderCenter, const XMFLOAT3& boxColliderExtents);	//コンストラクタ
 	~Player();
 
-	void Initialize();	//初期化
-	void Execute();		//処理
-	void Render();		//描画
+	void Initialize();					//初期化関数
+	void Execute(double deltaTime);		//処理関数
+	void Render();						//描画関数
 
 	//== AABBの当たり判定 ==
 	bool CheckPlayerCollision(AABBCollider& c);
