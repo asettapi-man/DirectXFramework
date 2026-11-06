@@ -1,8 +1,10 @@
 #pragma once
 
 #include "../Object/player.h"
+#include "../material.h"
 
-#define modelSize 12
+#define islandCount 12			//島の生成数
+#define initMaterialCount 1		//開始時に生成する資材数
 class SceneMainGame : public vnScene
 {
 private:
@@ -21,7 +23,8 @@ private:
 	vnModel* pGround;			//地面オブジェクト
 	vnModel* pSky;				//背景
 
-	std::vector<vnModel*> models;
+	std::vector<vnModel*> islands;	//島オブジェクト管理配列
+	std::vector<Material*> materials;	//資材オブジェクト管理配列
 
 	/*//== 画像 ==
 	vnSprite* pTitle;	//タイトル画面

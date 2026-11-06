@@ -46,11 +46,11 @@ vnModel* Material::CreateModel(MaterialType type)
 	switch (type)
 	{
 	case MaterialType::Wood:	//木材
-		model = new vnModel(L"data/model/", L".vnm");	//木材モデル
+		model = new vnModel(L"data/model/", L"Tree.vnm");	//木材モデル
 		break;
 
 	case MaterialType::Metal:	//金属
-		model = new vnModel(L"data/model/", L".vnm");	//金属モデル
+		model = new vnModel(L"data/model/", L"crown.vnm");	//金属モデル
 		break;
 
 	default:	//該当なし

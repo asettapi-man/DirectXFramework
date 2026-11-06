@@ -22,11 +22,18 @@ bool SceneMainGame::initialize()
 	pSky = new vnModel(L"data/model/", L"skydome.vnm");			//背景
 	pSky->setLighting(false);		//背景のライティングを無効
 
-	for (int i = 0; i < modelSize; i++)
+	for (int i = 0; i < islandCount; i++)
 	{
 		vnModel* model = new vnModel(L"data/model/", L"ForestIsland.vnm");
-		models.push_back(model);
-		models[i]->setPosition(50.0f * i, 0.0f, 0.0f);
+		islands.push_back(model);
+		islands[i]->setPosition(50.0f * i, 0.0f, 0.0f);
+	}
+
+	for (int i = 0; i < initMaterialCount; i++)
+	{
+		Material* material = new Material(MaterialType::Metal);
+		materials.push_back(material);
+		materials[i]->GetItemData().model->setPosition(0.0f, 0.0f, 10.0f * (i + 1));
 	}
 
 	//== 画像 ==
@@ -90,9 +97,14 @@ bool SceneMainGame::initialize()
 	registerObject(pGround);
 	registerObject(pSky);
 
-	for (int i = 0; i < modelSize; i++)
+	for (int i = 0; i < islandCount; i++)
 	{
-		registerObject(models[i]);
+		registerObject(islands[i]);
+	}
+
+	for (int i = 0; i < initMaterialCount; i++)
+	{
+		registerObject(materials[i]->GetItemData().model);
 	}
 
 	//== 半透明のオブジェクトは不透明の後に描画する ==
@@ -120,9 +132,14 @@ void SceneMainGame::terminate()
 	deleteObject(pGround);
 	deleteObject(pSky);
 
-	for (int i = 0; i < modelSize; i++)
+	for (int i = 0; i < islandCount; i++)
 	{
-		deleteObject(models[i]);
+		deleteObject(islands[i]);
+	}
+
+	for (int i = 0; i < initMaterialCount; i++)
+	{
+		deleteObject(materials[i]->GetItemData().model);
 	}
 
 	deleteObject(pShadow);
@@ -191,6 +208,12 @@ void SceneMainGame::execute()
 				XMVectorGetX(player->Getvelocity()),
 				XMVectorGetY(player->Getvelocity()),
 				XMVectorGetZ(player->Getvelocity())
+			);
+
+			vnFont::print(10.0f, 150.0f, L"playerPos : %.3f, %.3f, %.3f",
+				player->GetModel()->getPositionX(),
+				player->GetModel()->getPositionY(),
+				player->GetModel()->getPositionZ()
 			);
 			/*vnFont::print(10.0f, 10.0f, L"PlayerPos: %.3f, %.3f, %.3f",
 				player->getModel()->getPositionX(),		//x座標
