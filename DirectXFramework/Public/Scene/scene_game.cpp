@@ -175,6 +175,7 @@ void SceneMainGame::execute()
 	vnFont::print((float)vnMainFrame::screenWidth - 150.0f, (float)vnMainFrame::screenHeight - 80.0f, L"ˆÚ“® : W A S D");
 	vnFont::print((float)vnMainFrame::screenWidth - 150.0f, (float)vnMainFrame::screenHeight - 60.0f, player->GetIsJump() ? 0x7fffb84a : 0xffffb84a, L"ƒWƒƒƒ“ƒv : Space");
 	
+	pSky->setPosition(vnCamera::getPosition());
 
 	vnScene::execute();
 
