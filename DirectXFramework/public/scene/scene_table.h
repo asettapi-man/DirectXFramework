@@ -12,6 +12,7 @@ enum eSceneTable
 	Boot,
 	Game,
 	FieldTest,
+	PickTest,
 	GroundTest,
 	CollisionTest,
 	SphereCollisionTest,
@@ -32,6 +33,7 @@ enum eSceneTable
 #include "scene_boot.h"
 #include "scene_field_test.h"
 #include "scene_game.h"
+#include "scene_pick_test.h"
 #include "scene_ground_test.h"
 #include "scene_collision_test.h"
 #include "scene_sphere_collision_test.h"

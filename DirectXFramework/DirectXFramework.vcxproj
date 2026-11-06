@@ -163,6 +163,7 @@
     <ClCompile Include="public\scene\scene_joystick_test.cpp" />
     <ClCompile Include="public\scene\scene_model_test.cpp" />
     <ClCompile Include="public\scene\scene_novel_game.cpp" />
+    <ClCompile Include="Public\Scene\scene_pick_test.cpp" />
     <ClCompile Include="public\scene\scene_priority_test.cpp" />
     <ClCompile Include="public\scene\scene_se_test.cpp" />
     <ClCompile Include="Public\Scene\scene_sphere_collision_test.cpp" />
@@ -211,6 +212,7 @@
     <ClInclude Include="public\scene\scene_joystick_test.h" />
     <ClInclude Include="public\scene\scene_model_test.h" />
     <ClInclude Include="public\scene\scene_novel_game.h" />
+    <ClInclude Include="Public\Scene\scene_pick_test.h" />
     <ClInclude Include="public\scene\scene_priority_test.h" />
     <ClInclude Include="public\scene\scene_se_test.h" />
     <ClInclude Include="Public\Scene\scene_sphere_collision_test.h" />

@@ -164,6 +164,9 @@
     <ClCompile Include="Public\material.cpp">
       <Filter>Public</Filter>
     </ClCompile>
+    <ClCompile Include="Public\Scene\scene_pick_test.cpp">
+      <Filter>Public\Scene</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="framework\camera.h">
@@ -309,6 +312,9 @@
     </ClInclude>
     <ClInclude Include="Public\material.h">
       <Filter>Public</Filter>
+    </ClInclude>
+    <ClInclude Include="Public\Scene\scene_pick_test.h">
+      <Filter>Public\Scene</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
