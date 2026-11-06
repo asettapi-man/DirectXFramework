@@ -241,8 +241,8 @@ void FullScreen(HWND hWnd)
         SetWindowPos(
             hWnd,
             HWND_TOP,
-            clientRect.left,
-            clientRect.top,
+            (clientRect.right - clientRect.left) / 2 - screen_width / 2,    //x座標を画面中央にする
+            (clientRect.bottom - clientRect.top) / 2 - screen_height / 2,   //y座標を画面中央にする
             screen_width,
             screen_height,
             SWP_FRAMECHANGED

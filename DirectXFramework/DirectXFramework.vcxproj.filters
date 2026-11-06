@@ -158,10 +158,10 @@
     <ClCompile Include="public\inventory.cpp">
       <Filter>Public</Filter>
     </ClCompile>
-    <ClCompile Include="Public\material.cpp">
-      <Filter>ソース ファイル</Filter>
-    </ClCompile>
     <ClCompile Include="Public\time_manager.cpp">
+      <Filter>Public</Filter>
+    </ClCompile>
+    <ClCompile Include="Public\material.cpp">
       <Filter>Public</Filter>
     </ClCompile>
   </ItemGroup>
@@ -304,8 +304,10 @@
     <ClInclude Include="public\inventory.h">
       <Filter>Public</Filter>
     </ClInclude>
-    <ClInclude Include="Public\material.h" />
     <ClInclude Include="Public\time_manager.h">
+      <Filter>Public</Filter>
+    </ClInclude>
+    <ClInclude Include="Public\material.h">
       <Filter>Public</Filter>
     </ClInclude>
   </ItemGroup>
