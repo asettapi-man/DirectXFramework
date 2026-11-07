@@ -46,7 +46,7 @@ vnModel* Material::CreateModel(MaterialType type)
 	switch (type)
 	{
 	case MaterialType::Wood:	//–ØŞ
-		model = new vnModel(L"data/model/", L"Tree.vnm");	//–ØŞƒ‚ƒfƒ‹
+		model = new vnModel(L"data/model/Wood/WoodenSlab/", L"WoodenSlab.vnm");	//–ØŞƒ‚ƒfƒ‹
 		break;
 
 	case MaterialType::Metal:	//‹à‘®
