@@ -1,5 +1,6 @@
 #include "../../framework.h"
 #include "../../Framework/environment.h"
+#include <algorithm>
 #include "player.h"
 
 /// <summary>
@@ -28,6 +29,7 @@ Player::Player(const WCHAR* folder, const WCHAR* file, const XMFLOAT3& boxCollid
 
 	isJump = false;	//ジャンプフラグ
 	jumpForce = 6.0f;	//ジャンプ力
+	speedDown = 1.0f;	//移動速度低下量
 
 	radius = 10.0f;	//半径
 	theta = 0.0f;	//角度θ
@@ -67,12 +69,13 @@ void Player::Execute(double deltaTime)
 
 	//移動方向を示す方向ベクトル
 	vMove = XMVectorSet(0.0f, 0.0f, 0.0f, 0.0f);
-	float movement = 5.0f * deltaTime;	//移動量
+	speedDown = (std::max)(0.5f, 1.0f - (inventory.GetTotalWeight() / inventory.GetMaxWeight()) * 0.5f);
+	float movement = 5.0f * speedDown * deltaTime;	//移動量
 
 	//ダッシュ処理
 	if (vnKeyboard::on(DIK_LSHIFT))
 	{
-		movement = 10.0f * deltaTime;
+		movement = 10.0f * speedDown * deltaTime;
 	}
 
 	//移動処理
@@ -234,10 +237,6 @@ void Player::Execute(double deltaTime)
 	vnCamera::setTarget(&camTarget);
 
 #ifdef _DEBUG
-	if (vnKeyboard::on(DIK_UP))
-	{
-		vMove = XMVectorSetY(vMove, 10.0f);
-	}
 
 #endif // DEBUG
 

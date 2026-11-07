@@ -4,7 +4,7 @@
 #include "../material.h"
 
 #define islandCount 12			//島の生成数
-#define initMaterialCount 1		//開始時に生成する資材数
+#define initMaterialCount 10		//開始時に生成する資材数
 class SceneMainGame : public vnScene
 {
 private:

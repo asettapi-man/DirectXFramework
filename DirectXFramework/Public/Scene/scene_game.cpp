@@ -31,7 +31,8 @@ bool SceneMainGame::initialize()
 
 	for (int i = 0; i < initMaterialCount; i++)
 	{
-		Material* material = new Material(MaterialType::Metal);
+		Material* material = new Material(MaterialType::Wood);
+		player->GetInventory().SetMaterial(material);
 		materials.push_back(material);
 		materials[i]->GetItemData().model->setPosition(0.0f, 0.0f, 10.0f * (i + 1));
 	}
@@ -197,15 +198,15 @@ void SceneMainGame::execute()
 		{
 
 #ifdef _DEBUG
-			vnFont::print(10.0f, 90.0f, L"Jump: %s", player->GetIsJump() ? L"true" : L"false");
+			vnFont::print(10.0f, 90.0f, L"player_Jump: %s", player->GetIsJump() ? L"true" : L"false");
 
-			vnFont::print(10.0f, 110.0f, L"vMove : %.3f, %.3f, %.3f",
+			vnFont::print(10.0f, 110.0f, L"player_vMove : %.3f, %.3f, %.3f",
 				XMVectorGetX(player->GetvMove()),
 				XMVectorGetY(player->GetvMove()),
 				XMVectorGetZ(player->GetvMove())
 			);
 
-			vnFont::print(10.0f, 130.0f, L"velocity : %.3f, %.3f, %.3f",
+			vnFont::print(10.0f, 130.0f, L"player_velocity : %.3f, %.3f, %.3f",
 				XMVectorGetX(player->Getvelocity()),
 				XMVectorGetY(player->Getvelocity()),
 				XMVectorGetZ(player->Getvelocity())
@@ -216,13 +217,12 @@ void SceneMainGame::execute()
 				player->GetModel()->getPositionY(),
 				player->GetModel()->getPositionZ()
 			);
-			/*vnFont::print(10.0f, 10.0f, L"PlayerPos: %.3f, %.3f, %.3f",
-				player->getModel()->getPositionX(),		//xÀ•W
-				player->getModel()->getPositionY(), 	//yÀ•W
-				player->getModel()->getPositionZ()		//zÀ•W
+
+			vnFont::print(10.0f, 170.0f, L"player_speedDown : %.3f",
+				player->GetSpeedDown()
 			);
 
-			vnFont::print(10.0f, 50.0f, L"PlayerRotY: %.3f",
+			/*vnFont::print(10.0f, 50.0f, L"PlayerRotY: %.3f",
 				player->getModel()->getRotationY()		//yŽ²‚Ì‰ñ“]Šp“x
 			);
 
@@ -248,7 +248,11 @@ void SceneMainGame::execute()
 				vnCamera::getPositionZ()
 			);
 
-			vnFont::print(10.0f, 230.0f, L"DeltaTime : %.3f", TimeManager::GetDeltaTime());
+			vnFont::print(10.0f, 230.0f, L"inventory_totalWeight : %.3f",
+				player->GetInventory().GetTotalWeight()
+			);
+
+			vnFont::print(10.0f, 250.0f, L"DeltaTime : %.3f", TimeManager::GetDeltaTime());
 
 			/*for (int i = 0; i < BLOCK_NUM; i++)
 			{

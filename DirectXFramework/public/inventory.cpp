@@ -10,8 +10,7 @@
 bool Inventory::CanAdd(const Material* material) const
 {
 	//データを追加可能かどうかと重さが最大重量を越えていないか確認
-	return inventory.size() < maxInventoryCount
-		&& GetTotalWeight() + material->GetItemData().weight < maxWeight;
+	return GetTotalWeight() + material->GetItemData().weight < maxWeight;
 }
 
 /// <summary>

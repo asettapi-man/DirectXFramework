@@ -2,6 +2,7 @@
 
 #include "../model.h"
 #include "../../Public/Collider/AABBCollider.h"
+#include "../../Public/inventory.h"
 
 class Player
 {
@@ -20,9 +21,10 @@ private:
 
 	eDirection direction;
 
-	vnModel* model;	//プレイヤーモデル
+	vnModel* model;				//プレイヤーモデル
 	AABBCollider aabbCollider;	//AABBの当たり判定
-
+	Inventory inventory;		//インベントリ情報
+	
 	XMVECTOR vMove;		//移動ベクトル
 	XMVECTOR velocity;	//速度ベクトル
 	XMVECTOR gravity;	//重力ベクトル
@@ -30,6 +32,7 @@ private:
 	XMFLOAT3 playerPos;	//プレイヤーの座標
 
 	float jumpForce = 0.3f;	//ジャンプ力
+	float speedDown;		//重量による移動速度低下量
 
 	bool isJump;	//ジャンプ可能フラグ
 
@@ -44,11 +47,13 @@ private:
 public:
 
 	// == ゲッター関数 == 
-	inline vnModel* GetModel() const { return model; }	//モデルの取得
-	inline AABBCollider GetAABBCollider() const { return aabbCollider; }	//AABBの当たり判定の取得
-	inline XMVECTOR GetvMove() const { return vMove; }	//移動ベクトルの取得
-	inline XMVECTOR Getvelocity() const { return velocity; }	//速度ベクトルの取得
-	inline bool GetIsJump() const { return isJump; }	//ジャンプフラグの取得
+	inline vnModel* GetModel() const { return model; }						//モデルの取得
+	inline AABBCollider& GetAABBCollider() { return aabbCollider; }			//AABBの当たり判定の取得
+	inline Inventory& GetInventory() { return inventory; }					//インベントリ情報の取得
+	inline XMVECTOR GetvMove() const { return vMove; }						//移動ベクトルの取得
+	inline XMVECTOR Getvelocity() const { return velocity; }				//速度ベクトルの取得
+	inline bool GetIsJump() const { return isJump; }						//ジャンプフラグの取得
+	inline float GetSpeedDown() const { return speedDown; }					//移動速度低下量の取得
 
 	Player(const WCHAR* folder, const WCHAR* file, const XMFLOAT3& boxColliderCenter, const XMFLOAT3& boxColliderExtents);	//コンストラクタ
 	~Player();
