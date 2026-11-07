@@ -31,6 +31,10 @@ private:
 
 	XMFLOAT3 playerPos;	//プレイヤーの座標
 
+	//Rayの情報（カメラ）
+	XMVECTOR linePos;	//直線上の一点
+	XMVECTOR lineDir;	//直線の方向ベクトル
+
 	float jumpForce = 0.3f;	//ジャンプ力
 	float speedDown;		//重量による移動速度低下量
 
