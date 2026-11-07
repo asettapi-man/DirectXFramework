@@ -32,7 +32,6 @@ bool SceneMainGame::initialize()
 	for (int i = 0; i < initMaterialCount; i++)
 	{
 		Material* material = new Material(MaterialType::Wood);
-		player->GetInventory().SetMaterial(material);
 		materials.push_back(material);
 		materials[i]->GetItemData().model->setPosition(0.0f, 0.0f, 10.0f * (i + 1));
 	}
@@ -198,28 +197,22 @@ void SceneMainGame::execute()
 		{
 
 #ifdef _DEBUG
-			vnFont::print(10.0f, 90.0f, L"player_Jump: %s", player->GetIsJump() ? L"true" : L"false");
-
-			vnFont::print(10.0f, 110.0f, L"player_vMove : %.3f, %.3f, %.3f",
+			vnFont::print(10.0f, 0.0f, L"player_vMove : %.3f, %.3f, %.3f",
 				XMVectorGetX(player->GetvMove()),
 				XMVectorGetY(player->GetvMove()),
 				XMVectorGetZ(player->GetvMove())
 			);
 
-			vnFont::print(10.0f, 130.0f, L"player_velocity : %.3f, %.3f, %.3f",
+			vnFont::print(10.0f, 20.0f, L"player_velocity : %.3f, %.3f, %.3f",
 				XMVectorGetX(player->Getvelocity()),
 				XMVectorGetY(player->Getvelocity()),
 				XMVectorGetZ(player->Getvelocity())
 			);
 
-			vnFont::print(10.0f, 150.0f, L"playerPos : %.3f, %.3f, %.3f",
+			vnFont::print(10.0f, 40.0f, L"player_playerPos : %.3f, %.3f, %.3f",
 				player->GetModel()->getPositionX(),
 				player->GetModel()->getPositionY(),
 				player->GetModel()->getPositionZ()
-			);
-
-			vnFont::print(10.0f, 170.0f, L"player_speedDown : %.3f",
-				player->GetSpeedDown()
 			);
 
 			/*vnFont::print(10.0f, 50.0f, L"PlayerRotY: %.3f",
@@ -240,19 +233,27 @@ void SceneMainGame::execute()
 				goalPos.Center.z
 			);*/
 
-			vnFont::print(10.0f, 190.0f, L"isControllable : %s", isControllable ? L"true" : L"false");
-
-			vnFont::print(10.0f, 210.0f, L"CameraPos : %.3f, %.3f, %.3f",
+			vnFont::print(10.0f, 60.0f, L"Camera_Pos : %.3f, %.3f, %.3f",
 				vnCamera::getPositionX(),
 				vnCamera::getPositionY(),
 				vnCamera::getPositionZ()
 			);
 
-			vnFont::print(10.0f, 230.0f, L"inventory_totalWeight : %.3f",
+			vnFont::print(10.0f, 90.0f, L"player_speedDown : %.3f",
+				player->GetSpeedDown()
+			);
+
+			vnFont::print(10.0f, 110.0f, L"inventory_totalWeight : %.3f",
 				player->GetInventory().GetTotalWeight()
 			);
 
-			vnFont::print(10.0f, 250.0f, L"DeltaTime : %.3f", TimeManager::GetDeltaTime());
+			vnFont::print(10.0f, 140.0f, L"isControllable : %s", isControllable ? L"true" : L"false");
+
+			vnFont::print(10.0f, 160.0f, L"player_isInventoryOpen : %s",
+				player->GetIsInventoryOpen() ? L"true" : L"false"
+			);
+
+			vnFont::print(10.0f, 270.0f, L"DeltaTime : %.3f", TimeManager::GetDeltaTime());
 
 			/*for (int i = 0; i < BLOCK_NUM; i++)
 			{

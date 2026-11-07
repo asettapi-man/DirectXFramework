@@ -27,7 +27,9 @@ Player::Player(const WCHAR* folder, const WCHAR* file, const XMFLOAT3& boxCollid
 	gravity = XMVectorSet(0.0f, -9.81f, 0.0f, 0.0f);	//重力ベクトルの初期化
 	vMove = XMVectorSet(0.0f, 0.0f, 0.0f, 0.0f);
 
-	isJump = false;	//ジャンプフラグ
+	isJump = false;				//ジャンプフラグ
+	isInventoryOpen = false;	//インベントリ開閉フラグ
+
 	jumpForce = 6.0f;	//ジャンプ力
 	speedDown = 1.0f;	//移動速度低下量
 
@@ -98,6 +100,12 @@ void Player::Execute(double deltaTime)
 	{
 		vMove = XMVectorSetX(vMove, -movement);
 		isMovingForPlayer = true;	//移動中
+	}
+
+	//インベントリ開閉処理
+	if (vnKeyboard::trg(DIK_TAB))
+	{
+		isInventoryOpen = !isInventoryOpen;
 	}
 
 	//ジャンプ処理
