@@ -24,7 +24,7 @@ bool SceneMainGame::initialize()
 
 	for (int i = 0; i < islandCount; i++)
 	{
-		vnModel* model = new vnModel(L"data/model/", L"ForestIsland.vnm");
+		vnModel* model = new vnModel(L"data/model/Island/MiningIsland/", L"MiningIsland.vnm");
 		islands.push_back(model);
 		islands[i]->setPosition(50.0f * i, 0.0f, 0.0f);
 	}
