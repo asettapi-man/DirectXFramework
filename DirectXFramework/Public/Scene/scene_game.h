@@ -51,6 +51,7 @@ public:
 	void execute();
 	void render();
 
-	//再度ゲームプレイできるように初期化
-	void TitleSetUp();
+	bool DeleteMaterialData(Material* material);	//シーンから資材削除関数
+
+	void TitleSetUp();	//再度ゲームプレイできるように初期化
 };

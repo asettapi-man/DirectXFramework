@@ -142,7 +142,7 @@ void SceneMainGame::terminate()
 		deleteObject(islands[i]);
 	}
 
-	for (int i = 0; i < initMaterialCount; i++)
+	for (std::size_t i = 0; i < materials.size(); i++)
 	{
 		deleteObject(materials[i]->GetModel());
 	}
@@ -189,6 +189,11 @@ void SceneMainGame::execute()
 			{
 				//Eキー押下でインベントリに資材追加
 				isAddMaterial = player->AddMaterial(targetMat);
+				if (isAddMaterial)
+				{
+					DeleteMaterialData(targetMat);
+					break;
+				}
 			}
 		}
 		else
@@ -334,10 +339,24 @@ void SceneMainGame::render()
 
 	player->Render();
 
-	for (int i = 0; i < initMaterialCount; i++)
+	for (std::size_t i = 0; i < materials.size(); i++)
 	{
 		materials[i]->Draw();
 	}
+}
+
+bool SceneMainGame::DeleteMaterialData(Material* material)
+{
+	auto itr = std::find(materials.begin(), materials.end(), material);
+
+	if (itr != materials.end())
+	{
+		materials.erase(itr);
+		deleteObject(material->GetModel());
+		return true;
+	}
+
+	return false;
 }
 
 void SceneMainGame::TitleSetUp()
