@@ -3,8 +3,8 @@
 #include "../Object/player.h"
 #include "../material.h"
 
-#define islandCount 12			//島の生成数
-#define initMaterialCount 10		//開始時に生成する資材数
+#define islandCount 0			//島の生成数
+#define initMaterialCount 2		//開始時に生成する資材数
 class SceneMainGame : public vnScene
 {
 private:
@@ -35,6 +35,7 @@ private:
 	*/
 
 	bool isControllable;	//操作可能フラグ
+	bool isAddMaterial;		//資材追加フラグ
 
 	/*vnSound* pBGM;	//BGM
 

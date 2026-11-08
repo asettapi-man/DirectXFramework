@@ -34,6 +34,7 @@ private:
 	//Rayの情報（カメラ）
 	XMVECTOR linePos;	//直線上の一点
 	XMVECTOR lineDir;	//直線の方向ベクトル
+	float pickupRange;	//Rayの距離
 
 	float jumpForce = 0.3f;	//ジャンプ力
 	float speedDown;		//重量による移動速度低下量
@@ -55,6 +56,10 @@ public:
 	inline vnModel* GetModel() const { return model; }						//モデルの取得
 	inline AABBCollider& GetAABBCollider() { return aabbCollider; }			//AABBの当たり判定の取得
 	inline Inventory& GetInventory() { return inventory; }					//インベントリ情報の取得
+	inline XMVECTOR GetLinePos() { return linePos; }						//Rayの位置取得関数
+	inline XMVECTOR GetLineDir() { return lineDir; }						//Rayの方向ベクトル取得関数
+	inline float GetPickupRange() { return pickupRange; }					//Rayの距離取得関数
+
 	inline XMVECTOR GetvMove() const { return vMove; }						//移動ベクトルの取得
 	inline XMVECTOR Getvelocity() const { return velocity; }				//速度ベクトルの取得
 	inline bool GetIsJump() const { return isJump; }						//ジャンプフラグの取得
@@ -68,6 +73,7 @@ public:
 	void Execute(double deltaTime);		//処理関数
 	void Render();						//描画関数
 
-	//== AABBの当たり判定 ==
-	bool CheckPlayerCollision(AABBCollider& c);
+	bool AddMaterial(Material* material);
+
+	bool CheckPlayerCollision(AABBCollider& c);	//AABBコライダーの衝突判定
 };

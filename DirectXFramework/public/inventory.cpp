@@ -7,7 +7,7 @@
 /// </summary>
 /// <param name="material">資材クラス</param>
 /// <returns>追加可能かどうかを返す</returns>
-bool Inventory::CanAdd(const Material* material) const
+bool Inventory::CanAdd(Material* material) const
 {
 	//データを追加可能かどうかと重さが最大重量を越えていないか確認
 	return GetTotalWeight() + material->GetItemData().weight < maxWeight;
@@ -21,7 +21,7 @@ float Inventory::GetTotalWeight() const
 {
 	float totalWeight = 0;	//トータル用
 
-	for (const Material* mat : inventory)
+	for (Material* mat : inventory)
 	{
 		int weight = mat->GetItemData().weight;	//アイテムの重量
 		totalWeight += weight;

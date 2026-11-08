@@ -33,7 +33,12 @@ bool SceneMainGame::initialize()
 	{
 		Material* material = new Material(MaterialType::Wood);
 		materials.push_back(material);
-		materials[i]->GetItemData().model->setPosition(0.0f, 0.0f, 10.0f * (i + 1));
+		materials[i]->GetModel()->setPosition(0.0f, 0.0f, 10.0f * (i + 1));
+		materials[i]->GetAABBCollider().SetBoundingBoxCenter(
+			materials[i]->GetModel()->getPositionX(),
+			materials[i]->GetModel()->getPositionY(),
+			materials[i]->GetModel()->getPositionZ()
+		);
 	}
 
 	//== 画像 ==
@@ -104,7 +109,7 @@ bool SceneMainGame::initialize()
 
 	for (int i = 0; i < initMaterialCount; i++)
 	{
-		registerObject(materials[i]->GetItemData().model);
+		registerObject(materials[i]->GetModel());
 	}
 
 	//== 半透明のオブジェクトは不透明の後に描画する ==
@@ -139,7 +144,7 @@ void SceneMainGame::terminate()
 
 	for (int i = 0; i < initMaterialCount; i++)
 	{
-		deleteObject(materials[i]->GetItemData().model);
+		deleteObject(materials[i]->GetModel());
 	}
 
 	deleteObject(pShadow);
@@ -167,6 +172,30 @@ void SceneMainGame::execute()
 	player->Execute(TimeManager::GetDeltaTime());
 	//pShadow->setPosition(player->getModel()->getPosition());	//影の座標をプレイヤーの座標に合わせる
 	pShadow->setPositionY(0.01f);	//影の座標を少し浮かせる	Z-Fighting対策
+
+	float hitDistance = 0.0f;	//衝突点からカメラの位置までの距離を返す
+	for (std::size_t i = 0; i < materials.size(); i++)
+	{
+		//資材クラスが所持しているAABBColliderとの距離を確認
+		if (materials[i]->GetAABBCollider().GetBoundingBox().Intersects(
+				player->GetLinePos(),
+				player->GetLineDir(),
+				hitDistance)
+			&& hitDistance <= player->GetPickupRange())
+		{
+			Material* targetMat = materials[i];	//衝突対象の資材
+
+			if (vnKeyboard::trg(DIK_E))
+			{
+				//Eキー押下でインベントリに資材追加
+				isAddMaterial = player->AddMaterial(targetMat);
+			}
+		}
+		else
+		{
+			materials[i]->SetIsPickup(false);	//取得不可
+		}
+	}
 
 	vnDebugDraw::Grid();
 	vnDebugDraw::Axis();
@@ -253,7 +282,9 @@ void SceneMainGame::execute()
 				player->GetIsInventoryOpen() ? L"true" : L"false"
 			);
 
-			vnFont::print(10.0f, 270.0f, L"DeltaTime : %.3f", TimeManager::GetDeltaTime());
+			vnFont::print(10.0f, 180.0f, L"isAddMaterial : %s", isAddMaterial ? L"true" : L"false");
+
+			vnFont::print((float)vnMainFrame::screenWidth - 150.0f, 0.0f, L"DeltaTime : %.3f", TimeManager::GetDeltaTime());
 
 			/*for (int i = 0; i < BLOCK_NUM; i++)
 			{
@@ -302,6 +333,11 @@ void SceneMainGame::render()
 	vnScene::render();
 
 	player->Render();
+
+	for (int i = 0; i < initMaterialCount; i++)
+	{
+		materials[i]->Draw();
+	}
 }
 
 void SceneMainGame::TitleSetUp()

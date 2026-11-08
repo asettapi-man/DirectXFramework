@@ -30,6 +30,10 @@ Player::Player(const WCHAR* folder, const WCHAR* file, const XMFLOAT3& boxCollid
 	isJump = false;				//ジャンプフラグ
 	isInventoryOpen = false;	//インベントリ開閉フラグ
 
+	linePos = XMVectorZero();	//Rayの位置
+	lineDir = XMVectorZero();	//Rayの方向
+	pickupRange = 4.0f;			//Rayの長さ
+
 	jumpForce = 6.0f;	//ジャンプ力
 	speedDown = 1.0f;	//移動速度低下量
 
@@ -244,6 +248,11 @@ void Player::Execute(double deltaTime)
 
 	vnCamera::setTarget(&camTarget);
 
+	XMVECTOR cameraForward = XMVector3Normalize(XMVectorSubtract(camTarget, camPos));	//カメラが見ている方向ベクトル
+
+	linePos = camPos;	//始点
+	lineDir = cameraForward;
+
 #ifdef _DEBUG
 
 #endif // DEBUG
@@ -261,6 +270,15 @@ void Player::Render()
 		aabbCollider.DebugLineRenderer();
 	}
 #endif // _DEBUG
+}
+
+
+bool Player::AddMaterial(Material* material)
+{
+	if (!inventory.CanAdd(material)) return false;	//重量オーバーなら処理終了
+
+	inventory.SetMaterial(material);	//インベントリに資材追加
+	return true;
 }
 
 

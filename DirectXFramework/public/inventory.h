@@ -8,15 +8,14 @@ class Inventory
 private:
 	//インベントリの情報
 	std::vector<Material*> inventory;	//インベントリのデータ
-
-	const float maxWeight = 100.0f;					//最大重量
+	const float maxWeight = 100.0f;		//最大重量
 
 public:
 	Inventory() = default;	//コンストラクタ
 
-	inline float GetMaxWeight() const { return maxWeight; }							//インベントリ内の最大重量
+	inline float GetMaxWeight() const { return maxWeight; }		//インベントリ内の最大重量
 
-	bool CanAdd(const Material* material) const;	//追加可能フラグ関数
+	bool CanAdd(Material* material) const;			//追加可能フラグ関数
 	float GetTotalWeight() const;					//インベントリの最大重量取得関数
 
 	void SetMaterial(Material* material);		//資材の追加

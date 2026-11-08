@@ -9,6 +9,7 @@
 /// <param name="type">資材の種類</param>
 Material::Material(MaterialType type)
 {
+	CreateModel(type);	//資材モデル生成
 	itemData = CreateItemData(type);	//採取時にランダムな資材を生成
 }
 
@@ -17,7 +18,17 @@ Material::Material(MaterialType type)
 /// </summary>
 Material::~Material()
 {
+	
+}
 
+/// <summary>
+/// 描画関数
+/// </summary>
+void Material::Draw()
+{
+#ifdef _DEBUG
+	collider.DebugLineRenderer();	//コライダーの枠組み表示
+#endif
 }
 
 /// <summary>
@@ -37,12 +48,8 @@ float Material::GetRandomWeight()
 /// <summary>
 /// 資材モデル作成関数
 /// </summary>
-/// <param name="type">資材の種類</param>
-/// <returns>種類ごとの資材モデルを返す/returns>
-vnModel* Material::CreateModel(MaterialType type)
+void Material::CreateModel(MaterialType type)
 {
-	vnModel* model = nullptr;	//出力結果
-
 	switch (type)
 	{
 	case MaterialType::Wood:	//木材
@@ -57,7 +64,15 @@ vnModel* Material::CreateModel(MaterialType type)
 		break;
 	}
 
-	return model;
+	//AABBコライダーの設定
+	XMFLOAT3 materialPos = XMFLOAT3(
+		model->getPositionX(),
+		model->getPositionY(),
+		model->getPositionZ()
+	);
+
+	collider.SetBoundingBoxCenter(materialPos);
+	collider.SetBoundingBoxExtents(XMFLOAT3(1.25f, 0.3f, 1.25f));
 }
 
 /// <summary>
@@ -68,9 +83,8 @@ vnModel* Material::CreateModel(MaterialType type)
 ItemData Material::CreateItemData(MaterialType type)
 {
 	float weight = GetRandomWeight();
-	vnModel* model = CreateModel(type);
 
-	itemData = { model, weight };
+	itemData = {type , weight };
 
 	return itemData;
 }
