@@ -9,6 +9,8 @@ bool SceneMainGame::initialize()
 	player = new Player(L"data/model/bear/", L"bear.vnm", XMFLOAT3(0.0f, 1.3f, 0.0f), XMFLOAT3(0.5f, 1.3f, 0.5f));
 	player->Initialize();
 
+	crosshairUI = new CrosshairUI();
+
 	pShadow = new vnModel(L"data/model/", L"shadow.vnm");		//‰e
 	pShadow->setTransparent(true);	//‰e‚Ì”¼“§–¾‚ð—LŒø
 	pShadow->setPositionY(0.01f);	//‰e‚ÌˆÊ’u‚ð­‚µ•‚‚©‚¹‚é	Z-Fighting‘Îô
@@ -22,14 +24,14 @@ bool SceneMainGame::initialize()
 	pSky = new vnModel(L"data/model/", L"skydome.vnm");			//”wŒi
 	pSky->setLighting(false);		//”wŒi‚Ìƒ‰ƒCƒeƒBƒ“ƒO‚ð–³Œø
 
-	for (int i = 0; i < islandCount; i++)
+	for (int i = 0; i < ISLANDCOUNT; i++)
 	{
 		vnModel* model = new vnModel(L"data/model/Island/MiningIsland/", L"MiningIsland.vnm");
 		islands.push_back(model);
 		islands[i]->setPosition(50.0f * i, 0.0f, 0.0f);
 	}
 
-	for (int i = 0; i < initMaterialCount; i++)
+	for (int i = 0; i < INITMATERIALCOUNT; i++)
 	{
 		Material* material = new Material(MaterialType::Wood);
 		materials.push_back(material);
@@ -102,12 +104,12 @@ bool SceneMainGame::initialize()
 	registerObject(pGround);
 	registerObject(pSky);
 
-	for (int i = 0; i < islandCount; i++)
+	for (int i = 0; i < ISLANDCOUNT; i++)
 	{
 		registerObject(islands[i]);
 	}
 
-	for (int i = 0; i < initMaterialCount; i++)
+	for (int i = 0; i < INITMATERIALCOUNT; i++)
 	{
 		registerObject(materials[i]->GetModel());
 	}
@@ -115,8 +117,10 @@ bool SceneMainGame::initialize()
 	//== ”¼“§–¾‚ÌƒIƒuƒWƒFƒNƒg‚Í•s“§–¾‚ÌŒã‚É•`‰æ‚·‚é ==
 	registerObject(pShadow);
 
-	/*//== ‰æ‘œ ==
-	registerObject(pTitle);
+	//== ‰æ‘œ ==
+	registerObject(crosshairUI->GetSprite());
+
+	/*registerObject(pTitle);
 	registerObject(pStartButton);
 	registerObject(pQuitButton);
 	registerObject(pTitleButton);
@@ -137,7 +141,7 @@ void SceneMainGame::terminate()
 	deleteObject(pGround);
 	deleteObject(pSky);
 
-	for (int i = 0; i < islandCount; i++)
+	for (int i = 0; i < ISLANDCOUNT; i++)
 	{
 		deleteObject(islands[i]);
 	}
@@ -183,6 +187,8 @@ void SceneMainGame::execute()
 				hitDistance)
 			&& hitDistance <= player->GetPickupRange())
 		{
+			//crosshairUI->UpdateCrosshairUI(true);
+
 			Material* targetMat = materials[i];	//Õ“Ë‘ÎÛ‚ÌŽ‘Þ
 
 			if (vnKeyboard::trg(DIK_E))
@@ -198,7 +204,7 @@ void SceneMainGame::execute()
 		}
 		else
 		{
-			materials[i]->SetIsPickup(false);	//Žæ“¾•s‰Â
+			//crosshairUI->UpdateCrosshairUI(false);
 		}
 	}
 

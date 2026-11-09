@@ -7,8 +7,8 @@ class Inventory
 {
 private:
 	//インベントリの情報
-	std::vector<Material*> inventory;	//インベントリのデータ
-	const float maxWeight = 100.0f;		//最大重量
+	static constexpr float maxWeight = 100.0f;		//最大重量
+	std::vector<Material*> inventory;				//インベントリのデータ
 
 public:
 	Inventory() = default;	//コンストラクタ

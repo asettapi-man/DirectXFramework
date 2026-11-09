@@ -145,6 +145,7 @@
     <ClCompile Include="framework\sound.cpp" />
     <ClCompile Include="public\billboard.cpp" />
     <ClCompile Include="public\Collider\AABBCollider.cpp" />
+    <ClCompile Include="Public\crosshair_ui.cpp" />
     <ClCompile Include="public\inventory.cpp" />
     <ClCompile Include="Public\material.cpp" />
     <ClCompile Include="public\model.cpp" />
@@ -194,6 +195,7 @@
     <ClInclude Include="framework\sound.h" />
     <ClInclude Include="public\billboard.h" />
     <ClInclude Include="public\Collider\AABBCollider.h" />
+    <ClInclude Include="Public\crosshair_ui.h" />
     <ClInclude Include="public\inventory.h" />
     <ClInclude Include="Public\material.h" />
     <ClInclude Include="public\model.h" />

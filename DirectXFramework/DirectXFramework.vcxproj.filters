@@ -167,6 +167,9 @@
     <ClCompile Include="Public\Scene\scene_pick_test.cpp">
       <Filter>Public\Scene</Filter>
     </ClCompile>
+    <ClCompile Include="Public\crosshair_ui.cpp">
+      <Filter>Public</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="framework\camera.h">
@@ -315,6 +318,9 @@
     </ClInclude>
     <ClInclude Include="Public\Scene\scene_pick_test.h">
       <Filter>Public\Scene</Filter>
+    </ClInclude>
+    <ClInclude Include="Public\crosshair_ui.h">
+      <Filter>Public</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

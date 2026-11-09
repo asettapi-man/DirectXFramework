@@ -2,9 +2,8 @@
 
 #include "../Object/player.h"
 #include "../material.h"
+#include "../crosshair_ui.h"
 
-#define islandCount 0			//島の生成数
-#define initMaterialCount 2		//開始時に生成する資材数
 class SceneMainGame : public vnScene
 {
 private:
@@ -15,11 +14,15 @@ private:
 		RESULT
 	};
 
+	static constexpr int ISLANDCOUNT = 0;	//島の生成数
+	static constexpr int INITMATERIALCOUNT = 2;	//開始時に生成する資材数	
+
 	eGameState gameState;	//ゲームステート
 
 	Player* player;				//プレイヤー
-	vnModel* pShadow;			//影オブジェクト
+	CrosshairUI* crosshairUI;	//クロスヘア
 
+	vnModel* pShadow;			//影オブジェクト
 	vnModel* pGround;			//地面オブジェクト
 	vnModel* pSky;				//背景
 
