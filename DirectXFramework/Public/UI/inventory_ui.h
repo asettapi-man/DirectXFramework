@@ -22,7 +22,7 @@ public:
 	InventoryUI() = default;	//コンストラクタ
 	~InventoryUI();				//デストラクタ
 
-	void Render();	//描画関数
+	void Render(Inventory& inventory);	//描画関数
 
 	void SetInventorySlot();	//インベントリスロット追加関数
 	void DeleteInventorySlot();						//インベントリスロット削除関数

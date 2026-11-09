@@ -40,7 +40,6 @@ private:
 	float speedDown;		//重量による移動速度低下量
 
 	bool isJump;			//ジャンプ可能フラグ
-	bool isInventoryOpen;	//インベントリ開閉フラグ
 
 	//極座標の情報
 	float radius;	//半径
@@ -63,7 +62,6 @@ public:
 	inline XMVECTOR GetvMove() const { return vMove; }						//移動ベクトルの取得
 	inline XMVECTOR Getvelocity() const { return velocity; }				//速度ベクトルの取得
 	inline bool GetIsJump() const { return isJump; }						//ジャンプフラグの取得
-	inline bool GetIsInventoryOpen() const { return isInventoryOpen; }		//インベントリ開閉フラグの取得
 	inline float GetSpeedDown() const { return speedDown; }					//移動速度低下量の取得
 
 	Player(const WCHAR* folder, const WCHAR* file, const XMFLOAT3& boxColliderCenter, const XMFLOAT3& boxColliderExtents);	//コンストラクタ

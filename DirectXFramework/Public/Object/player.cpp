@@ -28,7 +28,6 @@ Player::Player(const WCHAR* folder, const WCHAR* file, const XMFLOAT3& boxCollid
 	vMove = XMVectorSet(0.0f, 0.0f, 0.0f, 0.0f);
 
 	isJump = false;				//ジャンプフラグ
-	isInventoryOpen = false;	//インベントリ開閉フラグ
 
 	linePos = XMVectorZero();	//Rayの位置
 	lineDir = XMVectorZero();	//Rayの方向
@@ -104,12 +103,6 @@ void Player::Execute(double deltaTime)
 	{
 		vMove = XMVectorSetX(vMove, -movement);
 		isMovingForPlayer = true;	//移動中
-	}
-
-	//インベントリ開閉処理
-	if (vnKeyboard::trg(DIK_TAB))
-	{
-		isInventoryOpen = !isInventoryOpen;
 	}
 
 	//ジャンプ処理

@@ -10,11 +10,13 @@ InventoryUI::~InventoryUI()
 	}
 }
 
-void InventoryUI::Render()
+void InventoryUI::Render(Inventory& inventory)
 {
 	for (std::size_t i = 0; i < inventoryUI.size(); i++)
 	{
-		inventoryUI.at(i)->sprite->render();
+		auto& ui = inventoryUI.at(i);
+		ui->sprite->render();
+		vnFont::print(ui->x, ui->y, L"%.1fkg", inventory.GetInventory().at(i)->GetItemData().weight);
 	}
 }
 

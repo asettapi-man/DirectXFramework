@@ -23,7 +23,7 @@ float Inventory::GetTotalWeight() const
 
 	for (Material* mat : inventory)
 	{
-		int weight = mat->GetItemData().weight;	//アイテムの重量
+		float weight = mat->GetItemData().weight;	//アイテムの重量
 		totalWeight += weight;
 	}
 

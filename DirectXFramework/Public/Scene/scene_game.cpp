@@ -305,10 +305,6 @@ void SceneMainGame::execute()
 
 			vnFont::print(10.0f, 140.0f, L"isControllable : %s", isControllable ? L"true" : L"false");
 
-			vnFont::print(10.0f, 160.0f, L"player_isInventoryOpen : %s",
-				player->GetIsInventoryOpen() ? L"true" : L"false"
-			);
-
 			vnFont::print(10.0f, 180.0f, L"isAddMaterial : %s", isAddMaterial ? L"true" : L"false");
 
 			vnFont::print((float)vnMainFrame::screenWidth - 150.0f, 0.0f, L"DeltaTime : %.3f", TimeManager::GetDeltaTime());
@@ -363,7 +359,7 @@ void SceneMainGame::render()
 
 	if (isInventoryUIRender)
 	{
-		inventoryUI.Render();
+		inventoryUI.Render(player->GetInventory());
 	}
 
 	for (std::size_t i = 0; i < materials.size(); i++)
