@@ -118,7 +118,10 @@ bool SceneMainGame::initialize()
 	registerObject(pShadow);
 
 	//== 画像 ==
-	registerObject(crosshairUI->GetSprite());
+	registerObject(crosshairUI->GetNormalCrosshair());
+	registerObject(crosshairUI->GetActionCrosshair());
+
+	crosshairUI->GetActionCrosshair()->setRenderEnable(false);
 
 	/*registerObject(pTitle);
 	registerObject(pStartButton);
@@ -156,8 +159,11 @@ void SceneMainGame::terminate()
 	//== 破棄 ==
 	delete player;
 
-	/*//== 画像 ==
-	deleteObject(pTitle);
+	//== 画像 ==
+	deleteObject(crosshairUI->GetNormalCrosshair());
+	deleteObject(crosshairUI->GetActionCrosshair());
+
+	/*deleteObject(pTitle);
 	deleteObject(pStartButton);
 	deleteObject(pQuitButton);
 	deleteObject(pTitleButton);
@@ -178,6 +184,7 @@ void SceneMainGame::execute()
 	pShadow->setPositionY(0.01f);	//影の座標を少し浮かせる	Z-Fighting対策
 
 	float hitDistance = 0.0f;	//衝突点からカメラの位置までの距離を返す
+	crosshairUI->UpdateCrosshairUI(false);
 	for (std::size_t i = 0; i < materials.size(); i++)
 	{
 		//資材クラスが所持しているAABBColliderとの距離を確認
@@ -187,7 +194,7 @@ void SceneMainGame::execute()
 				hitDistance)
 			&& hitDistance <= player->GetPickupRange())
 		{
-			//crosshairUI->UpdateCrosshairUI(true);
+			crosshairUI->UpdateCrosshairUI(true);
 
 			Material* targetMat = materials[i];	//衝突対象の資材
 
@@ -201,10 +208,6 @@ void SceneMainGame::execute()
 					break;
 				}
 			}
-		}
-		else
-		{
-			//crosshairUI->UpdateCrosshairUI(false);
 		}
 	}
 

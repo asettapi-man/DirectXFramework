@@ -4,19 +4,26 @@
 
 CrosshairUI::CrosshairUI()
 {
-	crosshair = new vnSprite(
+	normalCrosshair = new vnSprite(
 		(float)vnMainFrame::screenCenterX,
 		(float)vnMainFrame::screenCenterY,
 		WIDTH,
 		HEIGHT,
-		L"data/image/centerDot.png"
+		L"data/image/normalCrosshair.png"
+	);
+
+	actionCrosshair = new vnSprite(
+		(float)vnMainFrame::screenCenterX,
+		(float)vnMainFrame::screenCenterY,
+		WIDTH,
+		HEIGHT,
+		L"data/image/actionCrosshair.png"
 	);
 }
 
 void CrosshairUI::UpdateCrosshairUI(bool flag)
 {
-	if (flag)
-	{
-		
-	}
+	//ƒNƒƒXƒwƒA‚ÌØ‚è‘Ö‚¦
+	normalCrosshair->setRenderEnable(!flag);
+	actionCrosshair->setRenderEnable(flag);
 }
