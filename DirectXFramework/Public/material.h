@@ -38,7 +38,7 @@ public:
 	Material(MaterialType type);		//コンストラクタ
 	~Material();						//デストラクタ
 	
-	void Draw();	//AABBコライダー描画関数
+	void Render();	//AABBコライダー描画関数
 
 	inline vnModel* GetModel() const { return model; }			//モデル情報取得関数
 	inline AABBCollider& GetAABBCollider() { return collider; }	//AABBコライダー取得関数

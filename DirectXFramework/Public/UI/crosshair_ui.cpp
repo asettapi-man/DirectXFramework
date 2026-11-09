@@ -1,7 +1,10 @@
-#include "../framework.h"
-#include "../Framework/environment.h"
+#include "../../framework.h"
+#include "../../Framework/environment.h"
 #include "crosshair_ui.h"
 
+/// <summary>
+/// コンストラクタ
+/// </summary>
 CrosshairUI::CrosshairUI()
 {
 	normalCrosshair = new vnSprite(
@@ -21,6 +24,10 @@ CrosshairUI::CrosshairUI()
 	);
 }
 
+/// <summary>
+/// クロスヘア表示変更関数
+/// </summary>
+/// <param name="flag">アクションフラグ</param>
 void CrosshairUI::UpdateCrosshairUI(bool flag)
 {
 	//クロスヘアの切り替え

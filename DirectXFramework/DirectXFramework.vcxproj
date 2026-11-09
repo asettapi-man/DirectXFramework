@@ -145,7 +145,6 @@
     <ClCompile Include="framework\sound.cpp" />
     <ClCompile Include="public\billboard.cpp" />
     <ClCompile Include="public\Collider\AABBCollider.cpp" />
-    <ClCompile Include="Public\crosshair_ui.cpp" />
     <ClCompile Include="public\inventory.cpp" />
     <ClCompile Include="Public\material.cpp" />
     <ClCompile Include="public\model.cpp" />
@@ -172,6 +171,8 @@
     <ClCompile Include="public\scene\scene_table.cpp" />
     <ClCompile Include="public\sprite.cpp" />
     <ClCompile Include="Public\time_manager.cpp" />
+    <ClCompile Include="Public\UI\crosshair_ui.cpp" />
+    <ClCompile Include="Public\UI\inventory_ui.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="DirectXFramework.h" />
@@ -195,7 +196,6 @@
     <ClInclude Include="framework\sound.h" />
     <ClInclude Include="public\billboard.h" />
     <ClInclude Include="public\Collider\AABBCollider.h" />
-    <ClInclude Include="Public\crosshair_ui.h" />
     <ClInclude Include="public\inventory.h" />
     <ClInclude Include="Public\material.h" />
     <ClInclude Include="public\model.h" />
@@ -222,6 +222,8 @@
     <ClInclude Include="public\scene\scene_table.h" />
     <ClInclude Include="public\sprite.h" />
     <ClInclude Include="Public\time_manager.h" />
+    <ClInclude Include="Public\UI\crosshair_ui.h" />
+    <ClInclude Include="Public\UI\inventory_ui.h" />
     <ClInclude Include="Resource.h" />
     <ClInclude Include="targetver.h" />
   </ItemGroup>

@@ -131,7 +131,9 @@ bool SceneMainGame::initialize()
 	*/
 
 	//== 初期化 ==
-	isControllable = true;	//操作可能フラグの初期化
+	isControllable = true;	//操作可能フラグ
+	isAddMaterial = true;	//資材追加可能フラグ
+	isInventoryUIRender = false;	//インベントリUI表示フラグ
 
 	gameState = eGameState::GAME;	//ゲームステートの初期化
 	return true;
@@ -204,11 +206,22 @@ void SceneMainGame::execute()
 				isAddMaterial = player->AddMaterial(targetMat);
 				if (isAddMaterial)
 				{
+					inventoryUI.SetInventorySlot();
 					DeleteMaterialData(targetMat);
 					break;
 				}
 			}
 		}
+	}
+
+	if (vnKeyboard::on(DIK_TAB))
+	{
+		//インベントリUIの表示切替
+		isInventoryUIRender = true;
+	}
+	else
+	{
+		isInventoryUIRender = false;
 	}
 
 	vnDebugDraw::Grid();
@@ -348,9 +361,14 @@ void SceneMainGame::render()
 
 	player->Render();
 
+	if (isInventoryUIRender)
+	{
+		inventoryUI.Render();
+	}
+
 	for (std::size_t i = 0; i < materials.size(); i++)
 	{
-		materials[i]->Draw();
+		materials[i]->Render();
 	}
 }
 

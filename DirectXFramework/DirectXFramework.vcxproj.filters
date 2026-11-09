@@ -33,6 +33,9 @@
     <Filter Include="リソース ファイル\ヘッダー ファイル">
       <UniqueIdentifier>{b48a7592-1aa1-403d-984c-27518165a709}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Public\UI">
+      <UniqueIdentifier>{e2068e71-0196-4313-8461-bcb381b627e1}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="framework\camera.cpp">
@@ -167,8 +170,11 @@
     <ClCompile Include="Public\Scene\scene_pick_test.cpp">
       <Filter>Public\Scene</Filter>
     </ClCompile>
-    <ClCompile Include="Public\crosshair_ui.cpp">
-      <Filter>Public</Filter>
+    <ClCompile Include="Public\UI\crosshair_ui.cpp">
+      <Filter>Public\UI</Filter>
+    </ClCompile>
+    <ClCompile Include="Public\UI\inventory_ui.cpp">
+      <Filter>Public\UI</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -319,8 +325,11 @@
     <ClInclude Include="Public\Scene\scene_pick_test.h">
       <Filter>Public\Scene</Filter>
     </ClInclude>
-    <ClInclude Include="Public\crosshair_ui.h">
-      <Filter>Public</Filter>
+    <ClInclude Include="Public\UI\crosshair_ui.h">
+      <Filter>Public\UI</Filter>
+    </ClInclude>
+    <ClInclude Include="Public\UI\inventory_ui.h">
+      <Filter>Public\UI</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

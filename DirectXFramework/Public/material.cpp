@@ -24,7 +24,7 @@ Material::~Material()
 /// <summary>
 /// 描画関数
 /// </summary>
-void Material::Draw()
+void Material::Render()
 {
 #ifdef _DEBUG
 	collider.DebugLineRenderer();	//コライダーの枠組み表示

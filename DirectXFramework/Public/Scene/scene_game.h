@@ -2,7 +2,8 @@
 
 #include "../Object/player.h"
 #include "../material.h"
-#include "../crosshair_ui.h"
+#include "../UI/crosshair_ui.h"
+#include "../UI/inventory_ui.h"
 
 class SceneMainGame : public vnScene
 {
@@ -21,6 +22,7 @@ private:
 
 	Player* player;				//プレイヤー
 	CrosshairUI* crosshairUI;	//クロスヘア
+	InventoryUI inventoryUI;	//インベントリUI
 
 	vnModel* pShadow;			//影オブジェクト
 	vnModel* pGround;			//地面オブジェクト
@@ -37,8 +39,9 @@ private:
 	vnSprite* pDescriptionUI;	//説明UI背景
 	*/
 
-	bool isControllable;	//操作可能フラグ
-	bool isAddMaterial;		//資材追加フラグ
+	bool isControllable;		//操作可能フラグ
+	bool isAddMaterial;			//資材追加フラグ
+	bool isInventoryUIRender;	//インベントリUI表示フラグ
 
 	/*vnSound* pBGM;	//BGM
 
