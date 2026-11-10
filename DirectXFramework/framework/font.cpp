@@ -342,18 +342,26 @@ void vnFont::output(const WCHAR *string, ...)
 	OutputDebugStringW(buf);
 }
 
-void vnFont::PrintInRect(RECT rect, IDWriteTextFormat* format, DWORD color, const WCHAR* string, ...)
+bool vnFont::MeasureText(const WCHAR* text, float boxWidth, float boxHeight, DWRITE_TEXT_METRICS& metrics)
 {
-	if (string == NULL)return;
-	//vnDirect2D::getDeviceContext()->DrawTextW();
+	IDWriteTextLayout* layout = nullptr;	//描画形式
 
-	Color = color;
+	//描画形式の作成
+	const HRESULT hr = vnDirect2D::getDWFactory()->CreateTextLayout(
+		text,
+		static_cast<UINT32>(wcslen(text)),
+		currentTextFormat,
+		boxWidth,
+		boxHeight,
+		&layout
+	);
 
-	va_list	va;
-	va_start(va, string);
-	WCHAR buf[0x100];
-	vswprintf_s(buf, string, va);
-	va_end(va);
+	//作成できていない場合：false
+	if (FAILED(hr)) return false;
 
-	registerString(buf, (UINT32)wcslen(buf));
+	//メトリックの取得
+	const HRESULT result = layout->GetMetrics(&metrics);
+	layout->Release();	//オブジェクト参照解放
+
+	return SUCCEEDED(result);
 }

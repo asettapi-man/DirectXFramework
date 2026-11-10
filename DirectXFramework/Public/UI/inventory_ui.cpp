@@ -18,7 +18,21 @@ void InventoryUI::Render(Inventory& inventory)
 		auto& ui = inventoryUI[i];
 		ui->frameSprite->render();
 		ui->itemSprite->render();
-		vnFont::print(ui->x, ui->y, L"%.1fkg", inventory.GetInventory()[i]->GetItemData().weight);
+
+		//資材の重量
+		float weight = inventory.GetInventory()[i]->GetItemData().weight;
+
+		WCHAR buf[64];	//バッファ（文字列の幅・高さを測るため）
+		swprintf_s(buf, _countof(buf), L"%.1fkg", weight);	//数値を文字列に変換
+
+		DWRITE_TEXT_METRICS metrics{};	//出力用メトリクス
+		if (vnFont::MeasureText(buf, ui->width, ui->height, metrics))
+		{
+			float textX = ui->x - metrics.width / 2.0f;
+			float textY = ui->y - metrics.height / 2.0f;
+
+			vnFont::print(textX, textY, L"%ls", buf);	//WCHAR出力のために%lsが必須
+		}
 	}
 }
 

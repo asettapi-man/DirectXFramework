@@ -86,6 +86,6 @@ public:
 	//標準出力への文字列描画(ワイド文字)
 	static void output(const WCHAR *string, ...);
 
-	//中央揃えで文字列の描画
-	static void PrintInRect(RECT rect, IDWriteTextFormat* format, DWORD color, const WCHAR* string, ...);
+	//文字列の大きさを計測する関数
+	static bool MeasureText(const WCHAR* text, float boxWidth, float boxHeight, DWRITE_TEXT_METRICS& metrics);
 };
