@@ -341,3 +341,19 @@ void vnFont::output(const WCHAR *string, ...)
 
 	OutputDebugStringW(buf);
 }
+
+void vnFont::PrintInRect(RECT rect, IDWriteTextFormat* format, DWORD color, const WCHAR* string, ...)
+{
+	if (string == NULL)return;
+	//vnDirect2D::getDeviceContext()->DrawTextW();
+
+	Color = color;
+
+	va_list	va;
+	va_start(va, string);
+	WCHAR buf[0x100];
+	vswprintf_s(buf, string, va);
+	va_end(va);
+
+	registerString(buf, (UINT32)wcslen(buf));
+}

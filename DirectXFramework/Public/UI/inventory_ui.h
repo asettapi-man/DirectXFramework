@@ -8,7 +8,8 @@ struct InventorySlot
 {
 	float x, y;
 	float width, height;
-	vnSprite* sprite;
+	vnSprite* frameSprite;
+	vnSprite* itemSprite;
 };
 
 class InventoryUI

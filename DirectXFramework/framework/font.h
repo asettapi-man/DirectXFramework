@@ -85,4 +85,7 @@ public:
 
 	//標準出力への文字列描画(ワイド文字)
 	static void output(const WCHAR *string, ...);
+
+	//中央揃えで文字列の描画
+	static void PrintInRect(RECT rect, IDWriteTextFormat* format, DWORD color, const WCHAR* string, ...);
 };

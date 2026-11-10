@@ -366,10 +366,12 @@ void SceneMainGame::render()
 		inventoryUI.Render(player->GetInventory());
 	}
 
+#ifdef _DEBUG
 	for (std::size_t i = 0; i < materials.size(); i++)
 	{
-		materials[i]->Render();
+		materials[i]->Render();	//“–‚½‚è”»’è‚Ì˜g‘g‚Ý•\Ž¦
 	}
+#endif
 }
 
 bool SceneMainGame::DeleteMaterialData(Material* material)
