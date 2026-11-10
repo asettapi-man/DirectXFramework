@@ -37,6 +37,8 @@ int vnMainFrame::screenCenterY;	//画面の中央(縦)
 
 float vnMainFrame::clearColor[4] = { 0.2f, 0.3f, 0.6f, 0.0f };	//画面のクリアカラー
 
+bool isFullScreen;
+
 vnScene* vnMainFrame::pScene = NULL;
 
 //メインフレームの初期化
@@ -47,6 +49,8 @@ bool vnMainFrame::initialize(void* hWnd, void* hInst, int width, int height)
 	screenHeight = height;
 	screenCenterX = width / 2;
 	screenCenterY = height / 2;
+
+	isFullScreen = false;
 
 #if FIXED_FRAMERATE
 	//パフォーマンスカウンタの初期化

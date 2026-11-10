@@ -233,6 +233,15 @@ void SceneAssingment::execute()
 		pBGM->play();
 	}
 
+	if (vnMainFrame::isFullScreen)
+	{
+		pStartButton->posX = (float)vnMainFrame::screenCenterX;
+		pStartButton->posY = (float)vnMainFrame::screenCenterY + 100.0f;
+
+		pQuitButton->posX = (float)vnMainFrame::screenCenterX;
+		pQuitButton->posY = (float)vnMainFrame::screenCenterY + 250.0f;
+	}
+
 	switch (gameState)
 	{
 	case eGameState::TITLE:

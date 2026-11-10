@@ -17,7 +17,10 @@ public:
 	static int screenCenterX;	//画面の中央(横)
 	static int screenCenterY;	//画面の中央(縦)
 
+	static bool isFullScreen;  //フルスクリーン変更フラグ
+
 	static float clearColor[4];	//画面のクリアカラー(RGBA:0.0～1.0)
+
 
 	static void initializeScene(vnScene* p);	//シーンの初期化
 	static void terminateScene();				//シーンの終了

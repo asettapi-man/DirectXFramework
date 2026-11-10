@@ -22,8 +22,6 @@ HWND hWnd = NULL;								// ウィンドウのハンドル
 int screen_width = SCREEN_WIDTH;
 int screen_height = SCREEN_HEIGHT;
 
-bool isFullScreen = false;  //フルスクリーン変更フラグ
-
 // このコード モジュールに含まれる関数の宣言を転送します:
 ATOM                MyRegisterClass(HINSTANCE hInstance);
 BOOL                InitInstance(HINSTANCE, int);
@@ -121,7 +119,7 @@ ATOM MyRegisterClass(HINSTANCE hInstance)
 void LockCursorToWindow(HWND hWnd)
 {
     //画面がフルスクリーンなら範囲指定を無しにする
-    if (isFullScreen) return;
+    if (vnMainFrame::isFullScreen) return;
 
     //クライアント領域の取得
     RECT rc;
@@ -201,7 +199,7 @@ BOOL InitInstance(HINSTANCE hInstance, int nCmdShow)
 void FullScreen(HWND hWnd)
 {
     //フルスクリーンにする処理
-    if (!isFullScreen)
+    if (!vnMainFrame::isFullScreen)
     {
         //ウィンドウの枠を削除
         SetWindowLong(hWnd, GWL_STYLE, WS_POPUP | WS_VISIBLE);
@@ -225,7 +223,12 @@ void FullScreen(HWND hWnd)
             SWP_FRAMECHANGED
         );
 
-        isFullScreen = true;
+        vnMainFrame::screenWidth = (int)monitorInfo.rcMonitor.right - monitorInfo.rcMonitor.left;
+        vnMainFrame::screenHeight = (int)monitorInfo.rcMonitor.bottom - monitorInfo.rcMonitor.top;
+        vnMainFrame::screenCenterX = vnMainFrame::screenWidth / 2;
+        vnMainFrame::screenCenterY = vnMainFrame::screenHeight / 2;
+
+        vnMainFrame::isFullScreen = true;
         UnlockCursor();
     }
     else
@@ -248,7 +251,13 @@ void FullScreen(HWND hWnd)
             SWP_FRAMECHANGED
         );
 
-        isFullScreen = false;
+        //画面サイズの設定
+        vnMainFrame::screenWidth = screen_width;
+        vnMainFrame::screenHeight = screen_height;
+        vnMainFrame::screenCenterX = screen_width / 2;
+        vnMainFrame::screenCenterY = screen_height / 2;
+
+        vnMainFrame::isFullScreen = false;
         LockCursorToWindow(hWnd);
     }
 }
