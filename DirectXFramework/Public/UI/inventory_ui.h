@@ -14,8 +14,8 @@ struct InventorySlot
 class InventoryUI
 {
 private:
-	static constexpr float WIDTH = 200.0f;	//画像の幅
-	static constexpr float HEIGHT = 200.0f;	//画像の高さ
+	static constexpr float WIDTH = 150.0f;	//画像の幅
+	static constexpr float HEIGHT = 150.0f;	//画像の高さ
 
 	std::vector<InventorySlot*> inventoryUI;	//インベントリスロット
 public:
@@ -24,6 +24,6 @@ public:
 
 	void Render(Inventory& inventory);	//描画関数
 
-	void SetInventorySlot();	//インベントリスロット追加関数
-	void DeleteInventorySlot();						//インベントリスロット削除関数
+	void SetInventorySlot();		//インベントリスロット追加関数
+	void DeleteInventorySlot();		//インベントリスロット削除関数
 };

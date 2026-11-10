@@ -34,11 +34,16 @@ private:
 	AABBCollider collider;	//AABBコライダー
 	ItemData itemData;
 
+	XMVECTOR velocity;	//速度ベクトル
+	XMVECTOR gravity;	//重力ベクトル
+
 public:
 	Material(MaterialType type);		//コンストラクタ
 	~Material();						//デストラクタ
 	
-	void Render();	//AABBコライダー描画関数
+	void Initialize();					//初期化関数
+	void Execute(double deltaTime);		//処理関数
+	void Render();						//AABBコライダー描画関数
 
 	inline vnModel* GetModel() const { return model; }			//モデル情報取得関数
 	inline AABBCollider& GetAABBCollider() { return collider; }	//AABBコライダー取得関数

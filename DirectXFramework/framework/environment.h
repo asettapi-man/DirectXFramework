@@ -70,6 +70,9 @@ using namespace DirectX;
 #define SCREEN_WIDTH	(1280)	//クライアント領域の幅(ピクセル)
 #define SCREEN_HEIGHT	(720)	//クライアント領域の高さ(ピクセル)
 
+//ゲーム共通設定
+constexpr float gravityY = -9.81f;	//Y方向の重力加速度
+
 //リリース
 #define SAFE_RELEASE(p) {if(p){(p)->Release();(p)=NULL;}}
 

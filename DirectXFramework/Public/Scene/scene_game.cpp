@@ -35,12 +35,14 @@ bool SceneMainGame::initialize()
 	{
 		Material* material = new Material(MaterialType::Wood);
 		materials.push_back(material);
-		materials[i]->GetModel()->setPosition(0.0f, 0.0f, 10.0f * (i + 1));
+		materials[i]->GetModel()->setPosition(0.0f, 10.0f, 10.0f * (i + 1));
 		materials[i]->GetAABBCollider().SetBoundingBoxCenter(
 			materials[i]->GetModel()->getPositionX(),
 			materials[i]->GetModel()->getPositionY(),
 			materials[i]->GetModel()->getPositionZ()
 		);
+
+		materials[i]->Initialize();
 	}
 
 	//== 画像 ==
@@ -189,6 +191,8 @@ void SceneMainGame::execute()
 	crosshairUI->UpdateCrosshairUI(false);
 	for (std::size_t i = 0; i < materials.size(); i++)
 	{
+		materials[i]->Execute(TimeManager::GetDeltaTime());
+
 		//資材クラスが所持しているAABBColliderとの距離を確認
 		if (materials[i]->GetAABBCollider().GetBoundingBox().Intersects(
 				player->GetLinePos(),

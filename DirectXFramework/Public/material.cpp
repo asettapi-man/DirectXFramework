@@ -22,6 +22,41 @@ Material::~Material()
 }
 
 /// <summary>
+/// 初期化関数
+/// </summary>
+void Material::Initialize()
+{
+	velocity = XMVectorZero();	//移動量ベクトルの初期化
+	gravity = XMVectorSet(0.0f, gravityY, 0.0f, 0.0f);	//重力ベクトルの初期化
+}
+
+/// <summary>
+/// 処理関数
+/// </summary>
+/// <param name="deltaTime">経過時間</param>
+void Material::Execute(double deltaTime)
+{
+	//落下処理
+	velocity += gravity * deltaTime;
+	model->addPositionY(XMVectorGetY(velocity) * deltaTime);
+
+	//地面判定
+	if (model->getPositionY() < 0.0f)
+	{
+		model->setPositionY(0.0f);
+		velocity = XMVectorZero();
+	}
+
+	XMFLOAT3 materialPos = XMFLOAT3(
+		model->getPositionX(),
+		model->getPositionY() + 0.15f,	//BoundingBoxの位置調整で0.1f加えている
+		model->getPositionZ()
+	);
+
+	collider.SetBoundingBoxCenter(materialPos);
+}
+
+/// <summary>
 /// 描画関数
 /// </summary>
 void Material::Render()
@@ -72,7 +107,7 @@ void Material::CreateModel(MaterialType type)
 	);
 
 	collider.SetBoundingBoxCenter(materialPos);
-	collider.SetBoundingBoxExtents(XMFLOAT3(1.25f, 0.3f, 1.25f));
+	collider.SetBoundingBoxExtents(XMFLOAT3(1.25f, 0.15f, 1.25f));
 }
 
 /// <summary>

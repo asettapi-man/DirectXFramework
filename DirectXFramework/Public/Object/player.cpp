@@ -24,7 +24,7 @@ Player::Player(const WCHAR* folder, const WCHAR* file, const XMFLOAT3& boxCollid
 		model->getPositionZ());	//プレイヤーの座標を取得
 
 	velocity = XMVectorZero();	//移動量ベクトルの初期化
-	gravity = XMVectorSet(0.0f, -9.81f, 0.0f, 0.0f);	//重力ベクトルの初期化
+	gravity = XMVectorSet(0.0f, gravityY, 0.0f, 0.0f);	//重力ベクトルの初期化
 	vMove = XMVectorSet(0.0f, 0.0f, 0.0f, 0.0f);
 
 	isJump = false;				//ジャンプフラグ
@@ -66,8 +66,9 @@ void Player::Initialize()
 }
 
 /// <summary>
-/// 継続処理関数
+/// 処理関数
 /// </summary>
+/// <param name="deltaTime">経過時間</param>
 void Player::Execute(double deltaTime)
 {
 	bool isMovingForPlayer = false;	//移動フラグ
