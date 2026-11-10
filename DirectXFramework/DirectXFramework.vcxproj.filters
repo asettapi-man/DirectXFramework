@@ -176,6 +176,9 @@
     <ClCompile Include="Public\UI\inventory_ui.cpp">
       <Filter>Public\UI</Filter>
     </ClCompile>
+    <ClCompile Include="Public\Collider\collide.cpp">
+      <Filter>Public\Collider</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="framework\camera.h">
@@ -330,6 +333,9 @@
     </ClInclude>
     <ClInclude Include="Public\UI\inventory_ui.h">
       <Filter>Public\UI</Filter>
+    </ClInclude>
+    <ClInclude Include="Public\Collider\collide.h">
+      <Filter>Public\Collider</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

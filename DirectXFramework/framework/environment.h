@@ -100,6 +100,8 @@ constexpr float gravityY = -9.81f;	//Y•ûŒü‚Ìd—Í‰Á‘¬“x
 #include "../Public/sprite.h"
 #include "../Public/billboard.h"
 
+#include "../Public/Collider/collide.h"
+
 #include "../Public/scene/scene.h"
 #include "../Public/scene/scene_table.h"
 
