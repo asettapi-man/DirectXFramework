@@ -409,3 +409,46 @@ bool vnSprite::getAddition()
 {
 	return addition;
 }
+
+//画像とマウスの衝突判定関数
+bool vnSprite::CheckImageMouseOver()
+{
+	RECT clientRect;
+	if (GetClientRect(hWnd, &clientRect))
+	{
+		float clientWidth = (float)clientRect.right - clientRect.left;		//クライアント領域の幅
+		float clientHeight = (float)clientRect.bottom - clientRect.top;		//クライアント領域の高さ
+
+		//マウスのポインタ位置
+		float dx = vnMouse::getX() * vnMainFrame::screenWidth / clientWidth;
+		float dy = vnMouse::getY() * vnMainFrame::screenHeight / clientHeight;
+
+		//画像サイズの半分を取得
+		float halfSizeX = sizeX / 2.0f;
+		float halfSizeY = sizeY / 2.0f;
+
+		//四つ角の位置を計算
+		float left = posX - halfSizeX;
+		float right = posX + halfSizeX;
+		float top = posY - halfSizeY;
+		float bottom = posY + halfSizeY;
+
+		if ((dx >= left && dx <= right) && (dy >= top && dy <= bottom))
+		{
+			return true;
+		}
+	}
+
+	return false;
+}
+
+//画像の色設定関数
+void vnSprite::SetImageColor(float r, float g, float b)
+{
+	for (int i = 0; i < vnSprite::VertexNum; i++)
+	{
+		vtx[i].r = r;
+		vtx[i].g = g;
+		vtx[i].b = b;
+	}
+}

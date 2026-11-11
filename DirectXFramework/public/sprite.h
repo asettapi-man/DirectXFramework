@@ -114,4 +114,10 @@ public:
 
 	//加算合成の設定
 	bool getAddition();
+
+	//画像とマウスの衝突判定関数
+	bool CheckImageMouseOver();	
+
+	//画像の色設定関数
+	void SetImageColor(float r, float g, float b);
 };

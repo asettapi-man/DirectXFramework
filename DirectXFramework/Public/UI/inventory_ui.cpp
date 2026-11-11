@@ -2,15 +2,60 @@
 #include "../../Framework/environment.h"
 #include "inventory_ui.h"
 
+/// <summary>
+/// コンストラクタ
+/// </summary>
+InventoryUI::InventoryUI()
+{
+	isInventoryUIRender = false;
+}
+
+/// <summary>
+/// デストラクタ
+/// </summary>
 InventoryUI::~InventoryUI()
 {
-	for (std::size_t i = 0; i < inventoryUI.size(); i++)
+	for (auto& ui : inventoryUI)
 	{
-		delete inventoryUI[i]->frameSprite;
-		delete inventoryUI[i]->itemSprite;
+		delete ui->frameSprite;
+		delete ui->itemSprite;
 	}
 }
 
+/// <summary>
+/// 初期化関数
+/// </summary>
+void InventoryUI::Initialize()
+{
+	isInventoryUIRender = false;
+}
+
+/// <summary>
+/// 処理関数
+/// </summary>
+void InventoryUI::Execute()
+{
+	for (auto& ui : inventoryUI)
+	{
+		if (ui->itemSprite->CheckImageMouseOver())
+		{
+			//画像の色を灰色に変更
+			ui->frameSprite->SetImageColor(0.5f, 0.5f, 0.5f);
+			ui->itemSprite->SetImageColor(0.5f, 0.5f, 0.5f);
+		}
+		else
+		{
+			//画像の色を通常時に戻す
+			ui->frameSprite->SetImageColor(1.0f, 1.0f, 1.0f);
+			ui->itemSprite->SetImageColor(1.0f, 1.0f, 1.0f);
+		}
+	}
+}
+
+/// <summary>
+/// 描画関数
+/// </summary>
+/// <param name="inventory">インベントリ情報</param>
 void InventoryUI::Render(Inventory& inventory)
 {
 	for (std::size_t i = 0; i < inventoryUI.size(); i++)
@@ -36,6 +81,9 @@ void InventoryUI::Render(Inventory& inventory)
 	}
 }
 
+/// <summary>
+/// インベントリスロット追加関数
+/// </summary>
 void InventoryUI::SetInventorySlot()
 {
 	float x = (float)400.0f + 100.0f * inventoryUI.size();

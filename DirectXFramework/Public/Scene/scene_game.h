@@ -22,7 +22,7 @@ private:
 
 	Player* player;				//プレイヤー
 	CrosshairUI* crosshairUI;	//クロスヘア
-	InventoryUI inventoryUI;	//インベントリUI
+	InventoryUI* inventoryUI;	//インベントリUI
 
 	vnModel* pShadow;			//影オブジェクト
 	vnModel* pGround;			//地面オブジェクト
@@ -41,7 +41,6 @@ private:
 
 	bool isControllable;		//操作可能フラグ
 	bool isAddMaterial;			//資材追加フラグ
-	bool isInventoryUIRender;	//インベントリUI表示フラグ
 
 	/*vnSound* pBGM;	//BGM
 

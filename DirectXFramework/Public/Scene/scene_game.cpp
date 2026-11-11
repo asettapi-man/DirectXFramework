@@ -11,6 +11,9 @@ bool SceneMainGame::initialize()
 
 	crosshairUI = new CrosshairUI();
 
+	inventoryUI = new InventoryUI();
+	inventoryUI->Initialize();
+
 	pShadow = new vnModel(L"data/model/", L"shadow.vnm");		//影
 	pShadow->setTransparent(true);	//影の半透明を有効
 	pShadow->setPositionY(0.01f);	//影の位置を少し浮かせる	Z-Fighting対策
@@ -135,7 +138,6 @@ bool SceneMainGame::initialize()
 	//== 初期化 ==
 	isControllable = true;	//操作可能フラグ
 	isAddMaterial = true;	//資材追加可能フラグ
-	isInventoryUIRender = false;	//インベントリUI表示フラグ
 
 	gameState = eGameState::GAME;	//ゲームステートの初期化
 	return true;
@@ -184,6 +186,7 @@ void SceneMainGame::terminate()
 void SceneMainGame::execute()
 {
 	player->Execute(TimeManager::GetDeltaTime());
+	inventoryUI->Execute();
 	//pShadow->setPosition(player->getModel()->getPosition());	//影の座標をプレイヤーの座標に合わせる
 	pShadow->setPositionY(0.01f);	//影の座標を少し浮かせる	Z-Fighting対策
 
@@ -210,7 +213,7 @@ void SceneMainGame::execute()
 				isAddMaterial = player->AddMaterial(targetMat);
 				if (isAddMaterial)
 				{
-					inventoryUI.SetInventorySlot();
+					inventoryUI->SetInventorySlot();
 					DeleteMaterialData(targetMat);
 					break;
 				}
@@ -221,11 +224,11 @@ void SceneMainGame::execute()
 	if (vnKeyboard::on(DIK_TAB))
 	{
 		//インベントリUIの表示切替
-		isInventoryUIRender = true;
+		inventoryUI->SetIsInventoryUIRender(true);
 	}
 	else
 	{
-		isInventoryUIRender = false;
+		inventoryUI->SetIsInventoryUIRender(false);
 	}
 
 	vnDebugDraw::Grid();
@@ -361,9 +364,9 @@ void SceneMainGame::render()
 
 	player->Render();
 
-	if (isInventoryUIRender)
+	if (inventoryUI->GetIsInventoryUIRender())
 	{
-		inventoryUI.Render(player->GetInventory());
+		inventoryUI->Render(player->GetInventory());
 	}
 
 #ifdef _DEBUG
