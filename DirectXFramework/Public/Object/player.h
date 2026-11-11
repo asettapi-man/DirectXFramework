@@ -31,23 +31,10 @@ private:
 
 	XMFLOAT3 playerPos;	//プレイヤーの座標
 
-	//Rayの情報（カメラ）
-	XMVECTOR linePos;	//直線上の一点
-	XMVECTOR lineDir;	//直線の方向ベクトル
-	float pickupRange;	//Rayの距離
-
 	float jumpForce = 0.3f;	//ジャンプ力
 	float speedDown;		//重量による移動速度低下量
 
 	bool isJump;			//ジャンプ可能フラグ
-
-	//極座標の情報
-	float radius;	//半径
-	float theta;	//角度θ(平面角,経度)
-	float phi;		//角度φ(仰角,緯度)
-
-	bool reverseH;	//水平反転
-	bool reverseV;	//垂直反転
 
 public:
 
@@ -55,9 +42,6 @@ public:
 	inline vnModel* GetModel() const { return model; }						//モデルの取得
 	inline AABBCollider& GetAABBCollider() { return aabbCollider; }			//AABBの当たり判定の取得
 	inline Inventory& GetInventory() { return inventory; }					//インベントリ情報の取得
-	inline XMVECTOR GetLinePos() { return linePos; }						//Rayの位置取得関数
-	inline XMVECTOR GetLineDir() { return lineDir; }						//Rayの方向ベクトル取得関数
-	inline float GetPickupRange() { return pickupRange; }					//Rayの距離取得関数
 
 	inline XMVECTOR GetvMove() const { return vMove; }						//移動ベクトルの取得
 	inline XMVECTOR Getvelocity() const { return velocity; }				//速度ベクトルの取得
@@ -68,7 +52,7 @@ public:
 	~Player();
 
 	void Initialize();					//初期化関数
-	void Execute(double deltaTime);		//処理関数
+	void Execute(double deltaTime, float theta);		//処理関数
 	void Render();						//描画関数
 
 	bool AddMaterial(Material* material);

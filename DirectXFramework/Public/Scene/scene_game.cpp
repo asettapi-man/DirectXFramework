@@ -136,6 +136,17 @@ bool SceneMainGame::initialize()
 	*/
 
 	//== 初期化 ==
+	linePos = XMVectorZero();	//Rayの位置
+	lineDir = XMVectorZero();	//Rayの方向
+	pickupRange = 4.0f;			//Rayの長さ
+
+	radius = 10.0f;	//半径
+	theta = 0.0f;	//角度θ
+	phi = 0.0f;		//角度φ
+
+	reverseH = false;	//水平反転
+	reverseV = false;	//垂直反転
+
 	isControllable = true;	//操作可能フラグ
 	isAddMaterial = true;	//資材追加可能フラグ
 
@@ -185,23 +196,90 @@ void SceneMainGame::terminate()
 //処理関数
 void SceneMainGame::execute()
 {
-	player->Execute(TimeManager::GetDeltaTime());
+	player->Execute(TimeManager::GetDeltaTime(), theta);
 	inventoryUI->Execute();
 	//pShadow->setPosition(player->getModel()->getPosition());	//影の座標をプレイヤーの座標に合わせる
 	pShadow->setPositionY(0.01f);	//影の座標を少し浮かせる	Z-Fighting対策
 
 	float hitDistance = 0.0f;	//衝突点からカメラの位置までの距離を返す
 	crosshairUI->UpdateCrosshairUI(false);
+
+	inventoryUI->SetIsInventoryUIRender(vnKeyboard::on(DIK_TAB));
+
+	if (!inventoryUI->GetIsInventoryUIRender())
+	{
+		//マウスの移動量を取得
+		float dx = (float)vnMouse::getDX();
+		float dy = (float)vnMouse::getDY();
+
+		const float value_r = 0.5f * 3.141592f / 180.0f;	//ラジアン角度
+
+		//角度の更新
+		if (reverseH)
+		{
+			dx = -dx;	//水平反転
+		}
+		if (reverseV)
+		{
+			dy = -dy;	//垂直反転
+		}
+
+		theta += dx * value_r;
+		phi += dy * value_r;
+
+		//角度の制限
+		if (phi > 1.5f)
+		{
+			phi = 1.5f;
+		}
+		else if (phi < -1.5f)
+		{
+			phi = -1.5f;
+		}
+
+		//== １人称カメラ座標の計算 ==
+		XMVECTOR camBias = XMVectorSet(0.0f, 2.0f, 0.0f, 0.0f);	//カメラの位置のプレイヤーに対するオフセット
+		XMVECTOR camTarget;	//カメラの注視点（プレイヤーの座標 + オフセット）
+		XMVECTOR camPos;	//カメラの位置
+
+		//回転していない基準となるベクトル
+		XMVECTOR eye = XMVectorSet(0.0f, 0.0f, -0.01f, 0.0f);
+
+		//回転マトリクスを作成
+		XMMATRIX camRotate = XMMatrixRotationRollPitchYaw(phi, theta, 0.0f);
+
+		//基準となるベクトルを回転させる
+		eye = XMVector3TransformNormal(eye, camRotate);
+
+		//回転の中心をプレイヤーにする（プレイヤーの座標を加算する）
+		eye = XMVectorAdd(eye, *player->GetModel()->getPosition());
+
+		camPos = XMVectorAdd(eye, camBias);
+
+		//カメラの位置を更新
+		vnCamera::setPosition(&camPos);
+
+		//カメラの注視点を更新
+		camTarget = XMVectorAdd(*player->GetModel()->getPosition(), camBias);
+
+		vnCamera::setTarget(&camTarget);
+
+		XMVECTOR cameraForward = XMVector3Normalize(XMVectorSubtract(camTarget, camPos));	//カメラが見ている方向ベクトル
+
+		linePos = camPos;			//始点
+		lineDir = cameraForward;	//方向
+	}
+
 	for (std::size_t i = 0; i < materials.size(); i++)
 	{
 		materials[i]->Execute(TimeManager::GetDeltaTime());
 
 		//資材クラスが所持しているAABBColliderとの距離を確認
 		if (materials[i]->GetAABBCollider().GetBoundingBox().Intersects(
-				player->GetLinePos(),
-				player->GetLineDir(),
+				linePos,
+				lineDir,
 				hitDistance)
-			&& hitDistance <= player->GetPickupRange())
+			&& hitDistance <= pickupRange)
 		{
 			crosshairUI->UpdateCrosshairUI(true);
 
@@ -219,16 +297,6 @@ void SceneMainGame::execute()
 				}
 			}
 		}
-	}
-
-	if (vnKeyboard::on(DIK_TAB))
-	{
-		//インベントリUIの表示切替
-		inventoryUI->SetIsInventoryUIRender(true);
-	}
-	else
-	{
-		inventoryUI->SetIsInventoryUIRender(false);
 	}
 
 	vnDebugDraw::Grid();

@@ -39,6 +39,19 @@ private:
 	vnSprite* pDescriptionUI;	//説明UI背景
 	*/
 
+	//Rayの情報（カメラ）
+	XMVECTOR linePos;	//直線上の一点
+	XMVECTOR lineDir;	//直線の方向ベクトル
+	float pickupRange;	//Rayの距離
+
+	//極座標の情報
+	float radius;	//半径
+	float theta;	//角度θ(平面角,経度)
+	float phi;		//角度φ(仰角,緯度)
+
+	bool reverseH;	//水平反転
+	bool reverseV;	//垂直反転
+
 	bool isControllable;		//操作可能フラグ
 	bool isAddMaterial;			//資材追加フラグ
 

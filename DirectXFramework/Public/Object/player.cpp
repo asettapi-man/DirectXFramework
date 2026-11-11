@@ -29,19 +29,8 @@ Player::Player(const WCHAR* folder, const WCHAR* file, const XMFLOAT3& boxCollid
 
 	isJump = false;				//ジャンプフラグ
 
-	linePos = XMVectorZero();	//Rayの位置
-	lineDir = XMVectorZero();	//Rayの方向
-	pickupRange = 4.0f;			//Rayの長さ
-
 	jumpForce = 6.0f;	//ジャンプ力
 	speedDown = 1.0f;	//移動速度低下量
-
-	radius = 10.0f;	//半径
-	theta = 0.0f;	//角度θ
-	phi = 0.0f;		//角度φ
-
-	reverseH = false;	//水平反転
-	reverseV = false;	//垂直反転
 }
 
 Player::~Player()
@@ -57,19 +46,13 @@ void Player::Initialize()
 	direction = eDirection::NONE;	//衝突方向
 
 	isJump = false;	//ジャンプフラグ
-
-	theta = 0.0f;	//角度θ
-	phi = 0.0f;		//角度φ
-
-	reverseH = false;	//水平反転
-	reverseV = false;	//垂直反転
 }
 
 /// <summary>
 /// 処理関数
 /// </summary>
 /// <param name="deltaTime">経過時間</param>
-void Player::Execute(double deltaTime)
+void Player::Execute(double deltaTime, float theta)
 {
 	bool isMovingForPlayer = false;	//移動フラグ
 
@@ -185,68 +168,6 @@ void Player::Execute(double deltaTime)
 		velocity = XMVectorZero();
 		isJump = false;	//地面に着地したらジャンプ可能
 	}
-
-	//マウスの移動量を取得
-	float dx = (float)vnMouse::getDX();
-	float dy = (float)vnMouse::getDY();
-
-	const float value_r = 0.5f * 3.141592f / 180.0f;	//ラジアン角度
-
-	//角度の更新
-	if (reverseH)
-	{
-		dx = -dx;	//水平反転
-	}
-	if (reverseV)
-	{
-		dy = -dy;	//垂直反転
-	}
-
-	theta += dx * value_r;
-	phi += dy * value_r;
-
-	//角度の制限
-	if (phi > 1.5f)
-	{
-		phi = 1.5f;
-	}
-	else if (phi < -1.5f)
-	{
-		phi = -1.5f;
-	}
-
-	//== １人称カメラ座標の計算 ==
-	XMVECTOR camBias = XMVectorSet(0.0f, 2.0f, 0.0f, 0.0f);	//カメラの位置のプレイヤーに対するオフセット
-	XMVECTOR camTarget;	//カメラの注視点（プレイヤーの座標 + オフセット）
-	XMVECTOR camPos;	//カメラの位置
-
-	//回転していない基準となるベクトル
-	XMVECTOR eye = XMVectorSet(0.0f, 0.0f, -0.01f, 0.0f);
-
-	//回転マトリクスを作成
-	XMMATRIX camRotate = XMMatrixRotationRollPitchYaw(phi, theta, 0.0f);
-
-	//基準となるベクトルを回転させる
-	eye = XMVector3TransformNormal(eye, camRotate);
-
-	//回転の中心をプレイヤーにする（プレイヤーの座標を加算する）
-	eye = XMVectorAdd(eye, *model->getPosition());
-
-	camPos = XMVectorAdd(eye, camBias);
-
-	//カメラの位置を更新
-	vnCamera::setPosition(&camPos);
-
-	//カメラの注視点を更新
-	camTarget = XMVectorAdd(*model->getPosition(), camBias);
-
-	vnCamera::setTarget(&camTarget);
-
-	XMVECTOR cameraForward = XMVector3Normalize(XMVectorSubtract(camTarget, camPos));	//カメラが見ている方向ベクトル
-
-	linePos = camPos;	//始点
-	lineDir = cameraForward;
-
 #ifdef _DEBUG
 
 #endif // DEBUG
