@@ -36,7 +36,7 @@ bool SceneMainGame::initialize()
 
 	for (int i = 0; i < INITMATERIALCOUNT; i++)
 	{
-		Material* material = new Material(MaterialType::Wood);
+		Material* material = new Material(MaterialType::WOOD);
 		materials.push_back(material);
 		materials[i]->GetModel()->setPosition(0.0f, 10.0f, 10.0f * (i + 1));
 		materials[i]->GetAABBCollider().SetBoundingBoxCenter(
@@ -140,6 +140,8 @@ bool SceneMainGame::initialize()
 	lineDir = XMVectorZero();	//Rayの方向
 	pickupRange = 4.0f;			//Rayの長さ
 
+	holdRange = 4.0f;			//資材保持距離
+
 	radius = 10.0f;	//半径
 	theta = 0.0f;	//角度θ
 	phi = 0.0f;		//角度φ
@@ -236,43 +238,45 @@ void SceneMainGame::execute()
 		{
 			phi = -1.5f;
 		}
-
-		//== １人称カメラ座標の計算 ==
-		XMVECTOR camBias = XMVectorSet(0.0f, 2.0f, 0.0f, 0.0f);	//カメラの位置のプレイヤーに対するオフセット
-		XMVECTOR camTarget;	//カメラの注視点（プレイヤーの座標 + オフセット）
-		XMVECTOR camPos;	//カメラの位置
-
-		//回転していない基準となるベクトル
-		XMVECTOR eye = XMVectorSet(0.0f, 0.0f, -0.01f, 0.0f);
-
-		//回転マトリクスを作成
-		XMMATRIX camRotate = XMMatrixRotationRollPitchYaw(phi, theta, 0.0f);
-
-		//基準となるベクトルを回転させる
-		eye = XMVector3TransformNormal(eye, camRotate);
-
-		//回転の中心をプレイヤーにする（プレイヤーの座標を加算する）
-		eye = XMVectorAdd(eye, *player->GetModel()->getPosition());
-
-		camPos = XMVectorAdd(eye, camBias);
-
-		//カメラの位置を更新
-		vnCamera::setPosition(&camPos);
-
-		//カメラの注視点を更新
-		camTarget = XMVectorAdd(*player->GetModel()->getPosition(), camBias);
-
-		vnCamera::setTarget(&camTarget);
-
-		XMVECTOR cameraForward = XMVector3Normalize(XMVectorSubtract(camTarget, camPos));	//カメラが見ている方向ベクトル
-
-		linePos = camPos;			//始点
-		lineDir = cameraForward;	//方向
 	}
+
+	//== １人称カメラ座標の計算 ==
+	XMVECTOR camBias = XMVectorSet(0.0f, 2.0f, 0.0f, 0.0f);	//カメラの位置のプレイヤーに対するオフセット
+	XMVECTOR camTarget;	//カメラの注視点（プレイヤーの座標 + オフセット）
+	XMVECTOR camPos;	//カメラの位置
+
+	//回転していない基準となるベクトル
+	XMVECTOR eye = XMVectorSet(0.0f, 0.0f, -0.01f, 0.0f);
+
+	//回転マトリクスを作成
+	XMMATRIX camRotate = XMMatrixRotationRollPitchYaw(phi, theta, 0.0f);
+
+	//基準となるベクトルを回転させる
+	eye = XMVector3TransformNormal(eye, camRotate);
+
+	//回転の中心をプレイヤーにする（プレイヤーの座標を加算する）
+	eye = XMVectorAdd(eye, *player->GetModel()->getPosition());
+
+	camPos = XMVectorAdd(eye, camBias);
+
+	//カメラの位置を更新
+	vnCamera::setPosition(&camPos);
+
+	//カメラの注視点を更新
+	camTarget = XMVectorAdd(*player->GetModel()->getPosition(), camBias);
+
+	vnCamera::setTarget(&camTarget);
+
+	XMVECTOR cameraForward = XMVector3Normalize(XMVectorSubtract(camTarget, camPos));	//カメラが見ている方向ベクトル
+
+	linePos = camPos;			//始点
+	lineDir = cameraForward;	//方向
+
+	XMVECTOR holdPos = linePos + lineDir * holdRange;
 
 	for (std::size_t i = 0; i < materials.size(); i++)
 	{
-		materials[i]->Execute(TimeManager::GetDeltaTime());
+		materials[i]->Execute(TimeManager::GetDeltaTime(), holdPos);
 
 		//資材クラスが所持しているAABBColliderとの距離を確認
 		if (materials[i]->GetAABBCollider().GetBoundingBox().Intersects(
@@ -295,6 +299,17 @@ void SceneMainGame::execute()
 					DeleteMaterialData(targetMat);
 					break;
 				}
+			}
+
+			if (vnMouse::onR())
+			{
+				targetMat->SetMaterialState(MaterialState::HOLD);
+				isDebug = true;
+			}
+			else
+			{
+				targetMat->SetMaterialState(MaterialState::NONE);
+				isDebug = false;
 			}
 		}
 	}
@@ -380,7 +395,16 @@ void SceneMainGame::execute()
 
 			vnFont::print(10.0f, 140.0f, L"isControllable : %s", isControllable ? L"true" : L"false");
 
+			vnFont::print(10.0f, 160.0f, L"isDebug : %s", isDebug ? L"true" : L"false");
+
 			vnFont::print(10.0f, 180.0f, L"isAddMaterial : %s", isAddMaterial ? L"true" : L"false");
+
+			vnFont::print(10.0f, 200.0f, L"holdPos : %.3f, %.3f, %.3f",
+				XMVectorGetX(holdPos),
+				XMVectorGetY(holdPos),
+				XMVectorGetZ(holdPos)
+			);
+
 
 			vnFont::print((float)vnMainFrame::screenWidth - 150.0f, 0.0f, L"DeltaTime : %.3f", TimeManager::GetDeltaTime());
 

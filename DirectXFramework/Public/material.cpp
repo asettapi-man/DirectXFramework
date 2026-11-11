@@ -11,6 +11,9 @@ Material::Material(MaterialType type)
 {
 	CreateModel(type);	//資材モデル生成
 	itemData = CreateItemData(type);	//採取時にランダムな資材を生成
+
+	//初期化
+	state = MaterialState::NONE;
 }
 
 /// <summary>
@@ -26,6 +29,8 @@ Material::~Material()
 /// </summary>
 void Material::Initialize()
 {
+	state = MaterialState::NONE;
+
 	velocity = XMVectorZero();	//移動量ベクトルの初期化
 	gravity = XMVectorSet(0.0f, gravityY, 0.0f, 0.0f);	//重力ベクトルの初期化
 }
@@ -34,26 +39,46 @@ void Material::Initialize()
 /// 処理関数
 /// </summary>
 /// <param name="deltaTime">経過時間</param>
-void Material::Execute(double deltaTime)
+void Material::Execute(double deltaTime, const XMVECTOR holdPos)
 {
-	//落下処理
-	velocity += gravity * deltaTime;
-	model->addPositionY(XMVectorGetY(velocity) * deltaTime);
+	XMFLOAT3 materialPos;
 
-	//地面判定
-	if (model->getPositionY() < 0.0f)
+	switch (state)
 	{
-		model->setPositionY(0.0f);
-		velocity = XMVectorZero();
+	case MaterialState::NONE:	//無し
+
+		//落下処理
+		velocity += gravity * deltaTime;
+		model->addPositionY(XMVectorGetY(velocity) * deltaTime);
+
+		//地面判定
+		if (model->getPositionY() < 0.0f)
+		{
+			model->setPositionY(0.0f);
+			velocity = XMVectorZero();
+		}
+
+		materialPos = XMFLOAT3(
+			model->getPositionX(),
+			model->getPositionY() + 0.15f,	//BoundingBoxの位置調整で0.1f加えている
+			model->getPositionZ()
+		);
+
+		collider.SetBoundingBoxCenter(materialPos);
+		break;
+	case MaterialState::HOLD:	//保持状態
+		model->setPosition(&holdPos);
+
+		materialPos = XMFLOAT3(
+			model->getPositionX(),
+			model->getPositionY() + 0.15f,	//BoundingBoxの位置調整で0.1f加えている
+			model->getPositionZ()
+		);
+
+		collider.SetBoundingBoxCenter(materialPos);
+
+		break;
 	}
-
-	XMFLOAT3 materialPos = XMFLOAT3(
-		model->getPositionX(),
-		model->getPositionY() + 0.15f,	//BoundingBoxの位置調整で0.1f加えている
-		model->getPositionZ()
-	);
-
-	collider.SetBoundingBoxCenter(materialPos);
 }
 
 /// <summary>
@@ -87,11 +112,11 @@ void Material::CreateModel(MaterialType type)
 {
 	switch (type)
 	{
-	case MaterialType::Wood:	//木材
+	case MaterialType::WOOD:	//木材
 		model = new vnModel(L"data/model/Wood/WoodenSlab/", L"WoodenSlab.vnm");	//木材モデル
 		break;
 
-	case MaterialType::Metal:	//金属
+	case MaterialType::METAL:	//金属
 		model = new vnModel(L"data/model/", L"crown.vnm");	//金属モデル
 		break;
 

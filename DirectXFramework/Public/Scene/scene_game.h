@@ -44,6 +44,8 @@ private:
 	XMVECTOR lineDir;	//直線の方向ベクトル
 	float pickupRange;	//Rayの距離
 
+	float holdRange;	//資材保持距離
+
 	//極座標の情報
 	float radius;	//半径
 	float theta;	//角度θ(平面角,経度)
@@ -54,6 +56,7 @@ private:
 
 	bool isControllable;		//操作可能フラグ
 	bool isAddMaterial;			//資材追加フラグ
+	bool isDebug = false;		//デバッグ用（確認フラグ）
 
 	/*vnSound* pBGM;	//BGM
 
