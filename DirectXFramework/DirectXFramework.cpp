@@ -223,11 +223,6 @@ void FullScreen(HWND hWnd)
             SWP_FRAMECHANGED
         );
 
-        vnMainFrame::screenWidth = (int)monitorInfo.rcMonitor.right - monitorInfo.rcMonitor.left;
-        vnMainFrame::screenHeight = (int)monitorInfo.rcMonitor.bottom - monitorInfo.rcMonitor.top;
-        vnMainFrame::screenCenterX = vnMainFrame::screenWidth / 2;
-        vnMainFrame::screenCenterY = vnMainFrame::screenHeight / 2;
-
         vnMainFrame::isFullScreen = true;
         UnlockCursor();
     }
@@ -250,12 +245,6 @@ void FullScreen(HWND hWnd)
             screen_height,
             SWP_FRAMECHANGED
         );
-
-        //画面サイズの設定
-        vnMainFrame::screenWidth = screen_width;
-        vnMainFrame::screenHeight = screen_height;
-        vnMainFrame::screenCenterX = screen_width / 2;
-        vnMainFrame::screenCenterY = screen_height / 2;
 
         vnMainFrame::isFullScreen = false;
         LockCursorToWindow(hWnd);

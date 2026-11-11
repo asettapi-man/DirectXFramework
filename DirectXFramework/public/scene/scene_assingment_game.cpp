@@ -233,19 +233,25 @@ void SceneAssingment::execute()
 		pBGM->play();
 	}
 
-	if (vnMainFrame::isFullScreen)
-	{
-		pStartButton->posX = (float)vnMainFrame::screenCenterX;
-		pStartButton->posY = (float)vnMainFrame::screenCenterY + 100.0f;
+	vnFont::print(10.0f, 10.0f, 0xff000000, L"pStartButton_Pos : %.3f, %.3f",
+		pStartButton->posX,
+		pStartButton->posY
+	);
 
-		pQuitButton->posX = (float)vnMainFrame::screenCenterX;
-		pQuitButton->posY = (float)vnMainFrame::screenCenterY + 250.0f;
-	}
+	vnFont::print(10.0f, 50.0f, L"pQuitButton_Pos : %.3f, %.3f",
+		pQuitButton->posX,
+		pQuitButton->posY
+	);
 
 	switch (gameState)
 	{
 	case eGameState::TITLE:
 	{
+		#ifdef _DEBUG
+
+		#endif // _DEBUG
+
+
 		if (CheckImageMouseOver(pStartButton))
 		{
 			//マウスオーバー時の色変更
@@ -718,23 +724,30 @@ void SceneAssingment::MoveToTarget(vnModel* pBlock, int n)
 /// <returns></returns>
 bool SceneAssingment::CheckImageMouseOver(vnSprite* sprite)
 {
-	//マウスのポインタ位置
-	float dx = vnMouse::getX();
-	float dy = vnMouse::getY();
-
-	//画像サイズの半分を取得
-	float halfSizeX = sprite->sizeX / 2.0f;
-	float halfSizeY = sprite->sizeY / 2.0f;
-
-	//四つ角の位置を計算
-	float left = sprite->posX - halfSizeX;
-	float right = sprite->posX + halfSizeX;
-	float top = sprite->posY - halfSizeY;
-	float bottom = sprite->posY + halfSizeY;
-
-	if ((dx >= left && dx <= right) && (dy >= top && dy <= bottom))
+	RECT clientRect;
+	if (GetClientRect(hWnd, &clientRect))
 	{
-		return true;
+		float clientWidth = (float)clientRect.right - clientRect.left;		//クライアント領域の幅
+		float clientHeight = (float)clientRect.bottom - clientRect.top;		//クライアント領域の高さ
+
+		//マウスのポインタ位置
+		float dx = vnMouse::getX() * vnMainFrame::screenWidth / clientWidth;
+		float dy = vnMouse::getY() * vnMainFrame::screenHeight / clientHeight;
+
+		//画像サイズの半分を取得
+		float halfSizeX = sprite->sizeX / 2.0f;
+		float halfSizeY = sprite->sizeY / 2.0f;
+
+		//四つ角の位置を計算
+		float left = sprite->posX - halfSizeX;
+		float right = sprite->posX + halfSizeX;
+		float top = sprite->posY - halfSizeY;
+		float bottom = sprite->posY + halfSizeY;
+
+		if ((dx >= left && dx <= right) && (dy >= top && dy <= bottom))
+		{
+			return true;
+		}
 	}
 
 	return false;

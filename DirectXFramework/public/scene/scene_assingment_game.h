@@ -1,6 +1,9 @@
 #pragma once
 
 #define BLOCK_NUM 16
+
+extern HWND hWnd;
+
 class SceneAssingment : public vnScene
 {
 private:

@@ -37,7 +37,7 @@ int vnMainFrame::screenCenterY;	//画面の中央(縦)
 
 float vnMainFrame::clearColor[4] = { 0.2f, 0.3f, 0.6f, 0.0f };	//画面のクリアカラー
 
-bool isFullScreen;
+bool vnMainFrame::isFullScreen;
 
 vnScene* vnMainFrame::pScene = NULL;
 
