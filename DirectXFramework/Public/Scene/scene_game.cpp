@@ -208,6 +208,7 @@ void SceneMainGame::execute()
 
 	inventoryUI->SetIsInventoryUIRender(vnKeyboard::on(DIK_TAB));
 
+	//インベントリ画面表示中であれば視点移動をキャンセル
 	if (!inventoryUI->GetIsInventoryUIRender())
 	{
 		//マウスの移動量を取得
@@ -295,13 +296,12 @@ void SceneMainGame::execute()
 				isAddMaterial = player->AddMaterial(targetMat);
 				if (isAddMaterial)
 				{
-					inventoryUI->SetInventorySlot();
 					DeleteMaterialData(targetMat);
 					break;
 				}
 			}
 
-			if (vnMouse::onR())
+			if (vnMouse::onL())
 			{
 				targetMat->SetMaterialState(MaterialState::HOLD);
 				isDebug = true;
@@ -403,6 +403,14 @@ void SceneMainGame::execute()
 				XMVectorGetX(holdPos),
 				XMVectorGetY(holdPos),
 				XMVectorGetZ(holdPos)
+			);
+
+			vnFont::print(10.0f, 220.0f, L"Inventory_materialNum : %zu",
+				player->GetInventory().GetInventory().size()
+			);
+
+			vnFont::print(10.0f, 240.0f, L"InventoryUI_slotNum : %zu",
+				inventoryUI->GetInventoryUI().size()
 			);
 
 
