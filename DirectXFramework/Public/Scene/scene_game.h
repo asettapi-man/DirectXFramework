@@ -39,6 +39,8 @@ private:
 	vnSprite* pDescriptionUI;	//説明UI背景
 	*/
 
+	int uiIdx;			//インベントリUIの要素番号
+
 	//Rayの情報（カメラ）
 	XMVECTOR linePos;	//直線上の一点
 	XMVECTOR lineDir;	//直線の方向ベクトル

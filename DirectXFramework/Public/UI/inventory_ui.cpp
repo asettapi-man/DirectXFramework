@@ -22,6 +22,7 @@ InventoryUI::~InventoryUI()
 	{
 		delete ui->frameSprite;
 		delete ui->itemSprite;
+		delete ui;
 	}
 }
 
@@ -36,8 +37,11 @@ void InventoryUI::Initialize()
 /// <summary>
 /// 処理関数
 /// </summary>
-void InventoryUI::Execute()
+/// <param name="index">選択したUI番号（出力用）</param>
+void InventoryUI::Execute(int& index)
 {
+	if (!isInventoryUIRender) return;
+
 	for (auto& ui : inventoryUI)
 	{
 		if (ui->itemSprite->CheckImageMouseOver())
@@ -46,9 +50,9 @@ void InventoryUI::Execute()
 			ui->frameSprite->SetImageColor(0.5f, 0.5f, 0.5f);
 			ui->itemSprite->SetImageColor(0.5f, 0.5f, 0.5f);
 
-			if (!vnMouse::trgL()) return;
-			DeleteInventorySlot(*ui);
-
+			if (!vnMouse::trgL()) continue;
+			index = GetSelectedIndex(*ui);
+			isSelected = true;
 		}
 		else
 		{
@@ -65,24 +69,27 @@ void InventoryUI::Execute()
 /// <param name="inventory">インベントリ情報</param>
 void InventoryUI::Render(Inventory& inventory)
 {
-	const std::size_t inventorySize = inventory.GetInventory().size();
-	const std::size_t inventorySlotSize = inventoryUI.size();
+	const std::size_t inventorySize = inventory.GetInventory().size();	//インベントリのサイズ
+	const std::size_t inventorySlotSize = inventoryUI.size();			//インベントリUIのサイズ
 
 	if (inventorySize > inventorySlotSize)
 	{
+		//足りていない分追加する
 		std::size_t sub = inventorySize - inventorySlotSize;
 		SetInventorySlot(sub, inventory);
 	}
 
 	for (std::size_t i = 0; i < inventorySize; i++)
 	{
-		auto& ui = inventoryUI[i];
+		auto& ui = inventoryUI[i];	//対象
+
+		ui->id = (int)i;
 
 		//要素順に配置位置を修正
-		ui->frameSprite->posX = (float)100.0f + 100.0f * inventoryUI.size();
-		ui->frameSprite->posY = (float)100.0f + 100.0f * inventoryUI.size();
-		ui->itemSprite->posX = (float)100.0f + 100.0f * inventoryUI.size();
-		ui->itemSprite->posY = (float)100.0f + 100.0f * inventoryUI.size();
+		ui->frameSprite->posX = (float)100.0f + 100.0f * i;
+		ui->frameSprite->posY = (float)100.0f + 100.0f * i;
+		ui->itemSprite->posX = (float)100.0f + 100.0f * i;
+		ui->itemSprite->posY = (float)100.0f + 100.0f * i;
 
 		//画像の描画
 		ui->frameSprite->render();
@@ -118,7 +125,7 @@ void InventoryUI::SetInventorySlot(std::size_t loopNum, Inventory& inventory)
 	for (std::size_t i = 0; i < loopNum; i++)
 	{
 		//inventory配列の追加対象の要素番号を確認
-		std::size_t targetNum = inventory.GetInventory().size() - loopNum - i;
+		std::size_t targetNum = inventory.GetInventory().size() - loopNum + i;
 
 		currentID++;
 
@@ -147,21 +154,27 @@ int InventoryUI::GetSelectedIndex(InventorySlot& target)
 
 	for (std::size_t i = 0; i < inventoryUI.size(); i++)
 	{
-		if (*inventoryUI[i] != target)
+		if (*inventoryUI[i] == target)
 		{
 			return i;
 		}
 	}
 }
 
-void InventoryUI::DeleteInventorySlot(InventorySlot& target)
+void InventoryUI::DeleteInventorySlot(InventorySlot* target)
 {
 	//インベントリ画面にあるスロットすべてを確認
 	for (auto itr = inventoryUI.begin(); itr != inventoryUI.end(); itr++)
 	{
-		if (**itr != target) continue;
+		if (*itr != target) continue;
 
-		inventoryUI.erase(itr);
+		inventoryUI.erase(itr);	//削除
+
+		//メモリ破棄
+		delete target->frameSprite;
+		delete target->itemSprite;
+		delete target;
+
 		break;
 	}
 

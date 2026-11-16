@@ -199,14 +199,24 @@ void SceneMainGame::terminate()
 void SceneMainGame::execute()
 {
 	player->Execute(TimeManager::GetDeltaTime(), theta);
-	inventoryUI->Execute();
+	inventoryUI->Execute(uiIdx);
+
 	//pShadow->setPosition(player->getModel()->getPosition());	//影の座標をプレイヤーの座標に合わせる
 	pShadow->setPositionY(0.01f);	//影の座標を少し浮かせる	Z-Fighting対策
 
 	float hitDistance = 0.0f;	//衝突点からカメラの位置までの距離を返す
 	crosshairUI->UpdateCrosshairUI(false);
 
+	//==インベントリUI処理==
 	inventoryUI->SetIsInventoryUIRender(vnKeyboard::on(DIK_TAB));
+
+	//インベントリスロットを選択していれば処理
+	if (inventoryUI->GetIsSelected())
+	{
+		player->GetInventory().DeleteMaterial(player->GetInventory().GetInventory()[uiIdx]);
+		inventoryUI->DeleteInventorySlot(inventoryUI->GetInventoryUI()[uiIdx]);
+		inventoryUI->SetIsSelected(false);
+	}
 
 	//インベントリ画面表示中であれば視点移動をキャンセル
 	if (!inventoryUI->GetIsInventoryUIRender())
@@ -275,15 +285,15 @@ void SceneMainGame::execute()
 
 	XMVECTOR holdPos = linePos + lineDir * holdRange;
 
+	//シーン内にある資材すべて処理する
 	for (std::size_t i = 0; i < materials.size(); i++)
 	{
 		materials[i]->Execute(TimeManager::GetDeltaTime(), holdPos);
-
 		//資材クラスが所持しているAABBColliderとの距離を確認
 		if (materials[i]->GetAABBCollider().GetBoundingBox().Intersects(
-				linePos,
-				lineDir,
-				hitDistance)
+			linePos,
+			lineDir,
+			hitDistance)
 			&& hitDistance <= pickupRange)
 		{
 			crosshairUI->UpdateCrosshairUI(true);
@@ -294,11 +304,9 @@ void SceneMainGame::execute()
 			{
 				//Eキー押下でインベントリに資材追加
 				isAddMaterial = player->AddMaterial(targetMat);
-				if (isAddMaterial)
-				{
-					DeleteMaterialData(targetMat);
-					break;
-				}
+				if (!isAddMaterial) continue;	//追加不可であれば処理を飛ばす
+				DeleteMaterialData(targetMat);
+				break;
 			}
 
 			if (vnMouse::onL())

@@ -53,5 +53,6 @@ void Inventory::DeleteMaterial(Material* material)
 
 		//ˆê’v‚·‚é‘Şî•ñ‚ª‚ ‚ê‚Îíœ
 		inventory.erase(itr);
+		break;
 	}
 }

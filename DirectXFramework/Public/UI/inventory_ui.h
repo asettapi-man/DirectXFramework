@@ -35,22 +35,25 @@ private:
 	std::vector<InventorySlot*> inventoryUI;	//インベントリスロット
 
 	bool isInventoryUIRender;	//インベントリUI表示フラグ
+	bool isSelected;			//インベントリスロット選択フラグ
 public:
 	InventoryUI();		//コンストラクタ
 	~InventoryUI();		//デストラクタ
 
 	void Initialize();					//初期化関数
-	void Execute();						//処理関数
+	void Execute(int& index);			//処理関数
 	void Render(Inventory& inventory);	//描画関数
 
 	inline std::vector<InventorySlot*> GetInventoryUI() const { return inventoryUI; }	//インベントリスロット配列取得関数
 	inline bool GetIsInventoryUIRender() const { return isInventoryUIRender; }			//インベントリUI描画フラグ取得関数
+	inline bool GetIsSelected() const { return isSelected; }							//インベントリスロット選択フラグ取得関数
 
 	inline void SetIsInventoryUIRender(bool flag) { isInventoryUIRender = flag; }		//インベントリUI描画フラグ設定関数
+	inline void SetIsSelected(bool flag) { isSelected = flag; }							//インベントリスロット選択フラグ設定関数
 
 	
 	void SetInventorySlot(std::size_t loopNum, Inventory& inventory);	//インベントリスロット追加関数
 
 	int GetSelectedIndex(InventorySlot& inventorySlot);				//選択したインベントリスロットの番号取得関数
-	void DeleteInventorySlot(InventorySlot& inventorySlot);				//インベントリスロット削除関数
+	void DeleteInventorySlot(InventorySlot* inventorySlot);			//インベントリスロット削除関数
 };
