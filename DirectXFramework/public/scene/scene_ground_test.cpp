@@ -20,6 +20,14 @@ bool SceneGroundTest::isCollide(XMVECTOR* out, XMVECTOR* nor, XMVECTOR* linePos,
 
 	XMMATRIX world = *pGround->getWorld();
 
+	//直線情報
+	vnCollide::stLine line;
+	line.Pos = *linePos;
+	line.Dir = *lineDir;
+
+	//三角形の情報
+	vnCollide::stTriangle tri;
+
 	for (int i = 0; i < idxNum; i += 3)
 	{
 		//各３頂点番号を取得
@@ -55,69 +63,23 @@ bool SceneGroundTest::isCollide(XMVECTOR* out, XMVECTOR* nor, XMVECTOR* linePos,
 		thirdPoint = XMVector3TransformCoord(thirdPoint, world);
 
 		//平面（三角形）の情報
-		XMVECTOR v1, v2;
-		v1 = XMVectorSubtract(secondPoint, firstPoint);
-		v2 = XMVectorSubtract(thirdPoint, firstPoint);
+		tri.fromPoints(&firstPoint, &secondPoint, &thirdPoint);
 
-		planeNormal = XMVector3Cross(v1, v2);	//外積で法線ベクトルを求める
-		planeNormal = XMVector3Normalize(planeNormal);	//正規化
+		XMVECTOR hit;
 
-		XMVECTOR vDot = XMVector3Dot(planeNormal, firstPoint);	//ある１頂点と法線ベクトルから内積を求める
-		planeDistance = -XMVectorGetX(vDot);	//距離
-
-		float s, d;
-		XMVECTOR vS = XMVector3Dot(planeNormal, *linePos);
-		s = XMVectorGetX(vS);
-		s += planeDistance;
-
-		XMVECTOR vD = XMVector3Dot(planeNormal, *linePos + *lineDir);
-		d = XMVectorGetX(vD);
-		d += planeDistance;
-
-		float t = s / (s - d);	//傾き
-		float dif = s - d;	//floatの差
-
-		if (fabsf(dif < 0.000001f)) continue; 
-		if (t < 0) continue;
-		if (t > length) continue;
-
-		XMVECTOR hit = *linePos + *lineDir * t;
-
-		//①各３頂点の距離を求める（0 -> 1, 1 -> 2, 2 -> 0）
-		XMVECTOR firstEdge = XMVectorSubtract(secondPoint, firstPoint);
-		XMVECTOR secondEdge = XMVectorSubtract(thirdPoint, secondPoint);
-		XMVECTOR thirdEdge = XMVectorSubtract(firstPoint, thirdPoint);
-
-		//rayと各３頂点の位置の差分
-		XMVECTOR firstHitEdge = XMVectorSubtract(hit, firstPoint);
-		XMVECTOR secondHitEdge = XMVectorSubtract(hit, secondPoint);
-		XMVECTOR thirdHitEdge = XMVectorSubtract(hit, thirdPoint);
-
-		//③　①と②の外積を求める（求めたy成分で触れているか判定する）
-		XMVECTOR firstCross = XMVector3Cross(firstEdge, firstHitEdge);
-		XMVECTOR secondCross = XMVector3Cross(secondEdge, secondHitEdge);
-		XMVECTOR thirdCross = XMVector3Cross(thirdEdge, thirdHitEdge);
-
-		//法線ベクトルとの内積を求める
-		firstCross = XMVector3Dot(firstCross, planeNormal);
-		secondCross = XMVector3Dot(secondCross, planeNormal);
-		thirdCross = XMVector3Dot(thirdCross, planeNormal);
-
-		float fC = XMVectorGetX(firstCross);
-		float sC = XMVectorGetX(secondCross);
-		float tC = XMVectorGetX(thirdCross);
-
-		if (fC >= 0.0f && sC >= 0.0f && tC >= 0.0f)
+		if (vnCollide::isCollide(&hit, &line, &tri))
 		{
-			//衝突座標を返却用変数に代入
 			*out = hit;
-			if (nor) *nor = planeNormal;
+			if (nor) *nor = tri.plane.Normal;
 			result = true;
 		}
 	}
 	return result;
 }
 
+//線分と地形（三角形群）の衝突を調べる関数（メッシュ単位）
+//return -1 : 衝突無し
+// >= 0 : メッシュ番号
 int SceneGroundTest::isCollideMesh(XMVECTOR* out, XMVECTOR* nor, XMVECTOR* linePos, XMVECTOR* lineDir, float length)
 {
 	int result = -1;	//return用変数
@@ -206,8 +168,8 @@ int SceneGroundTest::isCollideMesh(XMVECTOR* out, XMVECTOR* nor, XMVECTOR* lineP
 			float dif = s - d;	//floatの差
 
 			if (fabsf(dif < 0.000001f)) continue;
-			if (t < 0) continue;
-			if (t > length) continue;
+			if (t < 0) continue;		//Directionの逆側は当たらない（半直線）
+			if (t > length) continue;	//一定距離以上当たらない（線分）
 
 			XMVECTOR hit = *linePos + *lineDir * t;
 
@@ -419,27 +381,21 @@ void SceneGroundTest::execute()
 		isJump = true;	//落下中はジャンプ不可
 	}
 
-	//落下対策
-	if (pPlayer->getPositionY() < -50.0f)
-	{
-		velocity = XMVectorZero();
-		pPlayer->setPosition(0.0f, 0.0f, 0.0f);
-	}
-
 	XMVECTOR hit;	//衝突座標を受け取る変数
-	linePos = *pPlayer->getPosition();
-	linePos = XMVectorAdd(linePos, XMVectorSet(0.0f, 0.1f, 0.0f, 0.0f));
-	linePos = XMVectorAdd(linePos, vMove * 5.0f);	//進行方向に5.0f進める
-	lineDir = XMVectorSet(0.0f, -1.0f, 0.0f, 0.0f);
+	vnCollide::stLine line;
+	line.Pos = *pPlayer->getPosition();
+	line.Pos = XMVectorAdd(linePos, XMVectorSet(0.0f, 0.1f, 0.0f, 0.0f));
+	line.Pos = XMVectorAdd(linePos, vMove * 5.0f);	//進行方向に5.0f進める
+	line.Dir = XMVectorSet(0.0f, -1.0f, 0.0f, 0.0f);
 	float length = 0.3f;
 
 	//線分のデバッグ表示
-	XMVECTOR linePosEnd = linePos + lineDir * length;
-	vnDebugDraw::Line(&linePos, &linePosEnd, debugLineColor);
+	XMVECTOR linePosEnd = line.Pos + line.Dir * length;
+	vnDebugDraw::Line(&line.Pos, &linePosEnd, debugLineColor);
 	
 	//地面判定
 	//bool result = isCollide(&hit, &linePos, &lineDir, length);
-	int result = isCollideMesh(&hit, NULL, &linePos, &lineDir, length);
+	int result = isCollideMesh(&hit, NULL, &line.Pos, &line.Dir, length);
 	playerGroundID = result;
 
 	if (result >= 0)
@@ -451,18 +407,24 @@ void SceneGroundTest::execute()
 
 		//速度をリセット
 		velocity = XMVectorZero();
-		jumpForce = 0.3f;	//ジャンプ力リセット
 
-		vnModel_MaterialData* pMat = pGround->getMaterial();
-		vnModel_MeshData* pMesh = pGround->getMesh();
-
-		pPlayer->setDiffuse(
-			pMat[pMesh[result].MaterialID].Diffuse[0],	//R
-			pMat[pMesh[result].MaterialID].Diffuse[1],	//G
-			pMat[pMesh[result].MaterialID].Diffuse[2],	//B
-			pMat[pMesh[result].MaterialID].Diffuse[3]	//A
-		);
+		//vnModel_MaterialData* pMat = pGround->getMaterial();
+		//vnModel_MeshData* pMesh = pGround->getMesh();
+		//
+		//pPlayer->setDiffuse(
+		//	pMat[pMesh[result].MaterialID].Diffuse[0],	//R
+		//	pMat[pMesh[result].MaterialID].Diffuse[1],	//G
+		//	pMat[pMesh[result].MaterialID].Diffuse[2],	//B
+		//	pMat[pMesh[result].MaterialID].Diffuse[3]	//A
+		//);
 		
+	}
+
+	//落下対策
+	if (pPlayer->getPositionY() < -50.0f)
+	{
+		velocity = XMVectorZero();
+		pPlayer->setPosition(0.0f, 0.0f, 0.0f);
 	}
 
 	/*if(result == true)

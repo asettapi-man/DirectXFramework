@@ -6,6 +6,12 @@
 //--------------------------------------------------------------//
 #pragma once	//インクルードガード
 
+//微小値
+#define EPSILON (1.0e-6)
+
+//微小値を考慮したゼロ比較（マクロ）
+#define ISZERO(x) (fabsf(x) < EPSILON)
+
 namespace vnCollide
 {
 	//形状：直線

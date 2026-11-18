@@ -42,6 +42,16 @@ void vnCollide::closesPoint(XMVECTOR* ret, const stLine* line, const XMVECTOR* p
 	XMVECTOR v;
 	v = XMVectorSubtract(*pos, line->Dir);
 
+	float vx = XMVectorGetX(v);
+	float vy = XMVectorGetY(v);
+	float vz = XMVectorGetZ(v);
+	if (ISZERO(vx) && ISZERO(vy) && ISZERO(vz))
+	{
+		//Lineの視点と点が一致
+		*ret = line->Pos;
+		return;
+	}
+
 	float dot = XMVectorGetX(XMVector3Dot(v, line->Dir));
 	*ret = line->Pos + line->Dir * dot;
 }
@@ -58,8 +68,10 @@ bool vnCollide::isCollide(XMVECTOR* hit, const stLine* line, const stPlane* plan
 	d = XMVectorGetX(vD);
 	d += plane->Distance;
 
+	//平行の関係
+	if (ISZERO(s - d) < EPSILON) return false;
+
 	float t = s / (s - d);	//傾き
-	float dif = s - d;	//floatの差
 
 	*hit = line->Pos + line->Dir * t;
 
@@ -68,7 +80,8 @@ bool vnCollide::isCollide(XMVECTOR* hit, const stLine* line, const stPlane* plan
 
 bool vnCollide::isCollide(XMVECTOR* hit, const stLine* line, const stTriangle* tri)
 {
-	vnCollide::isCollide(hit, line, &tri->plane);
+	//平面と平行であればfalse
+	if (!vnCollide::isCollide(hit, line, &tri->plane)) return false;
 
 	//衝突判定
 	//三角形の辺のベクトル作成
@@ -103,39 +116,47 @@ bool vnCollide::isCollide(XMVECTOR* hit, const stLine* line, const stTriangle* t
 
 int vnCollide::isCollide(XMVECTOR* hit, const stLine* line, const stSphere* sphere)
 {
+	int ret = 0;	//出力結果
+
 	XMVECTOR v = XMVectorSubtract(line->Pos, sphere->Pos);
 	float vx = XMVectorGetX(v);
 	float vy = XMVectorGetY(v);
 	float vz = XMVectorGetZ(v);
 
-	XMVECTOR nv = XMVector3Normalize(v);
-
-	XMVECTOR vdt = XMVector3Dot(nv, line->Dir);
-	XMVECTOR vdl = XMVector3Length(v);
-	float dt = XMVectorGetX(vdt);
-	//範囲指定
-	if (dt > 1.0f) dt = 1.0f;
-	else if (dt < -1.0f) dt = -1.0f;
-
-	float dl = XMVectorGetX(vdl);
-	float dr = dl * sqrt(1.0f - dt * dt);	//直線と球中心の最近傍距離
-
-	//球の半径より直線が近ければ衝突
-	float dq = sqrtf(sphere->Radius * sphere->Radius - dr * dr);
-	float ds = dl * dt;
-	float dm = ds - dq;	//直線の視点からの各衝突位置（マイナス側）
-	float dp = ds + dq;	//直線の視点からの各衝突位置（プラス側）
-	hit[0] = line->Pos + line->Dir * (-dm);
-	hit[1] = line->Pos + line->Dir * (-dp);
-
-
-	if (dr <= sphere->Radius)
+	if (ISZERO(vx) && ISZERO(vy) && ISZERO(vz))
 	{
-		
+		//直線が球中心に重なっている場合
+		hit[ret++] = line->Pos + line->Dir * sphere->Radius;
+		hit[ret++] = line->Pos + line->Dir * (-sphere->Radius);
 	}
 	else
 	{
+		XMVECTOR nv = XMVector3Normalize(v);
 
+		XMVECTOR vdt = XMVector3Dot(nv, line->Dir);
+		XMVECTOR vdl = XMVector3Length(v);
+		float dt = XMVectorGetX(vdt);
+		//範囲指定
+		if (dt > 1.0f) dt = 1.0f;
+		else if (dt < -1.0f) dt = -1.0f;
+
+		float dl = XMVectorGetX(vdl);
+		float dr = dl * sqrt(1.0f - dt * dt);	//直線と球中心の最近傍距離
+
+
+		if (dr <= sphere->Radius)
+		{
+			//球の半径より直線が近ければ衝突
+			float dq = sqrtf(sphere->Radius * sphere->Radius - dr * dr);
+			float ds = dl * dt;
+			float dm = ds - dq;	//直線の視点からの各衝突位置（マイナス側）
+			float dp = ds + dq;	//直線の視点からの各衝突位置（プラス側）
+			hit[ret++] = line->Pos + line->Dir * (-dm);
+			if (!ISZERO(dq))
+			{
+				hit[ret++] = line->Pos + line->Dir * (-dp);
+			}
+		}
 	}
-	return 0;
+	return ret;
 }

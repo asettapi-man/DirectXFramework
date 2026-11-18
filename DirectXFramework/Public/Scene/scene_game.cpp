@@ -215,6 +215,8 @@ void SceneMainGame::execute()
 	{
 		player->GetInventory().DeleteMaterial(player->GetInventory().GetInventory()[uiIdx]);
 		inventoryUI->DeleteInventorySlot(inventoryUI->GetInventoryUI()[uiIdx]);
+		CreateMaterial();
+
 		inventoryUI->SetIsSelected(false);
 	}
 
@@ -483,6 +485,24 @@ void SceneMainGame::render()
 		materials[i]->Render();	//“–‚½‚è”»’è‚Ì˜g‘g‚Ý•\Ž¦
 	}
 #endif
+}
+
+void SceneMainGame::CreateMaterial()
+{
+	Material* material = new Material(MaterialType::WOOD);
+	XMVECTOR holdPos = linePos + lineDir * holdRange;
+	material->GetModel()->setPosition(&holdPos);
+	material->GetAABBCollider().SetBoundingBoxCenter(
+		material->GetModel()->getPositionX(),
+		material->GetModel()->getPositionY(),
+		material->GetModel()->getPositionZ()
+	);
+
+	material->Initialize();
+
+	materials.push_back(material);
+
+	registerObject(materials.back()->GetModel());
 }
 
 bool SceneMainGame::DeleteMaterialData(Material* material)

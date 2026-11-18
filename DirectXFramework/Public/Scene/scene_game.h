@@ -74,6 +74,7 @@ public:
 	void execute();
 	void render();
 
+	void CreateMaterial();							//シーン上に資材クラスをインスタンス生成関数
 	bool DeleteMaterialData(Material* material);	//シーンから資材削除関数
 
 	void TitleSetUp();	//再度ゲームプレイできるように初期化
