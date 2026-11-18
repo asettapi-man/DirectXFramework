@@ -28,6 +28,8 @@ private:
 	vnModel* pGround;			//地面オブジェクト
 	vnModel* pSky;				//背景
 
+	Material* targetMat;			//操作対象の資材オブジェクト
+
 	std::vector<vnModel*> islands;	//島オブジェクト管理配列
 	std::vector<Material*> materials;	//資材オブジェクト管理配列
 

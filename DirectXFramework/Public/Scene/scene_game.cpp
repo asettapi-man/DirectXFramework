@@ -27,6 +27,8 @@ bool SceneMainGame::initialize()
 	pSky = new vnModel(L"data/model/", L"skydome.vnm");			//背景
 	pSky->setLighting(false);		//背景のライティングを無効
 
+	targetMat = nullptr;	//初期化時には対象の資材がないためnullとする
+
 	for (int i = 0; i < ISLANDCOUNT; i++)
 	{
 		vnModel* model = new vnModel(L"data/model/Island/MiningIsland/", L"MiningIsland.vnm");
@@ -177,6 +179,7 @@ void SceneMainGame::terminate()
 
 	//== 破棄 ==
 	delete player;
+	delete targetMat;
 
 	//== 画像 ==
 	deleteObject(crosshairUI->GetNormalCrosshair());
@@ -220,8 +223,9 @@ void SceneMainGame::execute()
 		inventoryUI->SetIsSelected(false);
 	}
 
-	//インベントリ画面表示中であれば視点移動をキャンセル
-	if (!inventoryUI->GetIsInventoryUIRender())
+	//インベントリ画面非表示中かつ資材の状態が回転状態であれば視点移動をキャンセル
+	if (!inventoryUI->GetIsInventoryUIRender()
+		&& (targetMat == nullptr || targetMat->GetState() != MaterialState::ROTATE))
 	{
 		//マウスの移動量を取得
 		float dx = (float)vnMouse::getDX();
@@ -251,6 +255,12 @@ void SceneMainGame::execute()
 		{
 			phi = -1.5f;
 		}
+
+		isDebug = true;
+	}
+	else
+	{
+		isDebug = false;
 	}
 
 	//== １人称カメラ座標の計算 ==
@@ -300,7 +310,7 @@ void SceneMainGame::execute()
 		{
 			crosshairUI->UpdateCrosshairUI(true);
 
-			Material* targetMat = materials[i];	//衝突対象の資材
+			targetMat = materials[i];	//衝突対象の資材
 
 			if (vnKeyboard::trg(DIK_E))
 			{
@@ -313,13 +323,21 @@ void SceneMainGame::execute()
 
 			if (vnMouse::onL())
 			{
+				//資材の投擲処理
+			}
+			else if (vnKeyboard::on(DIK_R))
+			{
+				//資材の回転処理
+				targetMat->SetMaterialState(MaterialState::ROTATE);
+			}
+			else if (vnMouse::onR())
+			{
+				//資材の保持処理
 				targetMat->SetMaterialState(MaterialState::HOLD);
-				isDebug = true;
 			}
 			else
 			{
 				targetMat->SetMaterialState(MaterialState::NONE);
-				isDebug = false;
 			}
 		}
 	}
@@ -423,6 +441,18 @@ void SceneMainGame::execute()
 				inventoryUI->GetInventoryUI().size()
 			);
 
+			vnFont::print(10.0f, 260.0f, L"InventoryUI_isInventoryUIRender : %s", inventoryUI->GetIsInventoryUIRender() ? L"true" : L"false");
+
+			if (targetMat != nullptr)
+			{
+				vnFont::print(10.0f, 280.0f, L"targetMat_MaterialState : %d", (int)targetMat->GetState()	);
+
+				vnFont::print(10.0f, 300.0f, L"targetMat_Rotate : %.3f, %.3f, %.3f",
+					targetMat->GetModel()->getRotationX(),
+					targetMat->GetModel()->getRotationY(),
+					targetMat->GetModel()->getRotationZ()
+				);
+			}
 
 			vnFont::print((float)vnMainFrame::screenWidth - 150.0f, 0.0f, L"DeltaTime : %.3f", TimeManager::GetDeltaTime());
 

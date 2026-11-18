@@ -78,6 +78,20 @@ void Material::Execute(double deltaTime, const XMVECTOR holdPos)
 		collider.SetBoundingBoxCenter(materialPos);
 
 		break;
+
+	case MaterialState::ROTATE:	//‰ñ“]ó‘Ô
+		RotateMaterial(deltaTime);	//‰ñ“]ˆ—
+
+		model->setPosition(&holdPos);
+
+		materialPos = XMFLOAT3(
+			model->getPositionX(),
+			model->getPositionY() + 0.15f,	//BoundingBox‚ÌˆÊ’u’²®‚Å0.1f‰Á‚¦‚Ä‚¢‚é
+			model->getPositionZ()
+		);
+
+		collider.SetBoundingBoxCenter(materialPos);
+		break;
 	}
 }
 
@@ -147,4 +161,17 @@ ItemData Material::CreateItemData(MaterialType type)
 	itemData = {type , weight };
 
 	return itemData;
+}
+
+void Material::RotateMaterial(double deltaTime)
+{
+	//ƒ}ƒEƒX‚Ìx, y‚ÌˆÚ“®—Ê
+	float mx = (float)vnMouse::getDX();
+	float my = (float)vnMouse::getDY();
+
+	theta = mx * deltaTime;
+	phi   = my * deltaTime;
+
+	model->addRotationX(phi);
+	model->addRotationY(theta);
 }
