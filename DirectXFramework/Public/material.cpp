@@ -14,6 +14,7 @@ Material::Material(MaterialType type)
 
 	//初期化
 	state = MaterialState::NONE;
+	colliderExtents = XMFLOAT3(1.25f, 0.15f, 1.25f);
 }
 
 /// <summary>
@@ -60,7 +61,7 @@ void Material::Execute(double deltaTime, const XMVECTOR holdPos)
 
 		materialPos = XMFLOAT3(
 			model->getPositionX(),
-			model->getPositionY() + 0.15f,	//BoundingBoxの位置調整で0.1f加えている
+			model->getPositionY() + offset,	//BoundingBoxの位置調整で0.15f加えている
 			model->getPositionZ()
 		);
 
@@ -71,7 +72,7 @@ void Material::Execute(double deltaTime, const XMVECTOR holdPos)
 
 		materialPos = XMFLOAT3(
 			model->getPositionX(),
-			model->getPositionY() + 0.15f,	//BoundingBoxの位置調整で0.1f加えている
+			model->getPositionY() + offset,	//BoundingBoxの位置調整で0.1f加えている
 			model->getPositionZ()
 		);
 
@@ -86,7 +87,7 @@ void Material::Execute(double deltaTime, const XMVECTOR holdPos)
 
 		materialPos = XMFLOAT3(
 			model->getPositionX(),
-			model->getPositionY() + 0.15f,	//BoundingBoxの位置調整で0.1f加えている
+			model->getPositionY() + offset,	//BoundingBoxの位置調整で0.1f加えている
 			model->getPositionZ()
 		);
 
@@ -146,7 +147,7 @@ void Material::CreateModel(MaterialType type)
 	);
 
 	collider.SetBoundingBoxCenter(materialPos);
-	collider.SetBoundingBoxExtents(XMFLOAT3(1.25f, 0.15f, 1.25f));
+	collider.SetBoundingBoxExtents(colliderExtents);
 }
 
 /// <summary>
@@ -163,6 +164,10 @@ ItemData Material::CreateItemData(MaterialType type)
 	return itemData;
 }
 
+/// <summary>
+/// 資材の回転処理
+/// </summary>
+/// <param name="deltaTime">経過時間</param>
 void Material::RotateMaterial(double deltaTime)
 {
 	//マウスのx, yの移動量

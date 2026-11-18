@@ -39,6 +39,7 @@ private:
 	static constexpr int maxDropCount = 4;				//最大ドロップ数
 	static constexpr float minMaterialWeight = 5.0f;	//最小重量
 	static constexpr float maxMaterialWeight = 10.0f;	//最大重量
+	static constexpr float offset = 0.15f;				//調整用
 
 	vnModel* model;			//モデル情報
 	AABBCollider collider;	//AABBコライダー
@@ -47,6 +48,9 @@ private:
 
 	XMVECTOR velocity;	//速度ベクトル
 	XMVECTOR gravity;	//重力ベクトル
+
+	XMFLOAT3 colliderExtents;	//コライダーの範囲
+
 
 	float phi = 0.0f;		//角度φ 緯度
 	float theta = 0.0f;		//角度θ 経度
