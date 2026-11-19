@@ -1,20 +1,27 @@
+//--------------------------------------------------------------//
+//	"inventory.cpp"												//
+//	インベントリクラス											//
+//  プレイヤーの持ち物（資材）の管理を担当						//
+//									           最終修正日 11/19	//
+//--------------------------------------------------------------//
+
 #include "../framework.h"
 #include "../Framework/environment.h"
 #include "inventory.h"
 
 /// <summary>
-/// 追加可能フラグ関数
+/// 追加可能か確認
 /// </summary>
 /// <param name="material">資材クラス</param>
-/// <returns>追加可能かどうかを返す</returns>
+/// <returns>追加可能であればtrueを返す</returns>
 bool Inventory::CanAdd(Material* material) const
 {
-	//データを追加可能かどうかと重さが最大重量を越えていないか確認
+	//重さが最大重量を越えていないか確認
 	return GetTotalWeight() + material->GetItemData().weight < MAXWEIGHT;
 }
 
 /// <summary>
-/// インベントリ内の合計重量を取得する関数
+/// インベントリ内の合計重量を取得
 /// </summary>
 /// <returns>合計重量を返す</returns>
 float Inventory::GetTotalWeight() const
@@ -31,9 +38,9 @@ float Inventory::GetTotalWeight() const
 }
 
 /// <summary>
-/// インベントリに資材を追加する関数
+/// 資材を追加
 /// </summary>
-/// <param name="material">資材クラス</param>
+/// <param name="material">追加する資材クラス</param>
 void Inventory::SetMaterial(Material* material)
 {
 	//追加可能？
@@ -43,6 +50,10 @@ void Inventory::SetMaterial(Material* material)
 	}
 }
 
+/// <summary>
+/// 資材の削除
+/// </summary>
+/// <param name="material">削除する資材クラス</param>
 void Inventory::DeleteMaterial(Material* material)
 {
 	if (inventory.empty()) return;	//要素が無ければ終了

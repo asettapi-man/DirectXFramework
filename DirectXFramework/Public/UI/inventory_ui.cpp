@@ -1,16 +1,21 @@
+//--------------------------------------------------------------//
+//	"inventory_ui.cpp"											//
+//	インベントリUIクラス										//
+//  インベントリの中身の表示を担当								//
+//									           最終修正日 11/19	//
+//--------------------------------------------------------------//
+
 #include "../../framework.h"
 #include "../../Framework/environment.h"
 #include <algorithm>
 #include "inventory_ui.h"
-
-int InventoryUI::currentID = 0;
 
 /// <summary>
 /// コンストラクタ
 /// </summary>
 InventoryUI::InventoryUI()
 {
-	isInventoryUIRender = false;
+	isVisible = false;
 }
 
 /// <summary>
@@ -18,7 +23,7 @@ InventoryUI::InventoryUI()
 /// </summary>
 InventoryUI::~InventoryUI()
 {
-	for (auto& ui : inventoryUI)
+	for (auto& ui : inventorySlots)
 	{
 		delete ui->frameSprite;
 		delete ui->itemSprite;
@@ -27,28 +32,29 @@ InventoryUI::~InventoryUI()
 }
 
 /// <summary>
-/// 初期化関数
+/// 初期化
 /// </summary>
 void InventoryUI::Initialize()
 {
-	isInventoryUIRender = false;
+	isVisible = false;
 }
 
 /// <summary>
-/// 処理関数
+/// 継続処理
 /// </summary>
 /// <param name="index">選択したUI番号（出力用）</param>
 void InventoryUI::Execute(int& index)
 {
-	if (!isInventoryUIRender) return;
+	if (!isVisible) return;
 
-	for (auto& ui : inventoryUI)
+	for (auto& ui : inventorySlots)
 	{
 		if (ui->itemSprite->CheckImageMouseOver())
 		{
 			//画像の色を灰色に変更
-			ui->frameSprite->SetImageColor(0.5f, 0.5f, 0.5f);
-			ui->itemSprite->SetImageColor(0.5f, 0.5f, 0.5f);
+			float gray = 0.5f;	//灰色
+			ui->frameSprite->SetImageColor(gray, gray, gray);
+			ui->itemSprite->SetImageColor(gray, gray, gray);
 
 			if (!vnMouse::trgL()) continue;
 			index = GetSelectedIndex(*ui);
@@ -57,20 +63,21 @@ void InventoryUI::Execute(int& index)
 		else
 		{
 			//画像の色を通常時に戻す
-			ui->frameSprite->SetImageColor(1.0f, 1.0f, 1.0f);
-			ui->itemSprite->SetImageColor(1.0f, 1.0f, 1.0f);
+			float white = 1.0f;	//白色
+			ui->frameSprite->SetImageColor(white, white, white);
+			ui->itemSprite->SetImageColor(white, white, white);
 		}
 	}
 }
 
 /// <summary>
-/// 描画関数
+/// 描画処理
 /// </summary>
 /// <param name="inventory">インベントリ情報</param>
 void InventoryUI::Render(Inventory& inventory)
 {
 	const std::size_t inventorySize = inventory.GetInventory().size();	//インベントリのサイズ
-	const std::size_t inventorySlotSize = inventoryUI.size();			//インベントリUIのサイズ
+	const std::size_t inventorySlotSize = inventorySlots.size();		//インベントリUIのサイズ
 
 	if (inventorySize > inventorySlotSize)
 	{
@@ -81,9 +88,9 @@ void InventoryUI::Render(Inventory& inventory)
 
 	for (std::size_t i = 0; i < inventorySize; i++)
 	{
-		auto& ui = inventoryUI[i];	//対象
+		auto& ui = inventorySlots[i];	//対象
 
-		ui->id = (int)i;
+		ui->id = (int)i;	//番号の修正
 
 		//要素順に配置位置を修正
 		ui->frameSprite->posX = (float)100.0f + 100.0f * i;
@@ -113,21 +120,19 @@ void InventoryUI::Render(Inventory& inventory)
 }
 
 /// <summary>
-/// インベントリスロット追加関数
+/// インベントリスロット追加
 /// </summary>
-/// <param name="loopNum">ループ回数</param>
+/// <param name="loopNum">追加回数</param>
 /// <param name="inventory">インベントリ情報</param>
-void InventoryUI::SetInventorySlot(std::size_t loopNum, Inventory& inventory)
+void InventoryUI::SetInventorySlot(std::size_t addNum, Inventory& inventory)
 {
-	if (loopNum <= 0) return;	//０以下なら処理を行わない
+	if (addNum <= 0) return;	//０以下なら処理を行わない
 
 	//足りていない分追加する
-	for (std::size_t i = 0; i < loopNum; i++)
+	for (std::size_t i = 0; i < addNum; i++)
 	{
 		//inventory配列の追加対象の要素番号を確認
-		std::size_t targetNum = inventory.GetInventory().size() - loopNum + i;
-
-		currentID++;
+		std::size_t targetNum = inventory.GetInventory().size() - addNum + i;
 
 		//inventory側にある資材の素材情報を取得
 		switch (inventory.GetInventory()[targetNum]->GetItemData().type)
@@ -142,33 +147,41 @@ void InventoryUI::SetInventorySlot(std::size_t loopNum, Inventory& inventory)
 		//対応した画像を作成
 		vnSprite* fSprite = new vnSprite(0.0f, 0.0f, WIDTH, HEIGHT, L"data/image/test.png");	//フレーム画像
 		vnSprite* iSprite = new vnSprite(0.0f, 0.0f, WIDTH, HEIGHT, L"data/image/test.png");	//アイテム画像
-		InventorySlot* slot = new InventorySlot{ currentID,fSprite, iSprite };
+		InventorySlot* slot = new InventorySlot{ 0, fSprite, iSprite };
 	
-		inventoryUI.push_back(slot);
+		inventorySlots.push_back(slot);
 	}
 }
 
+/// <summary>
+/// 選択したインベントリスロットの番号取得
+/// </summary>
+/// <param name="target">選択したインベントリスロット</param>
+/// <returns>一致した要素がある番号を返す</returns>
 int InventoryUI::GetSelectedIndex(InventorySlot& target)
 {
 	//インベントリ画面にあるスロットすべてを確認
-
-	for (std::size_t i = 0; i < inventoryUI.size(); i++)
+	for (std::size_t i = 0; i < inventorySlots.size(); i++)
 	{
-		if (*inventoryUI[i] == target)
+		if (*inventorySlots[i] == target)
 		{
 			return i;
 		}
 	}
 }
 
+/// <summary>
+/// インベントリスロット削除
+/// </summary>
+/// <param name="target">削除するインベントリスロット</param>
 void InventoryUI::DeleteInventorySlot(InventorySlot* target)
 {
 	//インベントリ画面にあるスロットすべてを確認
-	for (auto itr = inventoryUI.begin(); itr != inventoryUI.end(); itr++)
+	for (auto itr = inventorySlots.begin(); itr != inventorySlots.end(); itr++)
 	{
 		if (*itr != target) continue;
 
-		inventoryUI.erase(itr);	//削除
+		inventorySlots.erase(itr);	//削除
 
 		//メモリ破棄
 		delete target->frameSprite;
@@ -177,6 +190,4 @@ void InventoryUI::DeleteInventorySlot(InventorySlot* target)
 
 		break;
 	}
-
-	currentID--;
 }

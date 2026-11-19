@@ -30,8 +30,8 @@ private:
 
 	Material* targetMat;			//操作対象の資材オブジェクト
 
-	std::vector<vnModel*> islands;	//島オブジェクト管理配列
-	std::vector<Material*> materials;	//資材オブジェクト管理配列
+	std::vector<vnModel*> islands;		//島オブジェクト
+	std::vector<Material*> materials;	//資材オブジェクト
 
 	/*//== 画像 ==
 	vnSprite* pTitle;	//タイトル画面
@@ -76,8 +76,8 @@ public:
 	void execute();
 	void render();
 
-	void CreateMaterial();							//シーン上に資材クラスをインスタンス生成関数
-	bool DeleteMaterialData(Material* material);	//シーンから資材削除関数
+	void CreateMaterial();							//シーン上に資材を生成
+	bool DeleteMaterialData(Material* material);	//シーンから資材削除
 
-	void TitleSetUp();	//再度ゲームプレイできるように初期化
+	void TitleSetup();	//タイトルの初期設定
 };

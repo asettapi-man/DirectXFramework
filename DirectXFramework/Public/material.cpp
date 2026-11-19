@@ -1,3 +1,10 @@
+//--------------------------------------------------------------//
+//	"material.cpp"												//
+//	資材クラス													//
+//  フィールド上での挙動やアイテムの情報を担当					//
+//									           最終修正日 11/19	//
+//--------------------------------------------------------------//
+
 #include "../framework.h"
 #include "../Framework/environment.h"
 #include <random>
@@ -26,7 +33,7 @@ Material::~Material()
 }
 
 /// <summary>
-/// 初期化関数
+/// 初期化
 /// </summary>
 void Material::Initialize()
 {
@@ -37,7 +44,7 @@ void Material::Initialize()
 }
 
 /// <summary>
-/// 処理関数
+/// 継続処理
 /// </summary>
 /// <param name="deltaTime">経過時間</param>
 void Material::Execute(double deltaTime, const XMVECTOR holdPos)
@@ -61,7 +68,7 @@ void Material::Execute(double deltaTime, const XMVECTOR holdPos)
 
 		materialPos = XMFLOAT3(
 			model->getPositionX(),
-			model->getPositionY() + offset,	//BoundingBoxの位置調整で0.15f加えている
+			model->getPositionY() + OFFSET,	//BoundingBoxの位置調整で0.15f加えている
 			model->getPositionZ()
 		);
 
@@ -72,7 +79,7 @@ void Material::Execute(double deltaTime, const XMVECTOR holdPos)
 
 		materialPos = XMFLOAT3(
 			model->getPositionX(),
-			model->getPositionY() + offset,	//BoundingBoxの位置調整で0.1f加えている
+			model->getPositionY() + OFFSET,	//BoundingBoxの位置調整で0.1f加えている
 			model->getPositionZ()
 		);
 
@@ -87,7 +94,7 @@ void Material::Execute(double deltaTime, const XMVECTOR holdPos)
 
 		materialPos = XMFLOAT3(
 			model->getPositionX(),
-			model->getPositionY() + offset,	//BoundingBoxの位置調整で0.1f加えている
+			model->getPositionY() + OFFSET,	//BoundingBoxの位置調整で0.1f加えている
 			model->getPositionZ()
 		);
 
@@ -97,7 +104,7 @@ void Material::Execute(double deltaTime, const XMVECTOR holdPos)
 }
 
 /// <summary>
-/// 描画関数
+/// 描画処理
 /// </summary>
 void Material::Render()
 {
@@ -107,21 +114,21 @@ void Material::Render()
 }
 
 /// <summary>
-/// 資材の重量取得関数
+/// 資材の重量取得
 /// </summary>
 /// <returns>決められたランダムな値を返す</returns>
 float Material::GetRandomWeight()
 {
 	std::random_device rd;
 	std::mt19937 mt(rd());
-	std::uniform_real_distribution<float> dist(minMaterialWeight, maxMaterialWeight);
+	std::uniform_real_distribution<float> dist(MINWEIGHT, MAXWEIGHT);
 	float weight = dist(mt);
 
 	return weight;
 }
 
 /// <summary>
-/// 資材モデル作成関数
+/// モデル作成
 /// </summary>
 void Material::CreateModel(MaterialType type)
 {
@@ -165,7 +172,7 @@ ItemData Material::CreateItemData(MaterialType type)
 }
 
 /// <summary>
-/// 資材の回転処理
+/// 資材の回転
 /// </summary>
 /// <param name="deltaTime">経過時間</param>
 void Material::RotateMaterial(double deltaTime)

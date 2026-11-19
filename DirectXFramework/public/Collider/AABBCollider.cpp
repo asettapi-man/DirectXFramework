@@ -1,3 +1,10 @@
+//--------------------------------------------------------------//
+//	"AABBCollider.cpp"											//
+//	AABBの当たり判定クラス										//
+//																//
+//									           最終修正日 11/19	//
+//--------------------------------------------------------------//
+
 #include "../../framework.h"
 #include "../../Framework/environment.h"
 #include "AABBCollider.h"
@@ -18,34 +25,61 @@ void AABBCollider::Initialize(const XMFLOAT3& center, const XMFLOAT3& extents)
 	boundingBox.Extents = extents;
 }
 
-//== 当たり判定の設定 ==
+/// <summary>
+/// BoundingBox情報設定関数
+/// </summary>
+/// <param name="box">登録したいBoundingBox</param>
 void AABBCollider::SetBoundingBox(const BoundingBox& box)
 {
 	boundingBox.Center = box.Center;
 	boundingBox.Extents = box.Extents;
 }
 
+/// <summary>
+/// BoundingBoxのCenter設定関数
+/// </summary>
+/// <param name="center">中央位置</param>
 void AABBCollider::SetBoundingBoxCenter(const XMFLOAT3& center)
 {
 	boundingBox.Center = center;
 }
 
+/// <summary>
+/// BoundingBoxのCenter設定関数
+/// </summary>
+/// <param name="x">x座標</param>
+/// <param name="y">y座標</param>
+/// <param name="z">z座標</param>
 void AABBCollider::SetBoundingBoxCenter(float x, float y, float z)
 {
 	boundingBox.Center = XMFLOAT3(x, y, z);
 }
 
+/// <summary>
+/// BoundingBoxのExtents設定関数
+/// </summary>
+/// <param name="extents">範囲（大きさ）</param>
 void AABBCollider::SetBoundingBoxExtents(const XMFLOAT3& extents)
 {
 	boundingBox.Extents = extents;
 }
 
+/// <summary>
+/// BoundingBoxのExtents設定関数
+/// </summary>
+/// <param name="x">x方向の大きさ</param>
+/// <param name="y">y方向の大きさ</param>
+/// <param name="z">z方向の大きさ</param>
 void AABBCollider::SetBoundingBoxExtents(float x, float y, float z)
 {
 	boundingBox.Extents = XMFLOAT3(x, y, z);
 }
 
-//== AABB同士の当たり判定 ==
+/// <summary>
+/// AABBCollider同士の当たり判定
+/// </summary>
+/// <param name="other">衝突対象</param>
+/// <returns>衝突していればtrueが返る</returns>
 bool AABBCollider::Intersects(const AABBCollider& other) const
 {
 	//無効な場合は当たり判定を行わない
@@ -63,7 +97,9 @@ bool AABBCollider::Intersects(const AABBCollider& other) const
 	return false;
 }
 
-//== AABBColliderの当たり判定を線で可視化する ==
+/// <summary>
+/// 当たり判定の線表示関数
+/// </summary>
 void AABBCollider::DebugLineRenderer()
 {
 	const XMFLOAT3& center = boundingBox.Center;

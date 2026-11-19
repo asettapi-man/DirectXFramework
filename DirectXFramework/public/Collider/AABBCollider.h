@@ -6,7 +6,7 @@ private:
 	BoundingBox boundingBox;	//AABBの当たり判定
 	DWORD debugLineColor;	//デバッグ用の線の色
 
-	bool isEnable;	//有効かどうかのフラグ
+	bool isEnable;	//当たり判定有効フラグ
 
 public:
 	AABBCollider();	//コンストラクタ
@@ -31,6 +31,8 @@ public:
 	//有効・無効フラグの設定
 	inline void SetEnable(bool enable) { isEnable = enable; }
 
-	//デバッグ用
+	//==デバッグ用==
+	//当たり判定の線表示
 	void DebugLineRenderer();
+
 };

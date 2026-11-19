@@ -211,7 +211,7 @@ void SceneMainGame::execute()
 	crosshairUI->UpdateCrosshairUI(false);
 
 	//==インベントリUI処理==
-	inventoryUI->SetIsInventoryUIRender(vnKeyboard::on(DIK_TAB));
+	inventoryUI->SetIsVisible(vnKeyboard::on(DIK_TAB));
 
 	//インベントリスロットを選択していれば処理
 	if (inventoryUI->GetIsSelected())
@@ -224,7 +224,7 @@ void SceneMainGame::execute()
 	}
 
 	//インベントリ画面非表示中かつ資材の状態が回転状態であれば視点移動をキャンセル
-	if (!inventoryUI->GetIsInventoryUIRender()
+	if (!inventoryUI->GetIsVisible()
 		&& (targetMat == nullptr || targetMat->GetState() != MaterialState::ROTATE))
 	{
 		//マウスの移動量を取得
@@ -371,6 +371,8 @@ void SceneMainGame::execute()
 		{
 
 #ifdef _DEBUG
+
+			// == パラメーター表示（デバッグ用）
 			vnFont::print(10.0f, 0.0f, L"player_vMove : %.3f, %.3f, %.3f",
 				XMVectorGetX(player->GetvMove()),
 				XMVectorGetY(player->GetvMove()),
@@ -441,7 +443,7 @@ void SceneMainGame::execute()
 				inventoryUI->GetInventoryUI().size()
 			);
 
-			vnFont::print(10.0f, 260.0f, L"InventoryUI_isInventoryUIRender : %s", inventoryUI->GetIsInventoryUIRender() ? L"true" : L"false");
+			vnFont::print(10.0f, 260.0f, L"InventoryUI_isInventoryUIRender : %s", inventoryUI->GetIsVisible() ? L"true" : L"false");
 
 			if (targetMat != nullptr)
 			{
@@ -504,7 +506,7 @@ void SceneMainGame::render()
 
 	player->Render();
 
-	if (inventoryUI->GetIsInventoryUIRender())
+	if (inventoryUI->GetIsVisible())
 	{
 		inventoryUI->Render(player->GetInventory());
 	}
@@ -517,6 +519,9 @@ void SceneMainGame::render()
 #endif
 }
 
+/// <summary>
+/// シーン上に資材を生成
+/// </summary>
 void SceneMainGame::CreateMaterial()
 {
 	Material* material = new Material(MaterialType::WOOD);
@@ -535,6 +540,11 @@ void SceneMainGame::CreateMaterial()
 	registerObject(materials.back()->GetModel());
 }
 
+/// <summary>
+/// シーンから資材削除
+/// </summary>
+/// <param name="material">削除対象</param>
+/// <returns></returns>
 bool SceneMainGame::DeleteMaterialData(Material* material)
 {
 	auto itr = std::find(materials.begin(), materials.end(), material);
@@ -549,7 +559,10 @@ bool SceneMainGame::DeleteMaterialData(Material* material)
 	return false;
 }
 
-void SceneMainGame::TitleSetUp()
+/// <summary>
+/// タイトルの初期設定
+/// </summary>
+void SceneMainGame::TitleSetup()
 {
 	//プレイヤーの初期化
 	//player->getModel()->setPosition(0.0f, 0.0f, 0.0f);	//位置

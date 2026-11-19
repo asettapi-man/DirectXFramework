@@ -1,3 +1,10 @@
+//--------------------------------------------------------------//
+//	"player.cpp"												//
+//	プレイヤークラス											//
+//	フィールド上の動きや操作面を担当							//
+//									           最終修正日 11/19	//
+//--------------------------------------------------------------//
+
 #include "../../framework.h"
 #include "../../Framework/environment.h"
 #include <algorithm>
@@ -39,7 +46,7 @@ Player::~Player()
 }
 
 /// <summary>
-/// 初期化関数
+/// 初期化
 /// </summary>
 void Player::Initialize()
 {
@@ -49,9 +56,10 @@ void Player::Initialize()
 }
 
 /// <summary>
-/// 処理関数
+/// 継続処理
 /// </summary>
 /// <param name="deltaTime">経過時間</param>
+/// <param name="theta">角度θ</param>
 void Player::Execute(double deltaTime, float theta)
 {
 	bool isMovingForPlayer = false;	//移動フラグ
@@ -175,7 +183,7 @@ void Player::Execute(double deltaTime, float theta)
 }
 
 /// <summary>
-/// 描画関数
+/// 描画処理
 /// </summary>
 void Player::Render()
 {
@@ -187,7 +195,11 @@ void Player::Render()
 #endif // _DEBUG
 }
 
-
+/// <summary>
+/// インベントリに資材追加
+/// </summary>
+/// <param name="material">追加する資材クラス</param>
+/// <returns>追加出来たらtrueを返す</returns>
 bool Player::AddMaterial(Material* material)
 {
 	if (!inventory.CanAdd(material)) return false;	//重量オーバーなら処理終了
@@ -196,7 +208,11 @@ bool Player::AddMaterial(Material* material)
 	return true;
 }
 
-
+/// <summary>
+/// プレイヤーの衝突判定
+/// </summary>
+/// <param name="c">衝突相手</param>
+/// <returns>衝突していればtrueを返す</returns>
 bool Player::CheckPlayerCollision(AABBCollider& c)
 {
 	//プレイヤーのAABBCollider取得

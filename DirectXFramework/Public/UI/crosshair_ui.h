@@ -14,8 +14,8 @@ private:
 public:
 	CrosshairUI();	//コンストラクタ
 
-	inline vnSprite* GetNormalCrosshair() const { return normalCrosshair; }	//通常クロスヘア画像取得関数
-	inline vnSprite* GetActionCrosshair() const { return actionCrosshair; }	//アクションクロスヘア画像取得関数
+	inline vnSprite* GetNormalCrosshair() const { return normalCrosshair; }	//通常クロスヘア画像取得
+	inline vnSprite* GetActionCrosshair() const { return actionCrosshair; }	//アクションクロスヘア画像取得
 
-	void UpdateCrosshairUI(bool flag);	//フラグごとに画像を変更
+	void UpdateCrosshairUI(bool flag);	//クロスヘア表示変更
 };

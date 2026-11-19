@@ -7,7 +7,9 @@
 class Player
 {
 private:
-	//プレイヤーの衝突方向
+	/// <summary>
+	/// プレイヤーの衝突方向
+	/// </summary>
 	enum class eDirection
 	{
 		NONE,
@@ -49,13 +51,13 @@ public:
 	inline float GetSpeedDown() const { return speedDown; }					//移動速度低下量の取得
 
 	Player(const WCHAR* folder, const WCHAR* file, const XMFLOAT3& boxColliderCenter, const XMFLOAT3& boxColliderExtents);	//コンストラクタ
-	~Player();
+	~Player();																												//デストラクタ
 
-	void Initialize();					//初期化関数
-	void Execute(double deltaTime, float theta);		//処理関数
-	void Render();						//描画関数
+	void Initialize();									//初期化
+	void Execute(double deltaTime, float theta);		//継続処理
+	void Render();										//描画処理
 
-	bool AddMaterial(Material* material);
+	bool AddMaterial(Material* material);				//資材をインベントリ追加する
 
 	bool CheckPlayerCollision(AABBCollider& c);	//AABBコライダーの衝突判定
 };

@@ -5,15 +5,15 @@
 class TimeManager
 {
 private:
+	//１フレームにかかった処理時間
+	static double deltaTime;
+
 	//今回と前回の開始時間
 	LARGE_INTEGER freq, startCount, endCount;
-	static double deltaTime;	//経過時間
-
 public:
-	// == ゲッター ==
-	static double GetDeltaTime() { return deltaTime; }
+	static double GetDeltaTime() { return deltaTime; }	//経過時間取得
 
-	void Initialize();	//初期化関数
-	void BeginFrame();	//フレームの開始処理関数
-	void UpdateDeltaTime();	//経過時間更新関数
+	void Initialize();	//初期化
+	void BeginFrame();	//フレームの開始処理
+	void UpdateDeltaTime();	//経過時間更新
 };
