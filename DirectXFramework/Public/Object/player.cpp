@@ -58,7 +58,7 @@ void Player::Initialize()
 /// <summary>
 /// 継続処理
 /// </summary>
-/// <param name="deltaTime">経過時間</param>
+/// <param name="deltaTime">1フレームの処理にかかった時間</param>
 /// <param name="theta">角度θ</param>
 void Player::Execute(double deltaTime, float theta)
 {

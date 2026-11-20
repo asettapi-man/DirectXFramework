@@ -320,25 +320,31 @@ void SceneMainGame::execute()
 				DeleteMaterialData(targetMat);
 				break;
 			}
-
-			if (vnMouse::onR())
+			if (targetMat->GetIsHold() == true)
 			{
-				//Ž‘Þ‚Ì•ÛŽˆ—
-				targetMat->SetMaterialState(MaterialState::HOLD);
-
 				if (vnMouse::onL())
 				{
-					//Ž‘Þ‚Ì“Š±ˆ—
+					targetMat->SetMaterialState(MaterialState::CHARGE);
 				}
 				else if (vnKeyboard::on(DIK_R))
 				{
-					//Ž‘Þ‚Ì‰ñ“]ˆ—
 					targetMat->SetMaterialState(MaterialState::ROTATE);
+				}
+			}
+
+			if (vnMouse::onR())
+			{
+				if (targetMat->GetState() != MaterialState::THROW)
+				{
+					//•ÛŽó‘Ô
+					targetMat->SetMaterialState(MaterialState::HOLD);
+					targetMat->SetIsHold(true);
 				}
 			}
 			else
 			{
 				targetMat->SetMaterialState(MaterialState::NONE);
+				targetMat->SetIsHold(false);
 			}
 		}
 	}
@@ -448,12 +454,24 @@ void SceneMainGame::execute()
 
 			if (targetMat != nullptr)
 			{
-				vnFont::print(10.0f, 280.0f, L"targetMat_MaterialState : %d", (int)targetMat->GetState()	);
+				vnFont::print(10.0f, 280.0f, L"targetMat_isHold : %s",
+					targetMat->GetIsHold() ? L"true" : L"false"
+				);
 
-				vnFont::print(10.0f, 300.0f, L"targetMat_Rotate : %.3f, %.3f, %.3f",
+				vnFont::print(10.0f, 300.0f, L"targetMat_isThrow : %s",
+					targetMat->GetIsThrow() ? L"true" : L"false"
+				);
+
+				vnFont::print(10.0f, 320.0f, L"targetMat_MaterialState : %d", (int)targetMat->GetState());
+
+				vnFont::print(10.0f, 340.0f, L"targetMat_Rotate : %.3f, %.3f, %.3f",
 					targetMat->GetModel()->getRotationX(),
 					targetMat->GetModel()->getRotationY(),
 					targetMat->GetModel()->getRotationZ()
+				);
+
+				vnFont::print(10.0f, 360.0f, L"targetMat_force : %.3f",
+					targetMat->GetForce()
 				);
 			}
 

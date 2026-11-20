@@ -8,9 +8,11 @@
 /// </summary>
 enum class MaterialState
 {
-	NONE,	//0:通常
-	HOLD,	//1:保持
-	ROTATE	//2:回転
+	NONE,		//0:通常
+	HOLD,		//1:保持
+	ROTATE,		//2:回転
+	CHARGE,		//3:チャージ
+	THROW		//4:投擲
 };
 
 /// <summary>
@@ -53,8 +55,11 @@ private:
 	float phi = 0.0f;		//角度φ 緯度
 	float theta = 0.0f;		//角度θ 経度
 
-	bool isHold;		//保持フラグ
+	float elapsed = 0.0f;	//左クリックの長押し時間
+	float force = 1.0f;		//投擲力
 
+	bool isHold;	//保持フラグ
+	bool isThrow;	//投擲フラグ
 public:
 	Material(MaterialType type);		//コンストラクタ
 	~Material();						//デストラクタ
@@ -63,11 +68,13 @@ public:
 	void Execute(double deltaTime, const XMVECTOR holdPos);		//継続処理
 	void Render();												//AABBコライダー描画
 
-	inline vnModel* GetModel() const { return model; }			//モデル情報取得
-	inline AABBCollider& GetAABBCollider() { return collider; }	//AABBコライダー取得
-	inline ItemData& GetItemData() { return itemData; }			//資材情報取得
-	inline MaterialState& GetState() { return state; }			//資材状態取得
-	inline bool GetIsHold() const { return isHold; }			//保持フラグ取得
+	inline vnModel* GetModel() const { return model; }				//モデル情報取得
+	inline AABBCollider& GetAABBCollider()  { return collider; }	//AABBコライダー取得
+	inline ItemData& GetItemData() { return itemData; }				//資材情報取得
+	inline MaterialState& GetState() { return state; }				//資材状態取得
+	inline float GetForce() const { return force; }					//投擲力取得
+	inline bool GetIsHold() const { return isHold; }				//保持フラグ取得
+	inline bool GetIsThrow() const { return isThrow; }				//投擲フラグ取得
 
 	inline void SetMaterialState(MaterialState state) { this->state = state; }	//資材状態設定
 	inline void SetIsHold(bool flag) { isHold = flag; }							//保持フラグ設定
@@ -78,5 +85,7 @@ public:
 	ItemData CreateItemData(MaterialType type);		//資材情報の作成
 
 	//== 操作 ==
-	void RotateMaterial(double deltaTime);	//資材の回転
+	void RotateMaterial(double deltaTime);					//回転処理
+	void ThrowCharge(double deltaTime, XMVECTOR holdPos);	//投擲溜め処理
+	void ThrowMaterial(XMVECTOR lineDir);					//投擲処理
 };

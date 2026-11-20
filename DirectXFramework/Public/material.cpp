@@ -22,7 +22,6 @@ Material::Material(MaterialType type)
 
 	CreateModel(type);	//資材モデル生成
 	itemData = CreateItemData(type);	//採取時にランダムな資材を生成
-
 }
 
 /// <summary>
@@ -42,12 +41,15 @@ void Material::Initialize()
 
 	velocity = XMVectorZero();	//移動量ベクトルの初期化
 	gravity = XMVectorSet(0.0f, gravityY, 0.0f, 0.0f);	//重力ベクトルの初期化
+
+	isHold = false;	
+	isThrow = false;
 }
 
 /// <summary>
 /// 継続処理
 /// </summary>
-/// <param name="deltaTime">経過時間</param>
+/// <param name="deltaTime">1フレームの処理にかかった時間</param>
 void Material::Execute(double deltaTime, const XMVECTOR holdPos)
 {
 	XMFLOAT3 materialPos;
@@ -55,7 +57,6 @@ void Material::Execute(double deltaTime, const XMVECTOR holdPos)
 	switch (state)
 	{
 	case MaterialState::NONE:	//無し
-
 		//落下処理
 		velocity += gravity * deltaTime;
 		model->addPositionY(XMVectorGetY(velocity) * deltaTime);
@@ -85,7 +86,6 @@ void Material::Execute(double deltaTime, const XMVECTOR holdPos)
 		);
 
 		collider.SetBoundingBoxCenter(materialPos);
-
 		break;
 
 	case MaterialState::ROTATE:	//回転状態
@@ -100,6 +100,10 @@ void Material::Execute(double deltaTime, const XMVECTOR holdPos)
 		);
 
 		collider.SetBoundingBoxCenter(materialPos);
+		break;
+
+	case MaterialState::CHARGE:
+		ThrowCharge(deltaTime, holdPos);
 		break;
 	}
 }
@@ -173,9 +177,9 @@ ItemData Material::CreateItemData(MaterialType type)
 }
 
 /// <summary>
-/// 資材の回転
+/// 回転処理
 /// </summary>
-/// <param name="deltaTime">経過時間</param>
+/// <param name="deltaTime">1フレームの処理にかかった時間</param>
 void Material::RotateMaterial(double deltaTime)
 {
 	//マウスのx, yの移動量
@@ -187,4 +191,29 @@ void Material::RotateMaterial(double deltaTime)
 
 	model->addRotationX(phi);
 	model->addRotationY(theta);
+}
+
+void Material::ThrowCharge(double deltaTime, XMVECTOR holdPos)
+{
+	elapsed += deltaTime;	//経過時間
+	force += elapsed;		//投擲力を計算
+
+	if (vnMouse::relL())//左クリックを離した時
+	{
+		ThrowMaterial(holdPos);
+	}
+}
+
+
+void Material::ThrowMaterial(XMVECTOR holdPos)
+{
+
+	XMVECTOR addForce = holdPos * force;
+
+	model->addPosition(&addForce);
+
+	//初期化
+	elapsed = 0.0f;
+	force = 1.0f;
+	state = MaterialState::THROW;
 }
