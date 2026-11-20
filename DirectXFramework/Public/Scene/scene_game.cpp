@@ -140,7 +140,7 @@ bool SceneMainGame::initialize()
 	//== 初期化 ==
 	linePos = XMVectorZero();	//Rayの位置
 	lineDir = XMVectorZero();	//Rayの方向
-	pickupRange = 4.0f;			//Rayの長さ
+	pickupRange = 5.0f;			//Rayの長さ
 
 	holdRange = 4.0f;			//資材保持距離
 
@@ -300,7 +300,6 @@ void SceneMainGame::execute()
 	float hitDistance = 0.0f;	//衝突点からカメラの位置までの距離を返す
 	for (std::size_t i = 0; i < materials.size(); i++)
 	{
-		materials[i]->Execute(TimeManager::GetDeltaTime(), holdPos);
 		//資材クラスが所持しているAABBColliderとの距離を確認
 		if (materials[i]->GetAABBCollider().GetBoundingBox().Intersects(
 			linePos,
@@ -311,40 +310,47 @@ void SceneMainGame::execute()
 			crosshairUI->UpdateCrosshairUI(true);
 
 			targetMat = materials[i];	//衝突対象の資材
+		}
+		materials[i]->Execute(TimeManager::GetDeltaTime(), holdPos);
+	}
 
-			if (vnKeyboard::trg(DIK_E))
-			{
-				//Eキー押下でインベントリに資材追加
-				isAddMaterial = player->AddMaterial(targetMat);
-				if (!isAddMaterial) continue;	//追加不可であれば処理を飛ばす
-				DeleteMaterialData(targetMat);
-				break;
-			}
-			if (targetMat->GetIsHold() == true)
-			{
-				if (vnMouse::onL())
-				{
-					targetMat->SetMaterialState(MaterialState::CHARGE);
-				}
-				else if (vnKeyboard::on(DIK_R))
-				{
-					targetMat->SetMaterialState(MaterialState::ROTATE);
-				}
-			}
+	//対象の資材があるか確認
+	if (targetMat != nullptr)
+	{
+		if (vnKeyboard::trg(DIK_E))
+		{
+			//Eキー押下でインベントリに資材追加
+			isAddMaterial = player->AddMaterial(targetMat);
+			if (isAddMaterial) DeleteMaterialData(targetMat);
+		}
 
-			if (vnMouse::onR())
+		//投擲状態であれば処理しない
+		if (targetMat->GetState() != MaterialState::THROW)
+		{
+			if (!vnMouse::onR())
 			{
-				if (targetMat->GetState() != MaterialState::THROW)
-				{
-					//保持状態
-					targetMat->SetMaterialState(MaterialState::HOLD);
-					targetMat->SetIsHold(true);
-				}
+				//何もしていない状態
+				targetMat->SetMaterialState(MaterialState::NONE);
+			}
+			else if (vnMouse::onL())
+			{
+				//投擲力チャージ状態
+				targetMat->SetMaterialState(MaterialState::CHARGE);
+			}
+			else if (targetMat->GetState() == MaterialState::CHARGE && vnMouse::relL())
+			{
+				//投擲状態
+				targetMat->BeginThrow(lineDir);
+			}
+			else if (vnKeyboard::on(DIK_R))
+			{
+				//回転状態
+				targetMat->SetMaterialState(MaterialState::ROTATE);
 			}
 			else
 			{
-				targetMat->SetMaterialState(MaterialState::NONE);
-				targetMat->SetIsHold(false);
+				//右クリック押下中は保持状態
+				targetMat->SetMaterialState(MaterialState::HOLD);
 			}
 		}
 	}
@@ -454,23 +460,23 @@ void SceneMainGame::execute()
 
 			if (targetMat != nullptr)
 			{
-				vnFont::print(10.0f, 280.0f, L"targetMat_isHold : %s",
+				vnFont::print(10.0f, 300.0f, L"targetMat_isHold : %s",
 					targetMat->GetIsHold() ? L"true" : L"false"
 				);
 
-				vnFont::print(10.0f, 300.0f, L"targetMat_isThrow : %s",
+				vnFont::print(10.0f, 320.0f, L"targetMat_isThrow : %s",
 					targetMat->GetIsThrow() ? L"true" : L"false"
 				);
 
-				vnFont::print(10.0f, 320.0f, L"targetMat_MaterialState : %d", (int)targetMat->GetState());
+				vnFont::print(10.0f, 340.0f, L"targetMat_MaterialState : %d", (int)targetMat->GetState());
 
-				vnFont::print(10.0f, 340.0f, L"targetMat_Rotate : %.3f, %.3f, %.3f",
+				vnFont::print(10.0f, 360.0f, L"targetMat_Rotate : %.3f, %.3f, %.3f",
 					targetMat->GetModel()->getRotationX(),
 					targetMat->GetModel()->getRotationY(),
 					targetMat->GetModel()->getRotationZ()
 				);
 
-				vnFont::print(10.0f, 360.0f, L"targetMat_force : %.3f",
+				vnFont::print(10.0f, 380.0f, L"targetMat_force : %.3f",
 					targetMat->GetForce()
 				);
 			}

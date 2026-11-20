@@ -2,7 +2,7 @@
 //	"material.cpp"												//
 //	資材クラス													//
 //  フィールド上での挙動やアイテムの情報を担当					//
-//									           最終修正日 11/19	//
+//									           最終修正日 11/20	//
 //--------------------------------------------------------------//
 
 #include "../framework.h"
@@ -50,6 +50,7 @@ void Material::Initialize()
 /// 継続処理
 /// </summary>
 /// <param name="deltaTime">1フレームの処理にかかった時間</param>
+/// <param name="holdPos">保持位置</param>
 void Material::Execute(double deltaTime, const XMVECTOR holdPos)
 {
 	XMFLOAT3 materialPos;
@@ -57,55 +58,50 @@ void Material::Execute(double deltaTime, const XMVECTOR holdPos)
 	switch (state)
 	{
 	case MaterialState::NONE:	//無し
-		//落下処理
-		velocity += gravity * deltaTime;
-		model->addPositionY(XMVectorGetY(velocity) * deltaTime);
-
-		//地面判定
-		if (model->getPositionY() < 0.0f)
-		{
-			model->setPositionY(0.0f);
-			velocity = XMVectorZero();
-		}
-
-		materialPos = XMFLOAT3(
-			model->getPositionX(),
-			model->getPositionY() + OFFSET,	//BoundingBoxの位置調整で0.15f加えている
-			model->getPositionZ()
-		);
-
-		collider.SetBoundingBoxCenter(materialPos);
 		break;
 	case MaterialState::HOLD:	//保持状態
 		model->setPosition(&holdPos);
-
-		materialPos = XMFLOAT3(
-			model->getPositionX(),
-			model->getPositionY() + OFFSET,	//BoundingBoxの位置調整で0.1f加えている
-			model->getPositionZ()
-		);
-
-		collider.SetBoundingBoxCenter(materialPos);
 		break;
 
 	case MaterialState::ROTATE:	//回転状態
 		RotateMaterial(deltaTime);	//回転処理
 
 		model->setPosition(&holdPos);
-
-		materialPos = XMFLOAT3(
-			model->getPositionX(),
-			model->getPositionY() + OFFSET,	//BoundingBoxの位置調整で0.1f加えている
-			model->getPositionZ()
-		);
-
-		collider.SetBoundingBoxCenter(materialPos);
 		break;
 
 	case MaterialState::CHARGE:
-		ThrowCharge(deltaTime, holdPos);
+		ThrowCharge(deltaTime);
+		break;
+
+	case MaterialState::THROW:
+		ThrowMaterial(deltaTime);
 		break;
 	}
+
+	//落下処理
+	velocity += gravity * deltaTime;
+
+	//通常状態と投擲状態のみ実行
+	if (state == MaterialState::NONE)
+	{
+		model->addPositionY(XMVectorGetY(velocity) * deltaTime);
+	}
+
+	//地面判定
+	if (model->getPositionY() < 0.0f)
+	{
+		model->setPositionY(0.0f);
+		velocity = XMVectorZero();
+		state = MaterialState::NONE;
+	}
+
+	materialPos = XMFLOAT3(
+		model->getPositionX(),
+		model->getPositionY() + OFFSET,	//BoundingBoxの位置調整
+		model->getPositionZ()
+	);
+
+	collider.SetBoundingBoxCenter(materialPos);
 }
 
 /// <summary>
@@ -193,27 +189,28 @@ void Material::RotateMaterial(double deltaTime)
 	model->addRotationY(theta);
 }
 
-void Material::ThrowCharge(double deltaTime, XMVECTOR holdPos)
+/// <summary>
+/// 投擲前の溜め処理
+/// </summary>
+/// <param name="deltaTime">1フレームの処理にかかった時間</param>
+void Material::ThrowCharge(double deltaTime)
 {
 	elapsed += deltaTime;	//経過時間
 	force += elapsed;		//投擲力を計算
-
-	if (vnMouse::relL())//左クリックを離した時
-	{
-		ThrowMaterial(holdPos);
-	}
 }
 
-
-void Material::ThrowMaterial(XMVECTOR holdPos)
+void Material::BeginThrow(const XMVECTOR& dir)
 {
-
-	XMVECTOR addForce = holdPos * force;
-
-	model->addPosition(&addForce);
-
-	//初期化
-	elapsed = 0.0f;
-	force = 1.0f;
+	velocity = dir * force;
 	state = MaterialState::THROW;
+}
+
+/// <summary>
+/// 投擲処理
+/// </summary>
+/// <param name="deltaTime">1フレームの処理にかかった時間</param>
+void Material::ThrowMaterial(double deltaTime)
+{
+	XMVECTOR addForce = velocity * deltaTime;
+	model->addPosition(&addForce);
 }

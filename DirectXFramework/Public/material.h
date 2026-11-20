@@ -85,7 +85,8 @@ public:
 	ItemData CreateItemData(MaterialType type);		//‘Şî•ñ‚Ìì¬
 
 	//== ‘€ì ==
-	void RotateMaterial(double deltaTime);					//‰ñ“]ˆ—
-	void ThrowCharge(double deltaTime, XMVECTOR holdPos);	//“Š±—­‚ßˆ—
-	void ThrowMaterial(XMVECTOR lineDir);					//“Š±ˆ—
+	void RotateMaterial(double deltaTime);		//‰ñ“]ˆ—
+	void ThrowCharge(double deltaTime);			//“Š±—­‚ßˆ—
+	void BeginThrow(const XMVECTOR& dir);		//“Š±ŠJn‚ÉÀs‚·‚éˆ—
+	void ThrowMaterial(double deltaTime);		//“Š±ˆ—
 };
