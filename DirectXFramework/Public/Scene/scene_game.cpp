@@ -207,7 +207,6 @@ void SceneMainGame::execute()
 	//pShadow->setPosition(player->getModel()->getPosition());	//影の座標をプレイヤーの座標に合わせる
 	pShadow->setPositionY(0.01f);	//影の座標を少し浮かせる	Z-Fighting対策
 
-	float hitDistance = 0.0f;	//衝突点からカメラの位置までの距離を返す
 	crosshairUI->UpdateCrosshairUI(false);
 
 	//==インベントリUI処理==
@@ -298,6 +297,7 @@ void SceneMainGame::execute()
 	XMVECTOR holdPos = linePos + lineDir * holdRange;
 
 	//シーン内にある資材すべて処理する
+	float hitDistance = 0.0f;	//衝突点からカメラの位置までの距離を返す
 	for (std::size_t i = 0; i < materials.size(); i++)
 	{
 		materials[i]->Execute(TimeManager::GetDeltaTime(), holdPos);
@@ -321,19 +321,20 @@ void SceneMainGame::execute()
 				break;
 			}
 
-			if (vnMouse::onL())
-			{
-				//資材の投擲処理
-			}
-			else if (vnKeyboard::on(DIK_R))
-			{
-				//資材の回転処理
-				targetMat->SetMaterialState(MaterialState::ROTATE);
-			}
-			else if (vnMouse::onR())
+			if (vnMouse::onR())
 			{
 				//資材の保持処理
 				targetMat->SetMaterialState(MaterialState::HOLD);
+
+				if (vnMouse::onL())
+				{
+					//資材の投擲処理
+				}
+				else if (vnKeyboard::on(DIK_R))
+				{
+					//資材の回転処理
+					targetMat->SetMaterialState(MaterialState::ROTATE);
+				}
 			}
 			else
 			{

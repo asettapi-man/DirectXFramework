@@ -16,12 +16,13 @@
 /// <param name="type">資材の種類</param>
 Material::Material(MaterialType type)
 {
-	CreateModel(type);	//資材モデル生成
-	itemData = CreateItemData(type);	//採取時にランダムな資材を生成
-
 	//初期化
 	state = MaterialState::NONE;
 	colliderExtents = XMFLOAT3(1.25f, 0.15f, 1.25f);
+
+	CreateModel(type);	//資材モデル生成
+	itemData = CreateItemData(type);	//採取時にランダムな資材を生成
+
 }
 
 /// <summary>
